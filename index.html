@@ -1,16 +1,143 @@
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>Hello World</title>
+    <title>PixiJS Test</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="lib/pixi.js"></script>
+    <script src="lib/kotlin.js"></script>
+    <script src="lib/twf.js"></script>
 </head>
-<script src="lib/pixi.min.js"></script>
 <body>
-	<script type="text/javascript">
-		let type = "WebGL"
-		if (!PIXI.utils.isWebGLSupported()) {
-			type = "canvas"
-		}
-		PIXI.utils.sayHello(type)
-	</script>
+    <canvas id="mainCanvas"></canvas>
+    <script type="text/javascript">
+        const canvas = document.getElementById("mainCanvas");
+        const renderer = new PIXI.Renderer({
+            view: canvas,
+            resolution: 1
+        });
+
+        var style = new PIXI.TextStyle({
+            fontFamily : 'Comic Sans MS',
+            fontSize: 24,
+            fill: 0xffffff,
+        })
+
+        var testTaskString = "a*b+b/(c-12)";
+        var expressionRoot = twf.api.stringToExpression(testTaskString);
+        var containerRoot = makeReactiveExpression(0, 0, expressionRoot);
+
+        animate();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(containerRoot);
+        }
+
+        function makeReactiveExpression(x, y, expressionNode) {
+            var container = new PIXI.Container();
+            container.x = x;
+            container.y = y;
+            var children = expressionNode.children.array_hd7ov6$_0;
+            var type = expressionNode.nodeType.name$;
+            var value = expressionNode.value;
+            container.expressionTreeNodeId = expressionNode.nodeId;
+            // normalize height, not only width
+            if (type === "VARIABLE") {  // currently implies not having children
+                var text = new PIXI.Text(value, style);
+                container.addChild(text);
+                return makeResponsiveContainer(container);
+            }
+            else if (type === "FUNCTION") {   // currently implies having 1 or 2 children, depending on the function
+                switch(value) {
+                    case "+":
+                        // don't write if second param is FUNCTION "-", + ingore when added bracket support
+                        var left_part = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                        var text = new PIXI.Text("+", style);
+                        text.position.set(left_part.width, 0);
+                        var textBlockWidth = PIXI.TextMetrics.measureText("+", style).width;
+                        var textBlockHeight = PIXI.TextMetrics.measureText("+", style).height;
+                        var right_part = makeReactiveExpression(left_part.width+textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[1]);
+                        container.addChild(left_part);
+                        container.addChild(text);
+                        container.addChild(right_part);
+                        break;
+
+                    case "-":
+                        var text = new PIXI.Text("-", style);
+                        text.position.set(0, 0);
+                        var textBlockWidth = PIXI.TextMetrics.measureText("-", style).width;
+                        var textBlockHeight = PIXI.TextMetrics.measureText("-", style).height;
+                        var variable_part = makeReactiveExpression(textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                        container.addChild(text);
+                        container.addChild(variable_part);
+                        break;
+
+                    case "*":
+                        var left_part = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                        var text = new PIXI.Text("*", style);
+                        text.position.set(left_part.width, 0);
+                        var textBlockWidth = PIXI.TextMetrics.measureText("*", style).width;
+                        var textBlockHeight = PIXI.TextMetrics.measureText("*", style).height;
+                        var right_part = makeReactiveExpression(left_part.width+textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[1]);
+                        container.addChild(left_part);
+                        container.addChild(text);
+                        container.addChild(right_part);
+                        break;
+
+                    case "/":
+                        // put numer and denom in the middle
+                        var numerator = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                        var denominator = makeReactiveExpression(0, numerator.height+3, expressionNode.children.array_hd7ov6$_0[1]); // magic constant 10 incoming
+                        var line_length = Math.max(numerator.width, denominator.width);
+                        var divisionLine = new PIXI.Graphics();
+                        divisionLine.lineStyle(3, 0xffffff);
+                        divisionLine.moveTo(0, y+numerator.height); // half of the magic constant
+                        divisionLine.lineTo(line_length, y+numerator.height);
+                        divisionLine.closePath();
+                        container.addChild(numerator);
+                        container.addChild(denominator);
+                        container.addChild(divisionLine);
+                        console.log(container);
+                        break;
+
+                    default:    // currectly means only full expression
+                        var fullContainer = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                        container.addChild(fullContainer);
+                }
+            }
+
+            return container;
+        }
+
+        function makeResponsiveContainer(container) {
+            container.interactive = true;
+            container.buttonMode = true;
+            container.hitArea = new PIXI.Rectangle(0, 0, container.width, container.height);
+            container.on("click", returnNodeId);
+            var highlightRect = new PIXI.Graphics();
+            highlightRect.lineStyle(0, 0xffffff);
+            highlightRect.beginFill(0xffffff);
+            highlightRect.drawRect(0, 0, container.width, container.height);
+            highlightRect.endFill();
+            highlightRect.alpha = 0;
+
+            container.mouseover = function(mouseData) {
+                // add nodeId reaction and stuff
+                highlightRect.alpha = 0.4;
+            }
+
+            container.mouseout = function(mouseData) {
+                // add nodeId reaction and stuff
+                highlightRect.alpha = 0;
+            }
+
+            function returnNodeId() {
+                console.log(container.expressionTreeNodeId);    // for testing purposes
+            }
+
+            container.addChild(highlightRect);
+            return container;
+        }
+    </script>
 </body>
 </html>
