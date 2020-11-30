@@ -87,7 +87,7 @@
                     case "/":
                         // put numer and denom in the middle
                         var numerator = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
-                        var denominator = makeReactiveExpression(0, numerator.height+3, expressionNode.children.array_hd7ov6$_0[1]); // magic constant 10 incoming
+                        var denominator = makeReactiveExpression(0, numerator.height+3, expressionNode.children.array_hd7ov6$_0[1]); // magic constant 3 (division line width)
                         var line_length = Math.max(numerator.width, denominator.width);
                         var divisionLine = new PIXI.Graphics();
                         divisionLine.lineStyle(3, 0xffffff);
