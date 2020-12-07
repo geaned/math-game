@@ -27,8 +27,9 @@
             divisionLineWidth: 3,   // division line thickness
         }
 
-        var testTaskString = "a+(b/(c-12))/24";
-        var testTaskString = "a+(b/(c-12))/(24/48)";
+        var testTaskString = "a-b-c";
+        //var testTaskString = "a+(b/(c-12))/24";
+        //var testTaskString = "a+(b/(c-12))/(24/48)";
         var expressionRoot = twf.api.stringToExpression(testTaskString);
         var containerRoot = outputReactiveExpression(expressionRoot);
         console.log(expressionRoot);
@@ -60,32 +61,43 @@
                 container.addChild(text);
                 return makeResponsiveContainer(container);
             }
-            else if (type === "FUNCTION") {   // ATTENTION: currently implies having 1 or 2 children, depending on the function
+            else if (type === "FUNCTION") {
                 switch(value) {
-                    case "+":   // TODO: need to support more than 2 components (refer to comment on line 71)
-                        var left_part = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
-                        if (expressionNode.children.array_hd7ov6$_0[1].value === "-") { // if right child is -(<some_expression>), then we shouldn't draw a "+"
-                            var textBlockWidth = 0;
-                            var textBlockHeight = 0;
-                        } else {
-                            var text = new PIXI.Text("+", style);
-                            text.position.set(left_part.width, 0);
-                            var textBlockWidth = PIXI.TextMetrics.measureText("+", style).width;
-                            var textBlockHeight = PIXI.TextMetrics.measureText("+", style).height;
-                        }
-                        var right_part = makeReactiveExpression(left_part.width+textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[1]);
+                    case "+":
+                        var curOffset = 0;
+                        var parts = [];
+                        var plus_signs = [];
+                        var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
+                        for (childNum = 0; childNum < childrenAmount; childNum++) {
+                            var newBlock = makeReactiveExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum]);
+                            curOffset += newBlock.width;
+                            parts.push(newBlock);
 
-                        container.addChild(left_part);
-                        if (expressionNode.children.array_hd7ov6$_0[1].value !== "-")
-                            container.addChild(text);
-                        container.addChild(right_part);
+                            if (childNum < childrenAmount-1) {
+                                if (expressionNode.children.array_hd7ov6$_0[childNum+1].value !== "-") { // if right child is -(<some_expression>), then we shouldn't draw a "+"
+                                    var text = new PIXI.Text("+", style);
+                                    text.position.set(curOffset, 0);
+                                    plus_signs.push(text);
+                                    var textBlockWidth = PIXI.TextMetrics.measureText("+", style).width;
+                                    curOffset += textBlockWidth;
+                                }
+                            }
+                        }
+                        
+                        console.log(parts);
+                        console.log(plus_signs);
+                        for (let part of parts) {
+                            container.addChild(part);
+                        }
+                        for (let sign of plus_signs) {
+                            container.addChild(sign);
+                        }
                         break;
 
                     case "-":
                         var text = new PIXI.Text("-", style);
                         text.position.set(0, 0);
                         var textBlockWidth = PIXI.TextMetrics.measureText("-", style).width;
-                        var textBlockHeight = PIXI.TextMetrics.measureText("-", style).height;
                         var variable_part = makeReactiveExpression(textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[0]);
                         
                         container.addChild(text);
@@ -97,7 +109,6 @@
                         var text = new PIXI.Text("*", style);
                         text.position.set(left_part.width, 0);
                         var textBlockWidth = PIXI.TextMetrics.measureText("*", style).width;
-                        var textBlockHeight = PIXI.TextMetrics.measureText("*", style).height;
                         var right_part = makeReactiveExpression(left_part.width+textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[1]);
 
                         container.addChild(left_part);
