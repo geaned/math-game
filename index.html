@@ -27,9 +27,14 @@
             divisionLineWidth: 3,   // division line thickness
         }
 
-        var testTaskString = "a-b-c";
+        //var testTaskString = "a*(a+b/c)/24";
+        var testTaskString = "a+(a+b/c+d/(e))/24";
+        //var testTaskString = "a+b+c/d";
+        //var testTaskString = "a-b-c";
         //var testTaskString = "a+(b/(c-12))/24";
         //var testTaskString = "a+(b/(c-12))/(24/48)";
+        //var testTaskString = "a*b*c/d";
+        //var testTaskString = "a*b*(c/d)";
         var expressionRoot = twf.api.stringToExpression(testTaskString);
         var containerRoot = outputReactiveExpression(expressionRoot);
         console.log(expressionRoot);
@@ -44,7 +49,7 @@
 
         function outputReactiveExpression(expressionNode) {
             var outputContainer = makeReactiveExpression(0, 0, expressionNode);
-            outputContainer.position.set((renderer.width-outputContainer.width)/2, renderer.height/2);
+            outputContainer.position.set((renderer.width-outputContainer.width)/2, (renderer.height-outputContainer.height)/2);
             return outputContainer;
         }
 
@@ -65,12 +70,14 @@
                 switch(value) {
                     case "+":
                         var curOffset = 0;
+                        var maxHeight = 0;
                         var parts = [];
                         var plus_signs = [];
                         var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
                         for (childNum = 0; childNum < childrenAmount; childNum++) {
                             var newBlock = makeReactiveExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum]);
                             curOffset += newBlock.width;
+                            maxHeight = Math.max(maxHeight, newBlock.height);
                             parts.push(newBlock);
 
                             if (childNum < childrenAmount-1) {
@@ -84,12 +91,12 @@
                             }
                         }
                         
-                        console.log(parts);
-                        console.log(plus_signs);
                         for (let part of parts) {
+                            part.y = (maxHeight-part.height)/2;
                             container.addChild(part);
                         }
                         for (let sign of plus_signs) {
+                            sign.y = (maxHeight-sign.height)/2;
                             container.addChild(sign);
                         }
                         break;
@@ -105,15 +112,34 @@
                         break;
 
                     case "*":
-                        var left_part = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
-                        var text = new PIXI.Text("*", style);
-                        text.position.set(left_part.width, 0);
-                        var textBlockWidth = PIXI.TextMetrics.measureText("*", style).width;
-                        var right_part = makeReactiveExpression(left_part.width+textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[1]);
+                        var curOffset = 0;
+                        var maxHeight = 0;
+                        var parts = [];
+                        var multiply_signs = [];
+                        var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
+                        for (childNum = 0; childNum < childrenAmount; childNum++) {
+                            var newBlock = makeReactiveExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum]);
+                            curOffset += newBlock.width;
+                            maxHeight = Math.max(maxHeight, newBlock.height);
+                            parts.push(newBlock);
 
-                        container.addChild(left_part);
-                        container.addChild(text);
-                        container.addChild(right_part);
+                            if (childNum < childrenAmount-1) {
+                                var text = new PIXI.Text("*", style);
+                                text.position.set(curOffset, 0);
+                                multiply_signs.push(text);
+                                var textBlockWidth = PIXI.TextMetrics.measureText("*", style).width;
+                                curOffset += textBlockWidth;
+                            }
+                        }
+                        
+                        for (let part of parts) {
+                            part.y = (maxHeight-part.height)/2;
+                            container.addChild(part);
+                        }
+                        for (let sign of multiply_signs) {
+                            sign.y = (maxHeight-sign.height)/2;
+                            container.addChild(sign);
+                        }
                         break;
 
                     case "/":
@@ -126,8 +152,6 @@
                         var denominatorOffset = (fractionLength-denominator.width)/2;
                         numerator.x += numeratorOffset;
                         denominator.x += denominatorOffset;
-                        if (["+", "*"].includes(expressionNode.parent.value))   // ATTENTION: puts the fraction higher in order to line up with the whole expression
-                            container.y -= fractionHeight/2;
 
                         var divisionLine = new PIXI.Graphics();
                         divisionLine.lineStyle(extraSettings.divisionLineWidth, 0xffffff);
