@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>PixiJS Test</title>
+    <title>Math Game</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/style.css">
     <script src="lib/pixi.js"></script>
@@ -25,17 +25,21 @@
         var extraSettings = {
             divisionLineExtraLength: 4,    // used for managing "multi-floor" fractions
             divisionLineWidth: 3,   // division line thickness
+            powerOffsetMultiplier: 2/3  // managing base Y axis offset relatively to power height
         }
 
         //var testTaskString = "a*(a+b/c)/24";
-        var testTaskString = "a+(a+b/c+d/(e))/24";
+        //var testTaskString = "a+(a+b/c+d/(e))/24";
         //var testTaskString = "a+b+c/d";
         //var testTaskString = "a-b-c";
         //var testTaskString = "a+(b/(c-12))/24";
         //var testTaskString = "a+(b/(c-12))/(24/48)";
         //var testTaskString = "a*b*c/d";
         //var testTaskString = "a*b*(c/d)";
-        var expressionRoot = twf.api.stringToExpression(testTaskString);
+        //var testTaskString = "a^b";
+
+        var testTaskString = "a*b*((c/d)/e)^f";
+        var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future
         var containerRoot = outputReactiveExpression(expressionRoot);
         console.log(expressionRoot);
         console.log(containerRoot);
@@ -99,7 +103,7 @@
                             sign.y = (maxHeight-sign.height)/2;
                             container.addChild(sign);
                         }
-                        break;
+                        return makeResponsiveContainer(container);
 
                     case "-":
                         var text = new PIXI.Text("-", style);
@@ -140,7 +144,7 @@
                             sign.y = (maxHeight-sign.height)/2;
                             container.addChild(sign);
                         }
-                        break;
+                        return makeResponsiveContainer(container);
 
                     case "/":
                         var numerator = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
@@ -162,15 +166,23 @@
                         container.addChild(numerator);
                         container.addChild(denominator);
                         container.addChild(divisionLine);
-                        break;
+                        return makeResponsiveContainer(container);
+                    
+                    case "^":
+                        var base = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                        var power = makeReactiveExpression(base.width, 0, expressionNode.children.array_hd7ov6$_0[1]);
+                        base.y = power.height*extraSettings.powerOffsetMultiplier;
+
+                        container.addChild(base);
+                        container.addChild(power);
+                        return makeResponsiveContainer(container);
 
                     default:    // ATTENTION: currectly means only full expression (what if brackets?)
                         var fullContainer = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
                         container.addChild(fullContainer);
+                        return container;
                 }
             }
-
-            return container;
         }
 
         function makeResponsiveContainer(container) {
@@ -185,13 +197,12 @@
             highlightRect.endFill();
             highlightRect.alpha = 0;
 
+            // TODO: make only the deepest selected node highlighted and reactive
             container.mouseover = function(mouseData) {
-                // add nodeId reaction and stuff
                 highlightRect.alpha = 0.4;
             }
 
             container.mouseout = function(mouseData) {
-                // add nodeId reaction and stuff
                 highlightRect.alpha = 0;
             }
 
