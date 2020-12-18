@@ -78,8 +78,10 @@
                 console.log([posX, posY]);
                 var deepestContainerClicked = 0;
                 for (nodeNum = 0; nodeNum < nodeAmount; nodeNum++) {
-                    if (isInBlock(posX, posY, outputContainer.nodeData[nodeNum].x, outputContainer.nodeData[nodeNum].y, outputContainer.nodeData[nodeNum].width, outputContainer.nodeData[nodeNum].height))
+                    if (isInBlock(posX, posY, outputContainer.nodeData[nodeNum].x, outputContainer.nodeData[nodeNum].y, outputContainer.nodeData[nodeNum].width, outputContainer.nodeData[nodeNum].height) &&
+                        outputContainer.nodeData[nodeNum].nodeId > deepestContainerClicked) {
                         deepestContainerClicked = outputContainer.nodeData[nodeNum].nodeId;
+                    }
                 }
                 console.log(deepestContainerClicked);   // IMPORTANT: deepest selected node's id
             }
