@@ -28,6 +28,13 @@
             powerOffsetMultiplier: 2/3  // managing base Y axis offset relatively to power height
         }
 
+        function isInBlock(pointerX, pointerY, boxX, boxY, boxWidth, boxHeight) {
+            if (pointerX >= boxX && pointerX <= boxX + boxWidth && pointerY >= boxY && pointerY <= boxY + boxHeight)
+                return true;
+            else
+                return false;
+        }
+
         //var testTaskString = "a*(a+b/c)/24";
         //var testTaskString = "a+(a+b/c+d/(e))/24";
         //var testTaskString = "a+b+c/d";
@@ -39,7 +46,7 @@
         //var testTaskString = "a^b";
 
         var testTaskString = "a*b*((c/d)/e)^f";
-        var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future
+        var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future (just change the command)
         var containerRoot = outputReactiveExpression(expressionRoot);
         console.log(expressionRoot);
         console.log(containerRoot);
@@ -53,7 +60,29 @@
 
         function outputReactiveExpression(expressionNode) {
             var outputContainer = makeReactiveExpression(0, 0, expressionNode);
-            outputContainer.position.set((renderer.width-outputContainer.width)/2, (renderer.height-outputContainer.height)/2);
+            var absoluteCoordStartX = (renderer.width-outputContainer.width)/2;
+            var absoluteCoordStartY = (renderer.height-outputContainer.height)/2;
+            outputContainer.position.set(absoluteCoordStartX, absoluteCoordStartY);
+
+            outputContainer.nodeData = getAllNodeBlocksCoords(outputContainer, [], 0, 0);
+
+            outputContainer.interactive = true;
+            outputContainer.buttonMode = true;
+            outputContainer.hitArea = new PIXI.Rectangle(0, 0, outputContainer.width, outputContainer.height);
+            outputContainer.on("click", getDeepestContainer);
+
+            var nodeAmount = outputContainer.nodeData.length;
+            function getDeepestContainer(event) {
+                var posX = event.data.global.x;
+                var posY = event.data.global.y;
+                console.log([posX, posY]);
+                var deepestContainerClicked = 0;
+                for (nodeNum = 0; nodeNum < nodeAmount; nodeNum++) {
+                    if (isInBlock(posX, posY, outputContainer.nodeData[nodeNum].x, outputContainer.nodeData[nodeNum].y, outputContainer.nodeData[nodeNum].width, outputContainer.nodeData[nodeNum].height))
+                        deepestContainerClicked = outputContainer.nodeData[nodeNum].nodeId;
+                }
+                console.log(deepestContainerClicked);   // IMPORTANT: deepest selected node's id
+            }
             return outputContainer;
         }
 
@@ -189,7 +218,6 @@
             container.interactive = true;
             container.buttonMode = true;
             container.hitArea = new PIXI.Rectangle(0, 0, container.width, container.height);
-            container.on("click", returnNodeId);
             var highlightRect = new PIXI.Graphics();
             highlightRect.lineStyle(0, 0xffffff);
             highlightRect.beginFill(0xffffff);
@@ -197,7 +225,7 @@
             highlightRect.endFill();
             highlightRect.alpha = 0;
 
-            // TODO: make only the deepest selected node highlighted and reactive
+            // TODO: make only the deepest selected node highlighted and reactive + hightling of overlapping zones works wacky
             container.mouseover = function(mouseData) {
                 highlightRect.alpha = 0.4;
             }
@@ -206,12 +234,24 @@
                 highlightRect.alpha = 0;
             }
 
-            function returnNodeId() {
-                console.log(container.expressionTreeNodeId);    // for testing purposes
-            }
-
             container.addChild(highlightRect);
             return container;
+        }
+
+        function getAllNodeBlocksCoords(container, NodeDataArray, absoluteCoordX, absoluteCoordY) {
+            if (container.hasOwnProperty('expressionTreeNodeId')) {
+                NodeDataArray.push({
+                    nodeId: container.expressionTreeNodeId,
+                    x: absoluteCoordX+container.x,
+                    y: absoluteCoordY+container.y,
+                    width: container.width,
+                    height: container.height
+                });
+                for (let child of container.children) {
+                    NodeDataArray = getAllNodeBlocksCoords(child, NodeDataArray, absoluteCoordX+container.x, absoluteCoordY+container.y);
+                }
+            }
+            return NodeDataArray;
         }
     </script>
 </body>
