@@ -44,8 +44,10 @@
         //var testTaskString = "a*b*c/d";
         //var testTaskString = "a*b*(c/d)";
         //var testTaskString = "a^b";
+        //var testTaskString = "a*b*((c/d)/e)^f";
+        //var testTaskString = "sin(a)";
 
-        var testTaskString = "a*b*((c/d)/e)^f";
+        var testTaskString = "cos((a/(b+12))/(e+123)+c)";
         var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future (just change the command)
         var containerRoot = outputReactiveExpression(expressionRoot);
         console.log(expressionRoot);
@@ -208,10 +210,30 @@
                         container.addChild(power);
                         return makeResponsiveContainer(container);
 
-                    default:    // ATTENTION: currectly means only full expression (what if brackets?)
-                        var fullContainer = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
-                        container.addChild(fullContainer);
-                        return container;
+                    default:    // ATTENTION: currectly means only unary mathematical functions which are not operators
+                        if (value === "") {     // ATTENTION: this currently only means full expression
+                            var fullContainer = makeReactiveExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                            container.addChild(fullContainer);
+                            return container;
+
+                        } else {
+                            var left_side = new PIXI.Text(value+"(", style);
+                            var textBlockWidth = PIXI.TextMetrics.measureText(value+"(", style).width;
+                            var textBlockHeight = PIXI.TextMetrics.measureText(value+"(", style).height;
+
+                            var operand = makeReactiveExpression(textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[0]);
+                            var heightOffset = (operand.height-textBlockHeight)/2;
+                            left_side.position.set(0, heightOffset);
+
+                            var right_side = new PIXI.Text(")", style);
+                            right_side.position.set(textBlockWidth+operand.width, heightOffset);
+
+                            container.addChild(left_side);
+                            container.addChild(right_side);
+                            container.addChild(operand);
+                            return makeResponsiveContainer(container);
+                        }
+                        
                 }
             }
         }
