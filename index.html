@@ -46,12 +46,17 @@
         //var testTaskString = "a^b";
         //var testTaskString = "a*b*((c/d)/e)^f";
         //var testTaskString = "sin(a)";
-
         var testTaskString = "cos((a/(b+12))/(e+123)+c)";
+
         var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future (just change the command)
         var containerRoot = outputReactiveExpression(expressionRoot);
+        var config = new twf.config.CompiledConfiguration();
+        var kek = twf.api.expressionSubstitutionFromStructureStrings("a", "b", void 0, void 0, void 0); // change name ASAP
+        config.compiledExpressionTreeTransformationRules.array_hd7ov6$_0 = [kek];  // fake rule for testing purposes
+        config.compiledExpressionTreeTransformationRules.modCount = config.compiledExpressionTreeTransformationRules.array_hd7ov6$_0.length;
         console.log(expressionRoot);
         console.log(containerRoot);
+        console.log(config);
 
         animate();
 
