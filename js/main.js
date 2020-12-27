@@ -29,23 +29,23 @@ var extraSettings = {
 //var testTaskString = "a^b";
 //var testTaskString = "a*b*((c/d)/e)^f";
 //var testTaskString = "sin(a)";
-var testTaskString = "cos((a/(b+12))/(12+123)+c+d+f)";
+var testTaskString = "((a/(b*12))/(12*123))+c+d+f";
+//var testTaskString = "(a/(b*12))/(2*6*123)+c+d+f";
 
 var config = new twf.config.CompiledConfiguration();
-var kek = twf.api.expressionSubstitutionFromStructureStrings("a", "b"); // change name ASAP
-config.compiledExpressionTreeTransformationRules.array_hd7ov6$_0 = [kek];  // fake rule for testing purposes
+//var kek = twf.api.expressionSubstitutionFromStructureStrings("a", "b");
+//config.compiledExpressionTreeTransformationRules.array_hd7ov6$_0 = [kek];
 var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future (just change the command)
 
 var containerRoot = new PIXI.Container();   // contains the whole scene
-var expressionContainerRoot = outputReactiveExpression(expressionRoot); // contains current expression
+var expressionContainerRoot; // contains current expression
 var substitutionContainerRoot = new PIXI.Container();   // will contain clickable substitutions
 substitutionContainerRoot.position.set(0, renderer.height*extraSettings.partOfScreenDedicatedToExpression);
 
 console.log(expressionRoot);
+console.log(expressionContainerRoot);
 redrawMainExpression(expressionRoot);
 
-containerRoot.addChild(expressionContainerRoot);
-containerRoot.addChild(substitutionContainerRoot);
 animate();
 
 function animate() {

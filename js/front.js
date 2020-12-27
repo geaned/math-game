@@ -5,8 +5,8 @@ function redrawMainExpression(newExpressionNode) {
     substitutionContainerRoot.removeChildren();
     containerRoot.addChild(expressionContainerRoot);
     containerRoot.addChild(substitutionContainerRoot);
-    console.log(expressionRoot);
-    console.log(expressionContainerRoot);
+    //console.log(expressionRoot);
+    //console.log(expressionContainerRoot);
 }
 
 function outputReactiveExpression(expressionNode) {
@@ -23,8 +23,6 @@ function outputReactiveExpression(expressionNode) {
         var posY = event.data.global.y;
         var selectedNode = getDeepestContainer(posX, posY, outputContainer.nodeData);
         var applicableSubstitutions = twf.api.findApplicableSubstitutionsInSelectedPlace(expressionRoot, [selectedNode], config);
-        for (elem of applicableSubstitutions.array_hd7ov6$_0)
-            console.log(elem)
         
         containerRoot.removeChildAt(1);
         substitutionContainerRoot.removeChildren();
@@ -33,7 +31,7 @@ function outputReactiveExpression(expressionNode) {
         repositionExpressionContainer(outputContainer, false);
         var applicableSubstitutionsNum = applicableSubstitutions.array_hd7ov6$_0.length;
         var offsetHeight = 0;
-        for (applicableSubstitutionId = 0; applicableSubstitutionId < applicableSubstitutionsNum; applicableSubstitutionId++) {
+        for (let applicableSubstitutionId = 0; applicableSubstitutionId < applicableSubstitutionsNum; applicableSubstitutionId++) {
             //console.log(applicableSubstitutions.array_hd7ov6$_0[applicableSubstitutionId]);
             var outputSubstitutionsContainer = new PIXI.Container();
             outputSubstitutionsContainer.position.set(0, offsetHeight);
@@ -64,6 +62,8 @@ function drawExpression(x, y, expressionNode, isResponsive) {
     var type = expressionNode.nodeType.name$;
     var value = expressionNode.value;
     container.expressionTreeNodeId = expressionNode.nodeId;
+    container.respectiveIdentifier = expressionNode.identifier;
+
     if (type === "VARIABLE") {  // ATTENTION: currently implies not having children
         var text = new PIXI.Text(value, style);
         container.addChild(text);
@@ -79,7 +79,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 var parts = [];
                 var plus_signs = [];
                 var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
-                for (childNum = 0; childNum < childrenAmount; childNum++) {
+                for (let childNum = 0; childNum < childrenAmount; childNum++) {
                     var newBlock = drawExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum], isResponsive);
                     curOffset += newBlock.width;
                     maxHeight = Math.max(maxHeight, newBlock.height);
@@ -126,7 +126,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 var parts = [];
                 var multiply_signs = [];
                 var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
-                for (childNum = 0; childNum < childrenAmount; childNum++) {
+                for (let childNum = 0; childNum < childrenAmount; childNum++) {
                     var newBlock = drawExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum], isResponsive);
                     curOffset += newBlock.width;
                     maxHeight = Math.max(maxHeight, newBlock.height);
@@ -215,6 +215,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 
         }
     }
+    console.assert(true, {msg: "Oops, shouldn't've come here!"});
 }
 
 function makeResponsiveContainer(container) {
