@@ -21,6 +21,7 @@ if (typeof kotlin === 'undefined') {
   var Math_0 = Math;
   var intersect = Kotlin.kotlin.collections.intersect_q4559j$;
   var Kind_CLASS = Kotlin.Kind.CLASS;
+  var emptyMap = Kotlin.kotlin.collections.emptyMap_q3lmfv$;
   var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
@@ -67,6 +68,7 @@ if (typeof kotlin === 'undefined') {
   var NotImplementedError_init = Kotlin.kotlin.NotImplementedError;
   var LinkedHashMap_init_0 = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var toString = Kotlin.toString;
+  var toIntOrNull = Kotlin.kotlin.text.toIntOrNull_pdl1vz$;
   var copyToArray = Kotlin.kotlin.collections.copyToArray;
   var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
   var isBlank = Kotlin.kotlin.text.isBlank_gw00vp$;
@@ -89,16 +91,19 @@ if (typeof kotlin === 'undefined') {
   var max = Kotlin.kotlin.collections.max_exjks8$;
   var unboxChar = Kotlin.unboxChar;
   var StringBuilder = Kotlin.kotlin.text.StringBuilder;
-  var emptyMap = Kotlin.kotlin.collections.emptyMap_q3lmfv$;
   var get_indices = Kotlin.kotlin.text.get_indices_gw00vp$;
   var toBoxedChar = Kotlin.toBoxedChar;
+  var get_lastIndex_1 = Kotlin.kotlin.collections.get_lastIndex_m7z4lg$;
   var firstOrNull_0 = Kotlin.kotlin.collections.firstOrNull_2p1efm$;
   var Unit = Kotlin.kotlin.Unit;
+  var toList = Kotlin.kotlin.collections.toList_us0mfu$;
   var toMutableList_0 = Kotlin.kotlin.collections.toMutableList_us0mfu$;
   var indexOf = Kotlin.kotlin.collections.indexOf_bv23uc$;
-  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
-  var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
+  var contains = Kotlin.kotlin.text.contains_li3zpu$;
+  var toInt = Kotlin.kotlin.text.toInt_pdl1vz$;
+  var first_1 = Kotlin.kotlin.collections.first_us0mfu$;
   var Array_0 = Array;
+  var iterator = Kotlin.kotlin.text.iterator_gw00vp$;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var replace = Kotlin.kotlin.text.replace_680rmw$;
   var isWhitespace = Kotlin.kotlin.text.isWhitespace_myv2d0$;
@@ -110,10 +115,9 @@ if (typeof kotlin === 'undefined') {
   var lastIndexOfAny = Kotlin.kotlin.text.lastIndexOfAny_7utkvz$;
   var removeSuffix = Kotlin.kotlin.text.removeSuffix_gsj5wt$;
   var startsWith_1 = Kotlin.kotlin.text.startsWith_li3zpu$;
-  var contains_1 = Kotlin.kotlin.text.contains_li3zpu$;
   var trim = Kotlin.kotlin.text.trim_gw00vp$;
   var sum = Kotlin.kotlin.collections.sum_l63kqw$;
-  var first_1 = Kotlin.kotlin.collections.first_7wnvza$;
+  var first_2 = Kotlin.kotlin.collections.first_7wnvza$;
   var dropLast = Kotlin.kotlin.text.dropLast_94bcnn$;
   var checkCountOverflow = Kotlin.kotlin.collections.checkCountOverflow_za3lpa$;
   var binarySearch = Kotlin.kotlin.collections.binarySearch_jhx6be$;
@@ -122,7 +126,6 @@ if (typeof kotlin === 'undefined') {
   var elementAt = Kotlin.kotlin.text.elementAt_94bcnn$;
   var lazy = Kotlin.kotlin.lazy_klfg04$;
   var replace_0 = Kotlin.kotlin.text.replace_r2fvfm$;
-  var toInt = Kotlin.kotlin.text.toInt_pdl1vz$;
   var dropLast_0 = Kotlin.kotlin.collections.dropLast_yzln2o$;
   var StringBuilder_init_0 = Kotlin.kotlin.text.StringBuilder_init_6bul2c$;
   var substringAfterLast = Kotlin.kotlin.text.substringAfterLast_j4ogox$;
@@ -132,7 +135,6 @@ if (typeof kotlin === 'undefined') {
   var IllegalStateException_init_0 = Kotlin.kotlin.IllegalStateException_init_pdl1vj$;
   var Comparable = Kotlin.kotlin.Comparable;
   var Exception_init = Kotlin.kotlin.Exception_init_pdl1vj$;
-  var toIntOrNull = Kotlin.kotlin.text.toIntOrNull_pdl1vz$;
   var isInfinite = Kotlin.kotlin.isInfinite_yrwdxr$;
   var ArrayList = Kotlin.kotlin.collections.ArrayList;
   var reverse = Kotlin.kotlin.collections.reverse_vvxzk3$;
@@ -186,12 +188,16 @@ if (typeof kotlin === 'undefined') {
   Form.prototype.constructor = Form;
   Case.prototype = Object.create(Enum.prototype);
   Case.prototype.constructor = Case;
-  function normalizeExpressionToUsualForm(expression) {
+  function normalizeExpressionToUsualForm(expression, compiledConfiguration) {
+    if (compiledConfiguration === void 0)
+      compiledConfiguration = new CompiledConfiguration();
     var topExpressionNode = expression.getTopNode();
     topExpressionNode.normalizeNullWeightCommutativeFunctions();
     topExpressionNode.reduceExtraSigns_9jge9g$(setOf('+'), setOf('-'));
-    topExpressionNode.normilizeSubtructions_hee78y$(new FunctionConfiguration());
-    topExpressionNode.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_vux9f0$();
+    topExpressionNode.normilizeSubtructions_hee78y$(compiledConfiguration.functionConfiguration);
+    topExpressionNode.normalizeParentLinks();
+    topExpressionNode.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$();
+    topExpressionNode.normalizeFunctionStringDefinitions_hee78y$(compiledConfiguration.functionConfiguration);
   }
   function compareWithoutSubstitutions(left, right, scope, notChangesOnVariablesFunction, functionConfiguration, compiledConfiguration) {
     if (scope === void 0)
@@ -345,7 +351,7 @@ if (typeof kotlin === 'undefined') {
       functionConfiguration = new FunctionConfiguration(toSet(destination));
     }var expressionNodeConstructor = new ExpressionNodeConstructor(functionConfiguration);
     var result = expressionNodeConstructor.construct_61zpoe$(structureString);
-    result.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_vux9f0$();
+    result.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$();
     result.computeIdentifier_t6ztn0$();
     return result;
   }
@@ -553,16 +559,24 @@ if (typeof kotlin === 'undefined') {
       functionConfiguration = new FunctionConfiguration(toSet(destination));
     }if (compiledConfiguration === void 0)
       compiledConfiguration = new CompiledConfiguration(void 0, functionConfiguration);
-    return new ExpressionSubstitution(stringToExpression(left, void 0, void 0, void 0, compiledConfiguration), stringToExpression(right, void 0, void 0, void 0, compiledConfiguration), void 0, basedOnTaskContext, void 0, void 0, void 0, matchJumbledAndNested, void 0, priority);
+    return new ExpressionSubstitution(stringToExpression(left, void 0, void 0, void 0, compiledConfiguration), stringToExpression(right, void 0, void 0, void 0, compiledConfiguration), void 0, basedOnTaskContext, void 0, void 0, void 0, void 0, matchJumbledAndNested, priority);
   }
-  function expressionSubstitutionFromStructureStrings(leftStructureString, rightStructureString, basedOnTaskContext, matchJumbledAndNested, priority) {
+  function expressionSubstitutionFromStructureStrings(leftStructureString, rightStructureString, basedOnTaskContext, matchJumbledAndNested, simpleAdditional, isExtending, priority, nameEn, nameRu) {
     if (basedOnTaskContext === void 0)
       basedOnTaskContext = false;
     if (matchJumbledAndNested === void 0)
       matchJumbledAndNested = false;
+    if (simpleAdditional === void 0)
+      simpleAdditional = false;
+    if (isExtending === void 0)
+      isExtending = false;
     if (priority === void 0)
       priority = 50;
-    return new ExpressionSubstitution(structureStringToExpression(leftStructureString), structureStringToExpression(rightStructureString), void 0, basedOnTaskContext, void 0, void 0, void 0, matchJumbledAndNested, void 0, priority);
+    if (nameEn === void 0)
+      nameEn = '';
+    if (nameRu === void 0)
+      nameRu = '';
+    return new ExpressionSubstitution(structureStringToExpression(leftStructureString), structureStringToExpression(rightStructureString), void 0, basedOnTaskContext, nameEn, nameRu, void 0, void 0, matchJumbledAndNested, priority, void 0, simpleAdditional, isExtending);
   }
   function findSubstitutionPlacesInExpression(expression, substitution) {
     if (!substitution.leftFunctions.isEmpty() && intersect(substitution.leftFunctions, expression.getContainedFunctions()).isEmpty() && intersect(substitution.left.getContainedVariables(), expression.getContainedVariables()).isEmpty()) {
@@ -581,16 +595,31 @@ if (typeof kotlin === 'undefined') {
     substitution.applySubstitution_55nkop$(substitutionPlaces);
     expression.getTopNode().reduceExtraSigns_9jge9g$(setOf('+'), setOf('-'));
     expression.getTopNode().normilizeSubtructions_hee78y$(new FunctionConfiguration());
-    expression.getTopNode().computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_vux9f0$();
+    expression.getTopNode().computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$();
     expression.normalizeParentLinks();
     return expression;
+  }
+  function createCompiledConfigurationFromExpressionSubstitutionsAndParams(expressionSubstitutions, additionalParamsMap) {
+    if (additionalParamsMap === void 0) {
+      additionalParamsMap = emptyMap();
+    }var $receiver = new CompiledConfiguration(void 0, void 0, void 0, void 0, void 0, void 0, void 0, additionalParamsMap);
+    var tmp$;
+    $receiver.compiledExpressionTreeTransformationRules.clear();
+    $receiver.compiledExpressionSimpleAdditionalTreeTransformationRules.clear();
+    for (tmp$ = 0; tmp$ !== expressionSubstitutions.length; ++tmp$) {
+      var substitution = expressionSubstitutions[tmp$];
+      $receiver.compiledExpressionTreeTransformationRules.add_11rb$(substitution);
+      if (substitution.simpleAdditional) {
+        $receiver.compiledExpressionSimpleAdditionalTreeTransformationRules.add_11rb$(substitution);
+      }}
+    return $receiver;
   }
   function findApplicableSubstitutionsInSelectedPlace(expression, selectedNodeIds, compiledConfiguration, simplifyNotSelectedTopArguments, withReadyApplicationResult) {
     if (simplifyNotSelectedTopArguments === void 0)
       simplifyNotSelectedTopArguments = false;
     if (withReadyApplicationResult === void 0)
-      withReadyApplicationResult = false;
-    return generateSubstitutionsBySelectedNodes(new SubstitutionSelectionData(expression, selectedNodeIds, compiledConfiguration), simplifyNotSelectedTopArguments, withReadyApplicationResult);
+      withReadyApplicationResult = true;
+    return generateSubstitutionsBySelectedNodes(new SubstitutionSelectionData(expression, selectedNodeIds, compiledConfiguration), void 0, withReadyApplicationResult);
   }
   function applySubstitutionInSelectedPlace(expression, selectedNodeIds, substitution, compiledConfiguration, simplifyNotSelectedTopArguments) {
     if (simplifyNotSelectedTopArguments === void 0)
@@ -598,6 +627,9 @@ if (typeof kotlin === 'undefined') {
     var substitutionSelectionData = new SubstitutionSelectionData(expression, selectedNodeIds, compiledConfiguration);
     fillSubstitutionSelectionData(substitutionSelectionData);
     return applySubstitution_0(substitutionSelectionData, substitution, simplifyNotSelectedTopArguments);
+  }
+  function findLowestSubtreeTopOfSelectedNodesInExpression(node, selectedNodes) {
+    return findLowestSubtreeTopOfNodes(node, selectedNodes);
   }
   function SubstitutionPlaceOfflineData(parentStartPosition, parentEndPosition, startPosition, endPosition) {
     this.parentStartPosition = parentStartPosition;
@@ -4313,7 +4345,76 @@ if (typeof kotlin === 'undefined') {
   ComparisonSettings.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.maxTransformationWeight, other.maxTransformationWeight) && Kotlin.equals(this.maxBustCount, other.maxBustCount) && Kotlin.equals(this.maxExpressionTransformationWeight, other.maxExpressionTransformationWeight) && Kotlin.equals(this.maxExpressionBustCount, other.maxExpressionBustCount) && Kotlin.equals(this.isComparisonWithRules, other.isComparisonWithRules) && Kotlin.equals(this.compareExpressionsWithProbabilityRulesWhenComparingExpressions, other.compareExpressionsWithProbabilityRulesWhenComparingExpressions) && Kotlin.equals(this.compareExpressionsWithProbabilityRulesWhenComparingFacts, other.compareExpressionsWithProbabilityRulesWhenComparingFacts) && Kotlin.equals(this.compareExpressionsAndFactsWithProbabilityRules, other.compareExpressionsAndFactsWithProbabilityRules) && Kotlin.equals(this.useTestingToCompareFunctionArgumentsInProbabilityComparison, other.useTestingToCompareFunctionArgumentsInProbabilityComparison) && Kotlin.equals(this.useOldSimpleProbabilityTesting, other.useOldSimpleProbabilityTesting) && Kotlin.equals(this.defaultComparisonType, other.defaultComparisonType) && Kotlin.equals(this.minNumberOfPointsForEquality, other.minNumberOfPointsForEquality) && Kotlin.equals(this.justInDomainsIntersection, other.justInDomainsIntersection) && Kotlin.equals(this.allowedPartOfErrorTests, other.allowedPartOfErrorTests) && Kotlin.equals(this.testWithUndefinedResultIncreasingCoef, other.testWithUndefinedResultIncreasingCoef) && Kotlin.equals(this.maxDistBetweenDiffSteps, other.maxDistBetweenDiffSteps)))));
   };
-  function CompiledConfiguration(variableConfiguration, functionConfiguration, comparisonSettings, checkedFactAccentuation, factsLogicConfiguration, simpleComputationRuleParams) {
+  function GradientDescentComparisonConfiguration(startPointsCount, iterationCount, ternarySearchLeftBorder, ternarySearchRightBorder, ternarySearchIterationCount, ternarySearchAlpha, ternarySearchBeta) {
+    if (startPointsCount === void 0)
+      startPointsCount = 1;
+    if (iterationCount === void 0)
+      iterationCount = 20;
+    if (ternarySearchLeftBorder === void 0)
+      ternarySearchLeftBorder = 1.0E-9;
+    if (ternarySearchRightBorder === void 0)
+      ternarySearchRightBorder = 1.0E9;
+    if (ternarySearchIterationCount === void 0)
+      ternarySearchIterationCount = 100;
+    if (ternarySearchAlpha === void 0)
+      ternarySearchAlpha = 1.57;
+    if (ternarySearchBeta === void 0)
+      ternarySearchBeta = 1.0;
+    this.startPointsCount = startPointsCount;
+    this.iterationCount = iterationCount;
+    this.ternarySearchLeftBorder = ternarySearchLeftBorder;
+    this.ternarySearchRightBorder = ternarySearchRightBorder;
+    this.ternarySearchIterationCount = ternarySearchIterationCount;
+    this.ternarySearchAlpha = ternarySearchAlpha;
+    this.ternarySearchBeta = ternarySearchBeta;
+  }
+  GradientDescentComparisonConfiguration.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'GradientDescentComparisonConfiguration',
+    interfaces: []
+  };
+  GradientDescentComparisonConfiguration.prototype.component1 = function () {
+    return this.startPointsCount;
+  };
+  GradientDescentComparisonConfiguration.prototype.component2 = function () {
+    return this.iterationCount;
+  };
+  GradientDescentComparisonConfiguration.prototype.component3 = function () {
+    return this.ternarySearchLeftBorder;
+  };
+  GradientDescentComparisonConfiguration.prototype.component4 = function () {
+    return this.ternarySearchRightBorder;
+  };
+  GradientDescentComparisonConfiguration.prototype.component5 = function () {
+    return this.ternarySearchIterationCount;
+  };
+  GradientDescentComparisonConfiguration.prototype.component6 = function () {
+    return this.ternarySearchAlpha;
+  };
+  GradientDescentComparisonConfiguration.prototype.component7 = function () {
+    return this.ternarySearchBeta;
+  };
+  GradientDescentComparisonConfiguration.prototype.copy_8k1e3m$ = function (startPointsCount, iterationCount, ternarySearchLeftBorder, ternarySearchRightBorder, ternarySearchIterationCount, ternarySearchAlpha, ternarySearchBeta) {
+    return new GradientDescentComparisonConfiguration(startPointsCount === void 0 ? this.startPointsCount : startPointsCount, iterationCount === void 0 ? this.iterationCount : iterationCount, ternarySearchLeftBorder === void 0 ? this.ternarySearchLeftBorder : ternarySearchLeftBorder, ternarySearchRightBorder === void 0 ? this.ternarySearchRightBorder : ternarySearchRightBorder, ternarySearchIterationCount === void 0 ? this.ternarySearchIterationCount : ternarySearchIterationCount, ternarySearchAlpha === void 0 ? this.ternarySearchAlpha : ternarySearchAlpha, ternarySearchBeta === void 0 ? this.ternarySearchBeta : ternarySearchBeta);
+  };
+  GradientDescentComparisonConfiguration.prototype.toString = function () {
+    return 'GradientDescentComparisonConfiguration(startPointsCount=' + Kotlin.toString(this.startPointsCount) + (', iterationCount=' + Kotlin.toString(this.iterationCount)) + (', ternarySearchLeftBorder=' + Kotlin.toString(this.ternarySearchLeftBorder)) + (', ternarySearchRightBorder=' + Kotlin.toString(this.ternarySearchRightBorder)) + (', ternarySearchIterationCount=' + Kotlin.toString(this.ternarySearchIterationCount)) + (', ternarySearchAlpha=' + Kotlin.toString(this.ternarySearchAlpha)) + (', ternarySearchBeta=' + Kotlin.toString(this.ternarySearchBeta)) + ')';
+  };
+  GradientDescentComparisonConfiguration.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.startPointsCount) | 0;
+    result = result * 31 + Kotlin.hashCode(this.iterationCount) | 0;
+    result = result * 31 + Kotlin.hashCode(this.ternarySearchLeftBorder) | 0;
+    result = result * 31 + Kotlin.hashCode(this.ternarySearchRightBorder) | 0;
+    result = result * 31 + Kotlin.hashCode(this.ternarySearchIterationCount) | 0;
+    result = result * 31 + Kotlin.hashCode(this.ternarySearchAlpha) | 0;
+    result = result * 31 + Kotlin.hashCode(this.ternarySearchBeta) | 0;
+    return result;
+  };
+  GradientDescentComparisonConfiguration.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.startPointsCount, other.startPointsCount) && Kotlin.equals(this.iterationCount, other.iterationCount) && Kotlin.equals(this.ternarySearchLeftBorder, other.ternarySearchLeftBorder) && Kotlin.equals(this.ternarySearchRightBorder, other.ternarySearchRightBorder) && Kotlin.equals(this.ternarySearchIterationCount, other.ternarySearchIterationCount) && Kotlin.equals(this.ternarySearchAlpha, other.ternarySearchAlpha) && Kotlin.equals(this.ternarySearchBeta, other.ternarySearchBeta)))));
+  };
+  function CompiledConfiguration(variableConfiguration, functionConfiguration, comparisonSettings, checkedFactAccentuation, factsLogicConfiguration, simpleComputationRuleParams, gradientDescentComparisonConfiguration, additionalParamsMap) {
     if (variableConfiguration === void 0)
       variableConfiguration = new VariableConfiguration();
     if (functionConfiguration === void 0)
@@ -4326,12 +4427,18 @@ if (typeof kotlin === 'undefined') {
       factsLogicConfiguration = new FactsLogicConfiguration();
     if (simpleComputationRuleParams === void 0)
       simpleComputationRuleParams = new SimpleComputationRuleParams(true);
-    this.variableConfiguration = variableConfiguration;
+    if (gradientDescentComparisonConfiguration === void 0)
+      gradientDescentComparisonConfiguration = new GradientDescentComparisonConfiguration();
+    if (additionalParamsMap === void 0) {
+      additionalParamsMap = emptyMap();
+    }this.variableConfiguration = variableConfiguration;
     this.functionConfiguration = functionConfiguration;
     this.comparisonSettings = comparisonSettings;
     this.checkedFactAccentuation = checkedFactAccentuation;
     this.factsLogicConfiguration = factsLogicConfiguration;
     this.simpleComputationRuleParams = simpleComputationRuleParams;
+    this.gradientDescentComparisonConfiguration = gradientDescentComparisonConfiguration;
+    this.additionalParamsMap = additionalParamsMap;
     var $receiver = this.variableConfiguration.variableImmediateReplacementRules;
     var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
     var tmp$;
@@ -4342,6 +4449,7 @@ if (typeof kotlin === 'undefined') {
     }
     this.compiledImmediateVariableReplacements = mapOf_0(copyToArray(destination).slice());
     this.compiledExpressionTreeTransformationRules = ArrayList_init();
+    this.compiledExpressionSimpleAdditionalTreeTransformationRules = ArrayList_init();
     this.compiledFactTreeTransformationRules = ArrayList_init();
     this.compiledImmediateTreeTransformationRules = ArrayList_init();
     this.compiledFunctionDefinitions = ArrayList_init();
@@ -4349,19 +4457,19 @@ if (typeof kotlin === 'undefined') {
     this.noTransformationDefinedFunctionNameNumberOfArgsSet = LinkedHashSet_init();
     this.configurationErrors = ArrayList_init();
     this.factComporator = null;
-    var tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    var tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7, tmp$_8, tmp$_9, tmp$_10, tmp$_11, tmp$_12;
     this.factComporator = new FactComporator();
     this.factComporator.init_dvfgl$(this);
-    var tmp$_4;
-    tmp$_4 = this.functionConfiguration.notChangesOnVariablesInComparisonFunction.iterator();
-    while (tmp$_4.hasNext()) {
-      var element = tmp$_4.next();
+    var tmp$_13;
+    tmp$_13 = this.functionConfiguration.notChangesOnVariablesInComparisonFunction.iterator();
+    while (tmp$_13.hasNext()) {
+      var element = tmp$_13.next();
       this.definedFunctionNameNumberOfArgsSet.add_11rb$(element.getIdentifier());
     }
-    var tmp$_5;
-    tmp$_5 = this.functionConfiguration.notChangesOnVariablesInComparisonFunctionWithoutTransformations.iterator();
-    while (tmp$_5.hasNext()) {
-      var element_0 = tmp$_5.next();
+    var tmp$_14;
+    tmp$_14 = this.functionConfiguration.notChangesOnVariablesInComparisonFunctionWithoutTransformations.iterator();
+    while (tmp$_14.hasNext()) {
+      var element_0 = tmp$_14.next();
       this.noTransformationDefinedFunctionNameNumberOfArgsSet.add_11rb$(element_0.getIdentifier());
     }
     var compiledSubstitutions = LinkedHashMap_init_0();
@@ -4394,8 +4502,11 @@ if (typeof kotlin === 'undefined') {
         var newSubstitution_0 = new ExpressionSubstitution(leftTree_0, rightTree_0, treeTransformationRule.weight);
         if (treeTransformationRule.isImmediate)
           this.compiledImmediateTreeTransformationRules.add_11rb$(newSubstitution_0);
-        else
+        else {
           this.compiledExpressionTreeTransformationRules.add_11rb$(newSubstitution_0);
+          if (newSubstitution_0.simpleAdditional) {
+            this.compiledExpressionSimpleAdditionalTreeTransformationRules.add_11rb$(newSubstitution_0);
+          }}
       }}
     tmp$_2 = this.functionConfiguration.taskContextTreeTransformationRules.iterator();
     while (tmp$_2.hasNext()) {
@@ -4408,8 +4519,11 @@ if (typeof kotlin === 'undefined') {
         var newSubstitution_1 = new ExpressionSubstitution(leftTree_1, rightTree_1, treeTransformationRule_0.weight, true);
         if (treeTransformationRule_0.isImmediate)
           this.compiledImmediateTreeTransformationRules.add_11rb$(newSubstitution_1);
-        else
+        else {
           this.compiledExpressionTreeTransformationRules.add_11rb$(newSubstitution_1);
+          if (newSubstitution_1.simpleAdditional) {
+            this.compiledExpressionSimpleAdditionalTreeTransformationRules.add_11rb$(newSubstitution_1);
+          }}
       }}
     tmp$_3 = this.factsLogicConfiguration.factsTransformationRules.iterator();
     while (tmp$_3.hasNext()) {
@@ -4423,7 +4537,35 @@ if (typeof kotlin === 'undefined') {
         if (!factTransformation.isOneDirection) {
           this.compiledFactTreeTransformationRules.add_11rb$(new FactSubstitution(rightTree_2, leftTree_2, factTransformation.weight, void 0, factTransformation.direction, void 0, this.factComporator));
         }}}
-  }
+    if (!this.additionalParamsMap.isEmpty()) {
+      var simpleComputationRuleParamsMaxCalcComplexity = (tmp$_4 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxCalcComplexity')) != null ? toIntOrNull(tmp$_4) : null;
+      if (simpleComputationRuleParamsMaxCalcComplexity != null) {
+        this.simpleComputationRuleParams.maxCalcComplexity = simpleComputationRuleParamsMaxCalcComplexity;
+      }var simpleComputationRuleParamsMaxTenPowIterations = (tmp$_5 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxTenPowIterations')) != null ? toIntOrNull(tmp$_5) : null;
+      if (simpleComputationRuleParamsMaxTenPowIterations != null) {
+        this.simpleComputationRuleParams.maxTenPowIterations = simpleComputationRuleParamsMaxTenPowIterations;
+      }var simpleComputationRuleParamsMaxPlusArgRounded = (tmp$_6 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxPlusArgRounded')) != null ? toIntOrNull(tmp$_6) : null;
+      if (simpleComputationRuleParamsMaxPlusArgRounded != null) {
+        this.simpleComputationRuleParams.maxPlusArgRounded = simpleComputationRuleParamsMaxPlusArgRounded;
+      }var simpleComputationRuleParamsMaxPlusResRounded = (tmp$_7 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxPlusResRounded')) != null ? toIntOrNull(tmp$_7) : null;
+      if (simpleComputationRuleParamsMaxPlusResRounded != null) {
+        this.simpleComputationRuleParams.maxPlusResRounded = simpleComputationRuleParamsMaxPlusResRounded;
+      }var simpleComputationRuleParamsMaxMulArgRounded = (tmp$_8 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxMulArgRounded')) != null ? toIntOrNull(tmp$_8) : null;
+      if (simpleComputationRuleParamsMaxMulArgRounded != null) {
+        this.simpleComputationRuleParams.maxMulArgRounded = simpleComputationRuleParamsMaxMulArgRounded;
+      }var simpleComputationRuleParamsMaxMulResRounded = (tmp$_9 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxMulResRounded')) != null ? toIntOrNull(tmp$_9) : null;
+      if (simpleComputationRuleParamsMaxMulResRounded != null) {
+        this.simpleComputationRuleParams.maxMulResRounded = simpleComputationRuleParamsMaxMulResRounded;
+      }var simpleComputationRuleParamsMaxPowBaseRounded = (tmp$_10 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxPowBaseRounded')) != null ? toIntOrNull(tmp$_10) : null;
+      if (simpleComputationRuleParamsMaxPowBaseRounded != null) {
+        this.simpleComputationRuleParams.maxPowBaseRounded = simpleComputationRuleParamsMaxPowBaseRounded;
+      }var simpleComputationRuleParamsMaxPowDegRounded = (tmp$_11 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxPowDegRounded')) != null ? toIntOrNull(tmp$_11) : null;
+      if (simpleComputationRuleParamsMaxPowDegRounded != null) {
+        this.simpleComputationRuleParams.maxPowDegRounded = simpleComputationRuleParamsMaxPowDegRounded;
+      }var simpleComputationRuleParamsMaxPowResRounded = (tmp$_12 = this.additionalParamsMap.get_11rb$('simpleComputationRuleParamsMaxPowResRounded')) != null ? toIntOrNull(tmp$_12) : null;
+      if (simpleComputationRuleParamsMaxPowResRounded != null) {
+        this.simpleComputationRuleParams.maxPowResRounded = simpleComputationRuleParamsMaxPowResRounded;
+      }}}
   CompiledConfiguration.prototype.parseStringExpression_ivxn3r$ = function (expression, nameForRuleDesignationsPossible) {
     if (nameForRuleDesignationsPossible === void 0)
       nameForRuleDesignationsPossible = false;
@@ -4748,7 +4890,7 @@ if (typeof kotlin === 'undefined') {
   FunctionIdentifier.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.name, other.name) && Kotlin.equals(this.numberOfArguments, other.numberOfArguments)))));
   };
-  function FunctionProperties(function_0, mainFunction, priority, numberOfArguments, isCommutativeWithNullWeight, mainFunctionIsCommutativeWithNullWeight, numberOfDefinitionArguments, isNameForRuleDesignations, plainTextRepresentation, texRepresentation, defaultStringDefinitionType, texStringDefinitionType, notObligateMainFunction, minNumberOfPointsForEquality) {
+  function FunctionProperties(function_0, mainFunction, priority, numberOfArguments, isCommutativeWithNullWeight, mainFunctionIsCommutativeWithNullWeight, numberOfDefinitionArguments, isNameForRuleDesignations, plainTextRepresentation, texRepresentation, defaultStringDefinitionType, texStringDefinitionType, notObligateMainFunction, minNumberOfPointsForEquality, fieldZero) {
     if (isCommutativeWithNullWeight === void 0)
       isCommutativeWithNullWeight = false;
     if (mainFunctionIsCommutativeWithNullWeight === void 0)
@@ -4769,6 +4911,8 @@ if (typeof kotlin === 'undefined') {
       notObligateMainFunction = null;
     if (minNumberOfPointsForEquality === void 0)
       minNumberOfPointsForEquality = 2;
+    if (fieldZero === void 0)
+      fieldZero = null;
     this.function = function_0;
     this.mainFunction = mainFunction;
     this.priority = priority;
@@ -4783,6 +4927,7 @@ if (typeof kotlin === 'undefined') {
     this.texStringDefinitionType = texStringDefinitionType;
     this.notObligateMainFunction_0 = notObligateMainFunction;
     this.minNumberOfPointsForEquality = minNumberOfPointsForEquality;
+    this.fieldZero = fieldZero;
   }
   FunctionProperties.prototype.notObligateMainFunction = function () {
     var tmp$;
@@ -4835,11 +4980,14 @@ if (typeof kotlin === 'undefined') {
   FunctionProperties.prototype.component14 = function () {
     return this.minNumberOfPointsForEquality;
   };
-  FunctionProperties.prototype.copy_vaabvq$ = function (function_0, mainFunction, priority, numberOfArguments, isCommutativeWithNullWeight, mainFunctionIsCommutativeWithNullWeight, numberOfDefinitionArguments, isNameForRuleDesignations, plainTextRepresentation, texRepresentation, defaultStringDefinitionType, texStringDefinitionType, notObligateMainFunction, minNumberOfPointsForEquality) {
-    return new FunctionProperties(function_0 === void 0 ? this.function : function_0, mainFunction === void 0 ? this.mainFunction : mainFunction, priority === void 0 ? this.priority : priority, numberOfArguments === void 0 ? this.numberOfArguments : numberOfArguments, isCommutativeWithNullWeight === void 0 ? this.isCommutativeWithNullWeight : isCommutativeWithNullWeight, mainFunctionIsCommutativeWithNullWeight === void 0 ? this.mainFunctionIsCommutativeWithNullWeight : mainFunctionIsCommutativeWithNullWeight, numberOfDefinitionArguments === void 0 ? this.numberOfDefinitionArguments : numberOfDefinitionArguments, isNameForRuleDesignations === void 0 ? this.isNameForRuleDesignations : isNameForRuleDesignations, plainTextRepresentation === void 0 ? this.plainTextRepresentation : plainTextRepresentation, texRepresentation === void 0 ? this.texRepresentation : texRepresentation, defaultStringDefinitionType === void 0 ? this.defaultStringDefinitionType : defaultStringDefinitionType, texStringDefinitionType === void 0 ? this.texStringDefinitionType : texStringDefinitionType, notObligateMainFunction === void 0 ? this.notObligateMainFunction_0 : notObligateMainFunction, minNumberOfPointsForEquality === void 0 ? this.minNumberOfPointsForEquality : minNumberOfPointsForEquality);
+  FunctionProperties.prototype.component15 = function () {
+    return this.fieldZero;
+  };
+  FunctionProperties.prototype.copy_8kkpvr$ = function (function_0, mainFunction, priority, numberOfArguments, isCommutativeWithNullWeight, mainFunctionIsCommutativeWithNullWeight, numberOfDefinitionArguments, isNameForRuleDesignations, plainTextRepresentation, texRepresentation, defaultStringDefinitionType, texStringDefinitionType, notObligateMainFunction, minNumberOfPointsForEquality, fieldZero) {
+    return new FunctionProperties(function_0 === void 0 ? this.function : function_0, mainFunction === void 0 ? this.mainFunction : mainFunction, priority === void 0 ? this.priority : priority, numberOfArguments === void 0 ? this.numberOfArguments : numberOfArguments, isCommutativeWithNullWeight === void 0 ? this.isCommutativeWithNullWeight : isCommutativeWithNullWeight, mainFunctionIsCommutativeWithNullWeight === void 0 ? this.mainFunctionIsCommutativeWithNullWeight : mainFunctionIsCommutativeWithNullWeight, numberOfDefinitionArguments === void 0 ? this.numberOfDefinitionArguments : numberOfDefinitionArguments, isNameForRuleDesignations === void 0 ? this.isNameForRuleDesignations : isNameForRuleDesignations, plainTextRepresentation === void 0 ? this.plainTextRepresentation : plainTextRepresentation, texRepresentation === void 0 ? this.texRepresentation : texRepresentation, defaultStringDefinitionType === void 0 ? this.defaultStringDefinitionType : defaultStringDefinitionType, texStringDefinitionType === void 0 ? this.texStringDefinitionType : texStringDefinitionType, notObligateMainFunction === void 0 ? this.notObligateMainFunction_0 : notObligateMainFunction, minNumberOfPointsForEquality === void 0 ? this.minNumberOfPointsForEquality : minNumberOfPointsForEquality, fieldZero === void 0 ? this.fieldZero : fieldZero);
   };
   FunctionProperties.prototype.toString = function () {
-    return 'FunctionProperties(function=' + Kotlin.toString(this.function) + (', mainFunction=' + Kotlin.toString(this.mainFunction)) + (', priority=' + Kotlin.toString(this.priority)) + (', numberOfArguments=' + Kotlin.toString(this.numberOfArguments)) + (', isCommutativeWithNullWeight=' + Kotlin.toString(this.isCommutativeWithNullWeight)) + (', mainFunctionIsCommutativeWithNullWeight=' + Kotlin.toString(this.mainFunctionIsCommutativeWithNullWeight)) + (', numberOfDefinitionArguments=' + Kotlin.toString(this.numberOfDefinitionArguments)) + (', isNameForRuleDesignations=' + Kotlin.toString(this.isNameForRuleDesignations)) + (', plainTextRepresentation=' + Kotlin.toString(this.plainTextRepresentation)) + (', texRepresentation=' + Kotlin.toString(this.texRepresentation)) + (', defaultStringDefinitionType=' + Kotlin.toString(this.defaultStringDefinitionType)) + (', texStringDefinitionType=' + Kotlin.toString(this.texStringDefinitionType)) + (', notObligateMainFunction=' + Kotlin.toString(this.notObligateMainFunction_0)) + (', minNumberOfPointsForEquality=' + Kotlin.toString(this.minNumberOfPointsForEquality)) + ')';
+    return 'FunctionProperties(function=' + Kotlin.toString(this.function) + (', mainFunction=' + Kotlin.toString(this.mainFunction)) + (', priority=' + Kotlin.toString(this.priority)) + (', numberOfArguments=' + Kotlin.toString(this.numberOfArguments)) + (', isCommutativeWithNullWeight=' + Kotlin.toString(this.isCommutativeWithNullWeight)) + (', mainFunctionIsCommutativeWithNullWeight=' + Kotlin.toString(this.mainFunctionIsCommutativeWithNullWeight)) + (', numberOfDefinitionArguments=' + Kotlin.toString(this.numberOfDefinitionArguments)) + (', isNameForRuleDesignations=' + Kotlin.toString(this.isNameForRuleDesignations)) + (', plainTextRepresentation=' + Kotlin.toString(this.plainTextRepresentation)) + (', texRepresentation=' + Kotlin.toString(this.texRepresentation)) + (', defaultStringDefinitionType=' + Kotlin.toString(this.defaultStringDefinitionType)) + (', texStringDefinitionType=' + Kotlin.toString(this.texStringDefinitionType)) + (', notObligateMainFunction=' + Kotlin.toString(this.notObligateMainFunction_0)) + (', minNumberOfPointsForEquality=' + Kotlin.toString(this.minNumberOfPointsForEquality)) + (', fieldZero=' + Kotlin.toString(this.fieldZero)) + ')';
   };
   FunctionProperties.prototype.hashCode = function () {
     var result = 0;
@@ -4857,10 +5005,11 @@ if (typeof kotlin === 'undefined') {
     result = result * 31 + Kotlin.hashCode(this.texStringDefinitionType) | 0;
     result = result * 31 + Kotlin.hashCode(this.notObligateMainFunction_0) | 0;
     result = result * 31 + Kotlin.hashCode(this.minNumberOfPointsForEquality) | 0;
+    result = result * 31 + Kotlin.hashCode(this.fieldZero) | 0;
     return result;
   };
   FunctionProperties.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.function, other.function) && Kotlin.equals(this.mainFunction, other.mainFunction) && Kotlin.equals(this.priority, other.priority) && Kotlin.equals(this.numberOfArguments, other.numberOfArguments) && Kotlin.equals(this.isCommutativeWithNullWeight, other.isCommutativeWithNullWeight) && Kotlin.equals(this.mainFunctionIsCommutativeWithNullWeight, other.mainFunctionIsCommutativeWithNullWeight) && Kotlin.equals(this.numberOfDefinitionArguments, other.numberOfDefinitionArguments) && Kotlin.equals(this.isNameForRuleDesignations, other.isNameForRuleDesignations) && Kotlin.equals(this.plainTextRepresentation, other.plainTextRepresentation) && Kotlin.equals(this.texRepresentation, other.texRepresentation) && Kotlin.equals(this.defaultStringDefinitionType, other.defaultStringDefinitionType) && Kotlin.equals(this.texStringDefinitionType, other.texStringDefinitionType) && Kotlin.equals(this.notObligateMainFunction_0, other.notObligateMainFunction_0) && Kotlin.equals(this.minNumberOfPointsForEquality, other.minNumberOfPointsForEquality)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.function, other.function) && Kotlin.equals(this.mainFunction, other.mainFunction) && Kotlin.equals(this.priority, other.priority) && Kotlin.equals(this.numberOfArguments, other.numberOfArguments) && Kotlin.equals(this.isCommutativeWithNullWeight, other.isCommutativeWithNullWeight) && Kotlin.equals(this.mainFunctionIsCommutativeWithNullWeight, other.mainFunctionIsCommutativeWithNullWeight) && Kotlin.equals(this.numberOfDefinitionArguments, other.numberOfDefinitionArguments) && Kotlin.equals(this.isNameForRuleDesignations, other.isNameForRuleDesignations) && Kotlin.equals(this.plainTextRepresentation, other.plainTextRepresentation) && Kotlin.equals(this.texRepresentation, other.texRepresentation) && Kotlin.equals(this.defaultStringDefinitionType, other.defaultStringDefinitionType) && Kotlin.equals(this.texStringDefinitionType, other.texStringDefinitionType) && Kotlin.equals(this.notObligateMainFunction_0, other.notObligateMainFunction_0) && Kotlin.equals(this.minNumberOfPointsForEquality, other.minNumberOfPointsForEquality) && Kotlin.equals(this.fieldZero, other.fieldZero)))));
   };
   function FunctionStringDefinition(function_0, definitionType, definition, subAsLast, filter, definitionArgumentsCount, underlinedAsLast, powSeparatedAsPow) {
     if (subAsLast === void 0)
@@ -5027,7 +5176,7 @@ if (typeof kotlin === 'undefined') {
     this.functionDefinitions = mutableListOf([new FunctionDefinition('n!', 'P(i, 1, n, i)'), new FunctionDefinition('U(m,n)', 'm^n'), new FunctionDefinition('A(m,n)', 'm! / (m - n)!'), new FunctionDefinition('P(n)', 'n!'), new FunctionDefinition('C(m,n)', 'm! / (m - n)! / n!'), new FunctionDefinition('V(m,n)', '(m + n - 1)! / (m - 1)! / n!'), new FunctionDefinition('S1(n,k)', 'S(i,0,k,(-1)^(k-i) * i^n * k! / (k - i)! / i!)'), new FunctionDefinition('S2(n,k)', 'S1(n,k) / n!'), new FunctionDefinition('B(m)', 'S(n,0,m,S2(m,n))'), new FunctionDefinition('F(n)', '5^(-0.5) * (((1 + 5^0.5)/2)^(n+1) - ((1 - 5^0.5)/2)^(n+1))'), new FunctionDefinition('C(n)', '(2*n)! / (n!)^2 / (n+1)'), new FunctionDefinition('sec(x)', '1 / cos(x)'), new FunctionDefinition('csc(x)', '1 / sin(x)'), new FunctionDefinition('sech(x)', '1 / ch(x)'), new FunctionDefinition('csch(x)', '1 / sh(x)'), new FunctionDefinition('ctg(x)', '1 / tg(x)'), new FunctionDefinition('actg(x)', 'atg(1/x)'), new FunctionDefinition('cth(x)', '1 / th(x)'), new FunctionDefinition('log(b,a)', 'ln(a) / ln(b)')]);
     this.treeTransformationRules = mutableListOf([new TreeTransformationRule('sin(x)^2', '1 - cos(x)^2'), new TreeTransformationRule('sin(pi/2 - x)', 'cos(x)'), new TreeTransformationRule('sin(x)^2', '1 - cos(x)^2'), new TreeTransformationRule('S(i, a, a, f(i))', 'f(a)'), new TreeTransformationRule('S(i, a, b, f(i))', 'S(i, a, b-1, f(i)) + f(b)'), new TreeTransformationRule('S(i, a, b, f(i))', 'S(i, a+1, b, f(i)) + f(a)'), new TreeTransformationRule('S(i, a, c, f(i)) + S(i, c+1, b, f(i))', 'S(i, a, b, f(i))'), new TreeTransformationRule('P(i, a, a, f(i))', 'f(a)'), new TreeTransformationRule('P(i, a, b, f(i))', 'P(i, a, b-1, f(i)) * f(b)'), new TreeTransformationRule('P(i, a, b, f(i))', 'P(i, a+1, b, f(i)) * f(a)'), new TreeTransformationRule('P(i, a, c, f(i)) * P(i, c+1, b, f(i))', 'P(i, a, b, f(i))'), new TreeTransformationRule('U(m,n)', 'm^n'), new TreeTransformationRule('A(m,n)', 'm! / (m - n)!'), new TreeTransformationRule('P(n)', 'n!'), new TreeTransformationRule('P(n)', 'A(n,n)'), new TreeTransformationRule('C(m,n)', 'm! / (m - n)! / n!'), new TreeTransformationRule('V(m,n)', '(m + n - 1)! / (m - 1)! / n!'), new TreeTransformationRule('V(m,n)', 'C(m + n - 1, n)'), new TreeTransformationRule('S1(n,k)', 'S(i,0,k,(-1)^(k-i) * i^n * k! / (k - i)! / i!)'), new TreeTransformationRule('S2(n,k)', 'S1(n,k) / n!'), new TreeTransformationRule('S2(n,k)', 'S2(m-1,n-1) + n*S2(m-1,n)'), new TreeTransformationRule('B(m)', 'S(n,0,m,S2(m,n))'), new TreeTransformationRule('F(n)', '5^(-0.5) * (((1 + 5^0.5)/2)^(n+1) - ((1 - 5^0.5)/2)^(n+1))'), new TreeTransformationRule('F(n)', 'F(n-1) + F(n-2)'), new TreeTransformationRule('C(n)', '(2*n)! / (n!)^2 / (n+1)'), new TreeTransformationRule('a^(b+c)', 'a^b*a^c'), new TreeTransformationRule('sqrt(x)', 'x^0.5', true), new TreeTransformationRule('root(x,p)', 'x^(1/p)', true), new TreeTransformationRule('n!', 'P(i,1,n,i)', true), new TreeTransformationRule('d(expr)', 'd(expr,x)', true)]);
     this.taskContextTreeTransformationRules = ArrayList_init();
-    this.functionProperties = mutableListOf([new FunctionProperties('+', '+', 1.0, -1, true, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('-', '+', 1.0, -1, void 0, true, void 0, void 0, void 0, void 0, StringDefinitionType$UNARY_LEFT_OPERATION_getInstance(), void 0, '+'), new FunctionProperties('*', '*', 2.0, -1, true, true, void 0, void 0, void 0, '\\cdot', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('/', '/', 1.9, -1, void 0, true, void 0, void 0, void 0, '\\frac', StringDefinitionType$BINARY_OPERATION_getInstance(), void 0, '*'), new FunctionProperties('^', '^', 3.0, -1, void 0, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('S', 'S', 5.0, 4, void 0, void 0, 1, void 0, void 0, void 0, void 0, void 0, void 0, 2147483647), new FunctionProperties('P', 'P', 5.0, 4, void 0, void 0, 1, void 0, void 0, void 0, void 0, void 0, void 0, 2147483647), new FunctionProperties('sin', 'sin', 5.0, 1), new FunctionProperties('cos', 'cos', 5.0, 1), new FunctionProperties('sh', 'sh', 5.0, 1), new FunctionProperties('ch', 'ch', 5.0, 1), new FunctionProperties('sec', 'sec', 5.0, 1), new FunctionProperties('csc', 'csc', 5.0, 1), new FunctionProperties('tg', 'tg', 5.0, 1), new FunctionProperties('ctg', 'ctg', 5.0, 1), new FunctionProperties('th', 'th', 5.0, 1), new FunctionProperties('cth', 'cth', 5.0, 1), new FunctionProperties('sech', 'sech', 5.0, 1), new FunctionProperties('csch', 'csch', 5.0, 1), new FunctionProperties('asin', 'asin', 5.0, 1), new FunctionProperties('acos', 'acos', 5.0, 1), new FunctionProperties('atg', 'atg', 5.0, 1), new FunctionProperties('actg', 'actg', 5.0, 1), new FunctionProperties('exp', 'exp', 5.0, 1), new FunctionProperties('ln', 'ln', 5.0, 1), new FunctionProperties('abs', 'abs', 5.0, 1, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, 2147483647), new FunctionProperties('log', 'log', 5.0, 2, void 0, void 0, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('mod', 'mod', 5.0, 2), new FunctionProperties('and', 'and', 0.7, -1, true, true, void 0, void 0, '&', '\\land', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('or', 'or', 0.6, -1, true, true, void 0, void 0, '|', '\\lor', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('xor', 'xor', 0.6, -1, true, true, void 0, void 0, '^', '\\oplus', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('alleq', 'alleq', 0.4, -1, true, true, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('not', 'not', 5.0, 1, void 0, void 0, void 0, void 0, '!', '\\neg', StringDefinitionType$UNARY_LEFT_OPERATION_getInstance()), new FunctionProperties('implic', 'implic', 0.5, -1, void 0, void 0, void 0, void 0, '->', '\\implies', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('set-', 'set-', 0.5, -1, void 0, void 0, void 0, void 0, '\\', '\\setminus', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('sqrt', 'sqrt', 5.0, 1, void 0, void 0, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('root', 'root', 5.0, 2), new FunctionProperties('mfenced', 'mfenced', 5.0, 1), new FunctionProperties('U', 'U', 5.0, 2), new FunctionProperties('P', 'P', 5.0, 1), new FunctionProperties('A', 'A', 5.0, 2), new FunctionProperties('C', 'C', 5.0, 2), new FunctionProperties('V', 'V', 5.0, 2), new FunctionProperties('B', 'B', 5.0, 1), new FunctionProperties('S1', 'S1', 5.0, 2), new FunctionProperties('S2', 'S2', 5.0, 2), new FunctionProperties('F', 'F', 5.0, 1), new FunctionProperties('C', 'C', 5.0, 1), new FunctionProperties('factorial', 'factorial', 4.0, 1, void 0, void 0, void 0, void 0, '!', void 0, StringDefinitionType$UNARY_RIGHT_OPERATION_getInstance()), new FunctionProperties('double_factorial', 'factorial', 4.0, 1, void 0, void 0, void 0, void 0, '!!', void 0, StringDefinitionType$UNARY_RIGHT_OPERATION_getInstance()), new FunctionProperties('subfactorial', 'subfactorial', 4.0, 1, void 0, void 0, void 0, void 0, '!', void 0, StringDefinitionType$UNARY_LEFT_OPERATION_getInstance()), new FunctionProperties('partial_differential', 'partial_differential', 0.5, 1), new FunctionProperties('d', 'd', 0.5, 2), new FunctionProperties('d', 'd', 0.5, 1), new FunctionProperties('f', 'f', 0.5, 1, void 0, void 0, void 0, true), new FunctionProperties('g', 'g', 0.5, 1, void 0, void 0, void 0, true)]);
+    this.functionProperties = mutableListOf([new FunctionProperties('+', '+', 1.0, -1, true, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance(), void 0, void 0, void 0, '0'), new FunctionProperties('-', '+', 1.0, -1, void 0, true, void 0, void 0, void 0, void 0, StringDefinitionType$UNARY_LEFT_OPERATION_getInstance(), void 0, '+'), new FunctionProperties('*', '*', 2.0, -1, true, true, void 0, void 0, void 0, '\\cdot', StringDefinitionType$BINARY_OPERATION_getInstance(), void 0, void 0, void 0, '1'), new FunctionProperties('/', '/', 1.9, -1, void 0, true, void 0, void 0, void 0, '\\frac', StringDefinitionType$BINARY_OPERATION_getInstance(), void 0, '*'), new FunctionProperties('^', '^', 3.0, -1, void 0, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('S', 'S', 5.0, 4, void 0, void 0, 1, void 0, void 0, void 0, void 0, void 0, void 0, 2147483647), new FunctionProperties('P', 'P', 5.0, 4, void 0, void 0, 1, void 0, void 0, void 0, void 0, void 0, void 0, 2147483647), new FunctionProperties('sin', 'sin', 5.0, 1), new FunctionProperties('cos', 'cos', 5.0, 1), new FunctionProperties('sh', 'sh', 5.0, 1), new FunctionProperties('ch', 'ch', 5.0, 1), new FunctionProperties('sec', 'sec', 5.0, 1), new FunctionProperties('csc', 'csc', 5.0, 1), new FunctionProperties('tg', 'tg', 5.0, 1), new FunctionProperties('ctg', 'ctg', 5.0, 1), new FunctionProperties('th', 'th', 5.0, 1), new FunctionProperties('cth', 'cth', 5.0, 1), new FunctionProperties('sech', 'sech', 5.0, 1), new FunctionProperties('csch', 'csch', 5.0, 1), new FunctionProperties('asin', 'asin', 5.0, 1), new FunctionProperties('acos', 'acos', 5.0, 1), new FunctionProperties('atg', 'atg', 5.0, 1), new FunctionProperties('actg', 'actg', 5.0, 1), new FunctionProperties('exp', 'exp', 5.0, 1), new FunctionProperties('ln', 'ln', 5.0, 1), new FunctionProperties('abs', 'abs', 5.0, 1, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, 2147483647), new FunctionProperties('log', 'log', 5.0, 2, void 0, void 0, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('mod', 'mod', 5.0, 2), new FunctionProperties('and', 'and', 0.7, -1, true, true, void 0, void 0, '&', '\\land', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('or', 'or', 0.6, -1, true, true, void 0, void 0, '|', '\\lor', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('xor', 'xor', 0.6, -1, true, true, void 0, void 0, '^', '\\oplus', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('alleq', 'alleq', 0.4, -1, true, true, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('not', 'not', 5.0, 1, void 0, void 0, void 0, void 0, '!', '\\neg', StringDefinitionType$UNARY_LEFT_OPERATION_getInstance()), new FunctionProperties('implic', 'implic', 0.5, -1, void 0, void 0, void 0, void 0, '->', '\\implies', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('set-', 'set-', 0.5, -1, void 0, void 0, void 0, void 0, '\\', '\\setminus', StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('sqrt', 'sqrt', 5.0, 1, void 0, void 0, void 0, void 0, void 0, void 0, void 0, StringDefinitionType$BINARY_OPERATION_getInstance()), new FunctionProperties('root', 'root', 5.0, 2), new FunctionProperties('mfenced', 'mfenced', 5.0, 1), new FunctionProperties('U', 'U', 5.0, 2), new FunctionProperties('P', 'P', 5.0, 1), new FunctionProperties('A', 'A', 5.0, 2), new FunctionProperties('C', 'C', 5.0, 2), new FunctionProperties('V', 'V', 5.0, 2), new FunctionProperties('B', 'B', 5.0, 1), new FunctionProperties('S1', 'S1', 5.0, 2), new FunctionProperties('S2', 'S2', 5.0, 2), new FunctionProperties('F', 'F', 5.0, 1), new FunctionProperties('C', 'C', 5.0, 1), new FunctionProperties('factorial', 'factorial', 4.0, 1, void 0, void 0, void 0, void 0, '!', void 0, StringDefinitionType$UNARY_RIGHT_OPERATION_getInstance()), new FunctionProperties('double_factorial', 'factorial', 4.0, 1, void 0, void 0, void 0, void 0, '!!', void 0, StringDefinitionType$UNARY_RIGHT_OPERATION_getInstance()), new FunctionProperties('subfactorial', 'subfactorial', 4.0, 1, void 0, void 0, void 0, void 0, '!', void 0, StringDefinitionType$UNARY_LEFT_OPERATION_getInstance()), new FunctionProperties('partial_differential', 'partial_differential', 0.5, 1), new FunctionProperties('d', 'd', 0.5, 2), new FunctionProperties('d', 'd', 0.5, 1), new FunctionProperties('f', 'f', 0.5, 1, void 0, void 0, void 0, true), new FunctionProperties('g', 'g', 0.5, 1, void 0, void 0, void 0, true)]);
     this.boolFunctions = setOf_0(['and', 'or', 'not', 'alleq', 'xor', 'implic', 'set-']);
     var $receiver_0 = this.functionProperties;
     var capacity = coerceAtLeast(mapCapacity(collectionSizeOrDefault($receiver_0, 10)), 16);
@@ -5910,6 +6059,7 @@ if (typeof kotlin === 'undefined') {
     this.definedFunctionNameNumberOfArgsSet_cdkc0l$_0 = this.definedFunctionNameNumberOfArgsSet_cdkc0l$_0;
   }
   Object.defineProperty(ExpressionComporator.prototype, 'compiledConfiguration', {
+    configurable: true,
     get: function () {
       if (this.compiledConfiguration_h7im45$_0 == null)
         return throwUPAE('compiledConfiguration');
@@ -5920,6 +6070,7 @@ if (typeof kotlin === 'undefined') {
     }
   });
   Object.defineProperty(ExpressionComporator.prototype, 'definedFunctionNameNumberOfArgsSet', {
+    configurable: true,
     get: function () {
       if (this.definedFunctionNameNumberOfArgsSet_cdkc0l$_0 == null)
         return throwUPAE('definedFunctionNameNumberOfArgsSet');
@@ -5953,7 +6104,7 @@ if (typeof kotlin === 'undefined') {
     rUnified.normalizeSubTree_f8z7ch$(void 0, void 0, true);
     return lUnified.isNodeSubtreeEquals_7j5kvs$(rUnified, nameArgsMap);
   };
-  ExpressionComporator.prototype.probabilityTestComparison_zfhhb$ = function (leftOrigin, rightOrigin, comparisonType, justInDomainsIntersection, maxMinNumberOfPointsForEquality, allowedPartOfErrorTests, testWithUndefinedResultIncreasingCoef, useCleverDomain) {
+  ExpressionComporator.prototype.probabilityTestComparison_3fo6fu$ = function (leftOrigin, rightOrigin, comparisonType, justInDomainsIntersection, maxMinNumberOfPointsForEquality, allowedPartOfErrorTests, testWithUndefinedResultIncreasingCoef, useCleverDomain, useGradientDescentComparison) {
     if (comparisonType === void 0)
       comparisonType = this.compiledConfiguration.comparisonSettings.defaultComparisonType;
     if (justInDomainsIntersection === void 0)
@@ -5966,6 +6117,8 @@ if (typeof kotlin === 'undefined') {
       testWithUndefinedResultIncreasingCoef = this.compiledConfiguration.comparisonSettings.testWithUndefinedResultIncreasingCoef;
     if (useCleverDomain === void 0)
       useCleverDomain = false;
+    if (useGradientDescentComparison === void 0)
+      useGradientDescentComparison = false;
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7, tmp$_8, tmp$_9, tmp$_10;
     var normalized = normalizeExpressionsForComparison(leftOrigin, rightOrigin);
     var left = normalized.first;
@@ -6013,42 +6166,46 @@ if (typeof kotlin === 'undefined') {
     } else {
       if (useCleverDomain) {
         var domain_0 = new DomainPointGenerator(arrayListOf([left, right]), this.baseOperationsDefinitions);
-        while ((tmp$_5 = numberOfRemainingTests, numberOfRemainingTests = tmp$_5 - 1, tmp$_5) > 0) {
-          var pointI_0 = domain_0.generateNewPoint_mqu1mq$();
-          tmp$_6 = toDoubleOrNull(this.baseOperationsDefinitions.computeExpressionTree_6718cy$(left.cloneWithNormalization_1g1bdl$(pointI_0, false)).value);
-          if (tmp$_6 == null) {
-            continue;
-          }var l = tmp$_6;
-          tmp$_7 = toDoubleOrNull(this.baseOperationsDefinitions.computeExpressionTree_6718cy$(right.cloneWithNormalization_1g1bdl$(pointI_0, false)).value);
-          if (tmp$_7 == null) {
-            continue;
-          }var r = tmp$_7;
-          if (justInDomainsIntersection && isNaN_0(l) !== isNaN_0(r)) {
-            return false;
-          } else if (!isFinite(l) || !isFinite(r)) {
-            numberOfRemainingTests += testWithUndefinedResultIncreasingCoef;
-          } else {
-            switch (comparisonType.name) {
-              case 'LEFT_MORE_OR_EQUAL':
-                if (l < r)
-                  return false;
-                break;
-              case 'LEFT_MORE':
-                if (l <= r)
-                  return false;
-                break;
-              case 'LEFT_LESS_OR_EQUAL':
-                if (l > r)
-                  return false;
-                break;
-              case 'LEFT_LESS':
-                if (l >= r)
-                  return false;
-                break;
+        if (useGradientDescentComparison) {
+          return gradientDescentComparison(left, right, this.compiledConfiguration, comparisonType, domain_0);
+        } else {
+          while ((tmp$_5 = numberOfRemainingTests, numberOfRemainingTests = tmp$_5 - 1, tmp$_5) > 0) {
+            var pointI_0 = domain_0.generateNewPoint_mqu1mq$();
+            tmp$_6 = toDoubleOrNull(this.baseOperationsDefinitions.computeExpressionTree_6718cy$(left.cloneWithNormalization_1g1bdl$(pointI_0, false)).value);
+            if (tmp$_6 == null) {
+              continue;
+            }var l = tmp$_6;
+            tmp$_7 = toDoubleOrNull(this.baseOperationsDefinitions.computeExpressionTree_6718cy$(right.cloneWithNormalization_1g1bdl$(pointI_0, false)).value);
+            if (tmp$_7 == null) {
+              continue;
+            }var r = tmp$_7;
+            if (justInDomainsIntersection && isNaN_0(l) !== isNaN_0(r)) {
+              return false;
+            } else if (!isFinite(l) || !isFinite(r)) {
+              numberOfRemainingTests += testWithUndefinedResultIncreasingCoef;
+            } else {
+              switch (comparisonType.name) {
+                case 'LEFT_MORE_OR_EQUAL':
+                  if (l < r)
+                    return false;
+                  break;
+                case 'LEFT_MORE':
+                  if (l <= r)
+                    return false;
+                  break;
+                case 'LEFT_LESS_OR_EQUAL':
+                  if (l > r)
+                    return false;
+                  break;
+                case 'LEFT_LESS':
+                  if (l >= r)
+                    return false;
+                  break;
+              }
             }
           }
+          return true;
         }
-        return true;
       } else {
         var domain_1 = new PointGenerator(this.baseOperationsDefinitions, arrayListOf([left, right]));
         while ((tmp$_8 = numberOfRemainingTests, numberOfRemainingTests = tmp$_8 - 1, tmp$_8) > 0) {
@@ -6111,7 +6268,7 @@ if (typeof kotlin === 'undefined') {
       var functionIdentifierToVariableMap = LinkedHashMap_init_0();
       left.replaceNotDefinedFunctionsOnVariables_g22vlb$(functionIdentifierToVariableMap, definedFunctionNameNumberOfArgs, this);
       right.replaceNotDefinedFunctionsOnVariables_g22vlb$(functionIdentifierToVariableMap, definedFunctionNameNumberOfArgs, this);
-      return this.probabilityTestComparison_zfhhb$(left, right, comparisonType, justInDomainsIntersection);
+      return this.probabilityTestComparison_3fo6fu$(left, right, comparisonType, justInDomainsIntersection);
     }return this.compareAsIs_98xwbf$(left, right, void 0, true);
   };
   ExpressionComporator.prototype.compareWithTreeTransformationRules_ob15jn$ = function (leftOriginal, rightOriginal, transformations, maxTransformationWeight, maxBustCount, minTransformationWeight, expressionChainComparisonType, maxDistBetweenDiffSteps) {
@@ -6241,7 +6398,7 @@ if (typeof kotlin === 'undefined') {
       }if (tmp$_7 && intersect(functionsInExpression, originalTransformation.leftFunctions).isEmpty()) {
         continue;
       }if (sortOperands) {
-        tmp$_3 = new ExpressionSubstitution(originalTransformation.left.cloneWithSortingChildrenForExpressionSubstitutionComparison(), originalTransformation.right.cloneWithSortingChildrenForExpressionSubstitutionComparison(), originalTransformation.weight, originalTransformation.basedOnTaskContext, originalTransformation.name, originalTransformation.comparisonType);
+        tmp$_3 = new ExpressionSubstitution(originalTransformation.left.cloneWithSortingChildrenForExpressionSubstitutionComparison(), originalTransformation.right.cloneWithSortingChildrenForExpressionSubstitutionComparison(), originalTransformation.weight, originalTransformation.basedOnTaskContext, originalTransformation.nameEn, void 0, originalTransformation.comparisonType);
       } else {
         tmp$_3 = originalTransformation;
       }
@@ -6574,6 +6731,7 @@ if (typeof kotlin === 'undefined') {
     this.nodeType = NodeType$VARIABLE_getInstance();
     this.value = value;
     this.identifier = value;
+    this.functionStringDefinition = null;
   };
   ExpressionNode.prototype.setNode_6718cy$ = function (value) {
     this.nodeType = value.nodeType;
@@ -6598,19 +6756,44 @@ if (typeof kotlin === 'undefined') {
     }
     return result;
   };
-  ExpressionNode.prototype.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_vux9f0$ = function (startId, startDistance) {
+  ExpressionNode.prototype.getChildNodesOnDepthOrWhileOperation_okkhzr$ = function (depth, operationList) {
+    var tmp$;
+    var result = ArrayList_init();
+    if (depth < 1 && !operationList.contains_11rb$(this.value))
+      return result;
+    tmp$ = this.children.iterator();
+    while (tmp$.hasNext()) {
+      var child = tmp$.next();
+      result.add_11rb$(child);
+      result.addAll_brywnq$(child.getChildNodesOnDepthOrWhileOperation_okkhzr$(depth - 1 | 0, operationList));
+    }
+    return result;
+  };
+  ExpressionNode.prototype.resetNodeIds = function () {
+    var tmp$;
+    this.nodeId = -1;
+    tmp$ = this.children.iterator();
+    while (tmp$.hasNext()) {
+      var child = tmp$.next();
+      child.resetNodeIds();
+    }
+  };
+  ExpressionNode.prototype.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$ = function (startId, startDistance, replaceCalculatedNodeIds) {
     if (startId === void 0)
       startId = 0;
     if (startDistance === void 0)
       startDistance = 0;
+    if (replaceCalculatedNodeIds === void 0)
+      replaceCalculatedNodeIds = true;
     var tmp$;
-    this.nodeId = startId;
-    var currentStartId = startId + 1 | 0;
+    if (replaceCalculatedNodeIds || this.nodeId < 0) {
+      this.nodeId = startId;
+    }var currentStartId = startId + 1 | 0;
     this.distanceToRoot = startDistance;
     tmp$ = this.children.iterator();
     while (tmp$.hasNext()) {
       var child = tmp$.next();
-      currentStartId = child.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_vux9f0$(currentStartId, startDistance + 1 | 0);
+      currentStartId = child.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$(currentStartId, startDistance + 1 | 0, replaceCalculatedNodeIds);
     }
     return currentStartId;
   };
@@ -6633,6 +6816,15 @@ if (typeof kotlin === 'undefined') {
       var child = tmp$.next();
       child.normalizeParentLinks();
       child.parent = this;
+    }
+  };
+  ExpressionNode.prototype.normalizeFunctionStringDefinitions_hee78y$ = function (functionConfiguration) {
+    var tmp$;
+    this.functionStringDefinition = functionConfiguration.fastFindStringDefinitionByNameAndNumberOfArguments_bm4lxs$(this.value, this.children.size);
+    tmp$ = this.children.iterator();
+    while (tmp$.hasNext()) {
+      var child = tmp$.next();
+      child.normalizeFunctionStringDefinitions_hee78y$(functionConfiguration);
     }
   };
   ExpressionNode.prototype.reduceExtraSigns_9jge9g$ = function (extraUnaryFunctions, exclusionChildFunctions) {
@@ -6694,10 +6886,13 @@ if (typeof kotlin === 'undefined') {
   function ExpressionNode$fillStructureStringIdentifiers$lambda_2(it) {
     return ensureNotNull(it.expressionStrictureIdentifier).commutativeSortedIdentifier;
   }
+  function ExpressionNode$fillStructureStringIdentifiers$lambda_3(it) {
+    return ensureNotNull(it.expressionStrictureIdentifier).commutativeSortedIdentifier;
+  }
   ExpressionNode.prototype.fillStructureStringIdentifiers_t6ztn0$ = function (getNodeValueString) {
     if (getNodeValueString === void 0)
       getNodeValueString = ExpressionNode$fillStructureStringIdentifiers$lambda;
-    var tmp$;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     if (this.nodeType === NodeType$VARIABLE_getInstance()) {
       var v = getNodeValueString(this);
       this.expressionStrictureIdentifier = new ExpressionStrictureIdentifier(v, v);
@@ -6710,7 +6905,14 @@ if (typeof kotlin === 'undefined') {
         child.fillStructureStringIdentifiers_t6ztn0$(getNodeValueString);
       }
       ensureNotNull(this.expressionStrictureIdentifier).originalOrderIdentifier = ensureNotNull(this.expressionStrictureIdentifier).originalOrderIdentifier + joinToString(this.children, ';', void 0, void 0, void 0, void 0, ExpressionNode$fillStructureStringIdentifiers$lambda_0);
-      ensureNotNull(this.expressionStrictureIdentifier).commutativeSortedIdentifier = ensureNotNull(this.expressionStrictureIdentifier).commutativeSortedIdentifier + joinToString(sortedWith(this.children, new Comparator$ObjectLiteral_0(compareBy$lambda(ExpressionNode$fillStructureStringIdentifiers$lambda_1))), ';', void 0, void 0, void 0, void 0, ExpressionNode$fillStructureStringIdentifiers$lambda_2);
+      tmp$_3 = ensureNotNull(this.expressionStrictureIdentifier);
+      tmp$_4 = tmp$_3.commutativeSortedIdentifier;
+      if (((tmp$_1 = (tmp$_0 = this.functionStringDefinition) != null ? tmp$_0.function : null) != null ? tmp$_1.isCommutativeWithNullWeight : null) === true) {
+        tmp$_2 = joinToString(sortedWith(this.children, new Comparator$ObjectLiteral_0(compareBy$lambda(ExpressionNode$fillStructureStringIdentifiers$lambda_1))), ';', void 0, void 0, void 0, void 0, ExpressionNode$fillStructureStringIdentifiers$lambda_2);
+      } else {
+        tmp$_2 = joinToString(this.children, ';', void 0, void 0, void 0, void 0, ExpressionNode$fillStructureStringIdentifiers$lambda_3);
+      }
+      tmp$_3.commutativeSortedIdentifier = tmp$_4 + tmp$_2;
       ensureNotNull(this.expressionStrictureIdentifier).originalOrderIdentifier = ensureNotNull(this.expressionStrictureIdentifier).originalOrderIdentifier + ')';
       ensureNotNull(this.expressionStrictureIdentifier).commutativeSortedIdentifier = ensureNotNull(this.expressionStrictureIdentifier).commutativeSortedIdentifier + ')';
     }
@@ -7653,7 +7855,7 @@ if (typeof kotlin === 'undefined') {
         if (this.children.size === expression.children.size) {
           if (expressionComporator != null && expressionComporator.compiledConfiguration.comparisonSettings.useTestingToCompareFunctionArgumentsInProbabilityComparison && !hasBoolFunctions) {
             if (expressionComporator.baseOperationsDefinitions.definedFunctionNameNumberOfArgsSet.contains_11rb$(this.value + '_' + toString(this.children.size)) || expressionComporator.baseOperationsDefinitions.definedFunctionNameNumberOfArgsSet.contains_11rb$(this.value + '_-1')) {
-              if (expressionComporator.probabilityTestComparison_zfhhb$(this, expression, ComparisonType$EQUAL_getInstance())) {
+              if (expressionComporator.probabilityTestComparison_3fo6fu$(this, expression, ComparisonType$EQUAL_getInstance())) {
                 nodeExists = true;
                 this.setVariable_61zpoe$(variable);
                 break;
@@ -7661,7 +7863,7 @@ if (typeof kotlin === 'undefined') {
               var hasDifferentArgs = false;
               tmp$_1 = get_lastIndex(this.children);
               for (var i = 0; i <= tmp$_1; i++) {
-                if (!expressionComporator.probabilityTestComparison_zfhhb$(this.children.get_za3lpa$(i), expression.children.get_za3lpa$(i), ComparisonType$EQUAL_getInstance())) {
+                if (!expressionComporator.probabilityTestComparison_3fo6fu$(this.children.get_za3lpa$(i), expression.children.get_za3lpa$(i), ComparisonType$EQUAL_getInstance())) {
                   hasDifferentArgs = true;
                   break;
                 }}
@@ -7906,18 +8108,17 @@ if (typeof kotlin === 'undefined') {
   function nodeIdsPositionsMap(nodeIds) {
     var tmp$;
     var nodeIdsMap = LinkedHashMap_init_0();
-    tmp$ = get_lastIndex(nodeIds);
+    tmp$ = get_lastIndex_1(nodeIds);
     for (var i = 0; i <= tmp$; i++) {
-      nodeIdsMap.put_xwzc9p$(nodeIds.get_za3lpa$(i), i);
+      nodeIdsMap.put_xwzc9p$(nodeIds[i], i);
     }
     return nodeIdsMap;
   }
   function nodeIdsToNodeLinksInSameOrder($receiver, nodeIds, nodeIdsMap) {
     if (nodeIdsMap === void 0)
       nodeIdsMap = nodeIdsPositionsMap(nodeIds);
-    var size = nodeIds.size;
-    var list = ArrayList_init_0(size);
-    for (var index = 0; index < size; index++) {
+    var list = ArrayList_init_0(nodeIds.length);
+    for (var index = 0; index < nodeIds.length; index++) {
       list.add_11rb$(new ExpressionNode(NodeType$EMPTY_getInstance(), ''));
     }
     var result = list;
@@ -7965,29 +8166,39 @@ if (typeof kotlin === 'undefined') {
     }
     return currentSubtree;
   }
-  function findLowestSubtreeWithNodes($receiver, nodes, onlyHigherSelection) {
+  function findLowestSubtreeWithNodes($receiver, nodes, onlyHigherSelection, nestedNodesInSelection) {
+    if (nestedNodesInSelection === void 0)
+      nestedNodesInSelection = mutableListOf([false]);
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     var currentSubtree = null;
-    var nodeChains = toMutableList(nodes);
-    var destination = ArrayList_init_0(collectionSizeOrDefault(nodeChains, 10));
+    var destination = ArrayList_init_0(collectionSizeOrDefault(nodes, 10));
     var tmp$_4;
-    tmp$_4 = nodeChains.iterator();
+    tmp$_4 = nodes.iterator();
     while (tmp$_4.hasNext()) {
       var item = tmp$_4.next();
-      var tmp$_5 = destination.add_11rb$;
-      var res = onlyHigherSelection ? item.copy_uq8prj$() : item.clone();
-      res.linkOnOriginalTreeNode = item;
-      tmp$_5.call(destination, res);
+      destination.add_11rb$(item.nodeId);
     }
-    var nodeSelectedChains = toMutableList(destination);
-    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(nodeSelectedChains, 10));
-    var tmp$_6;
-    tmp$_6 = nodeSelectedChains.iterator();
-    while (tmp$_6.hasNext()) {
-      var item_0 = tmp$_6.next();
-      destination_0.add_11rb$(new Pair(ensureNotNull(item_0).nodeId, item_0));
+    var nodeIdsSet = toSet(destination);
+    var nodeChains = toMutableList(nodes);
+    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(nodeChains, 10));
+    var tmp$_5;
+    tmp$_5 = nodeChains.iterator();
+    while (tmp$_5.hasNext()) {
+      var item_0 = tmp$_5.next();
+      var tmp$_6 = destination_0.add_11rb$;
+      var res = onlyHigherSelection ? item_0.copy_uq8prj$() : item_0.clone();
+      res.linkOnOriginalTreeNode = item_0;
+      tmp$_6.call(destination_0, res);
     }
-    var treeParts = toMutableMap(toMap(destination_0));
+    var nodeSelectedChains = toMutableList(destination_0);
+    var destination_1 = ArrayList_init_0(collectionSizeOrDefault(nodeSelectedChains, 10));
+    var tmp$_7;
+    tmp$_7 = nodeSelectedChains.iterator();
+    while (tmp$_7.hasNext()) {
+      var item_1 = tmp$_7.next();
+      destination_1.add_11rb$(new Pair(ensureNotNull(item_1).nodeId, item_1));
+    }
+    var treeParts = toMutableMap(toMap(destination_1));
     var subtreeOfNodesFound = false;
     while (!subtreeOfNodesFound) {
       subtreeOfNodesFound = true;
@@ -8000,18 +8211,20 @@ if (typeof kotlin === 'undefined') {
           if (tmp$_2 == null) {
             return null;
           }nodeChains.set_wxm5ur$(i, tmp$_2);
-          var suchPart = treeParts.get_11rb$(nodeChains.get_za3lpa$(i).nodeId);
+          if (nestedNodesInSelection.isEmpty() && nodeIdsSet.contains_11rb$(nodeChains.get_za3lpa$(i).nodeId)) {
+            nestedNodesInSelection.add_11rb$(true);
+          }var suchPart = treeParts.get_11rb$(nodeChains.get_za3lpa$(i).nodeId);
           if (suchPart != null) {
             var $receiver_0 = suchPart.children;
             var all$result;
             all$break: do {
-              var tmp$_7;
+              var tmp$_8;
               if (Kotlin.isType($receiver_0, Collection) && $receiver_0.isEmpty()) {
                 all$result = true;
                 break all$break;
-              }tmp$_7 = $receiver_0.iterator();
-              while (tmp$_7.hasNext()) {
-                var element = tmp$_7.next();
+              }tmp$_8 = $receiver_0.iterator();
+              while (tmp$_8.hasNext()) {
+                var element = tmp$_8.next();
                 if (!(element.nodeId !== ensureNotNull(nodeSelectedChains.get_za3lpa$(i)).nodeId)) {
                   all$result = false;
                   break all$break;
@@ -8069,7 +8282,7 @@ if (typeof kotlin === 'undefined') {
       return new ExpressionNode(NodeType$EMPTY_getInstance(), '');
     }return result;
   }
-  function SubstitutionSelectionData(originalExpression, selectedNodeIds, compiledConfiguration, expressionToTransform, isMoving, selectedNodeIdsMap, selectedNodes, topOfSelection, topOfSelectionParent, topOfSelectionIndex, lowestSubtree, lowestSubtreeHigh, notSelectedSubtreeTopOriginalTree, notSelectedSubtreeTopArguments, selectedSubtreeTopArguments, selectedSubtreeTopArgumentsInSelectionOrder) {
+  function SubstitutionSelectionData(originalExpression, selectedNodeIds, compiledConfiguration, expressionToTransform, isMoving, selectedNodeIdsMap, selectedNodes, topOfSelection, topOfSelectionParent, topOfSelectionIndex, lowestSubtree, lowestSubtreeHigh, notSelectedSubtreeTopOriginalTree, notSelectedSubtreeTopArguments, selectedSubtreeTopArguments, selectedSubtreeTopArgumentsInSelectionOrder, nestedNodesInSelection) {
     if (expressionToTransform === void 0)
       expressionToTransform = originalExpression.clone();
     if (isMoving === void 0)
@@ -8096,6 +8309,8 @@ if (typeof kotlin === 'undefined') {
       selectedSubtreeTopArguments = null;
     if (selectedSubtreeTopArgumentsInSelectionOrder === void 0)
       selectedSubtreeTopArgumentsInSelectionOrder = null;
+    if (nestedNodesInSelection === void 0)
+      nestedNodesInSelection = false;
     this.originalExpression = originalExpression;
     this.selectedNodeIds = selectedNodeIds;
     this.compiledConfiguration = compiledConfiguration;
@@ -8112,6 +8327,7 @@ if (typeof kotlin === 'undefined') {
     this.notSelectedSubtreeTopArguments = notSelectedSubtreeTopArguments;
     this.selectedSubtreeTopArguments = selectedSubtreeTopArguments;
     this.selectedSubtreeTopArgumentsInSelectionOrder = selectedSubtreeTopArgumentsInSelectionOrder;
+    this.nestedNodesInSelection = nestedNodesInSelection;
   }
   SubstitutionSelectionData.$metadata$ = {
     kind: Kind_CLASS,
@@ -8166,11 +8382,14 @@ if (typeof kotlin === 'undefined') {
   SubstitutionSelectionData.prototype.component16 = function () {
     return this.selectedSubtreeTopArgumentsInSelectionOrder;
   };
-  SubstitutionSelectionData.prototype.copy_cp5d6h$ = function (originalExpression, selectedNodeIds, compiledConfiguration, expressionToTransform, isMoving, selectedNodeIdsMap, selectedNodes, topOfSelection, topOfSelectionParent, topOfSelectionIndex, lowestSubtree, lowestSubtreeHigh, notSelectedSubtreeTopOriginalTree, notSelectedSubtreeTopArguments, selectedSubtreeTopArguments, selectedSubtreeTopArgumentsInSelectionOrder) {
-    return new SubstitutionSelectionData(originalExpression === void 0 ? this.originalExpression : originalExpression, selectedNodeIds === void 0 ? this.selectedNodeIds : selectedNodeIds, compiledConfiguration === void 0 ? this.compiledConfiguration : compiledConfiguration, expressionToTransform === void 0 ? this.expressionToTransform : expressionToTransform, isMoving === void 0 ? this.isMoving : isMoving, selectedNodeIdsMap === void 0 ? this.selectedNodeIdsMap : selectedNodeIdsMap, selectedNodes === void 0 ? this.selectedNodes : selectedNodes, topOfSelection === void 0 ? this.topOfSelection : topOfSelection, topOfSelectionParent === void 0 ? this.topOfSelectionParent : topOfSelectionParent, topOfSelectionIndex === void 0 ? this.topOfSelectionIndex : topOfSelectionIndex, lowestSubtree === void 0 ? this.lowestSubtree : lowestSubtree, lowestSubtreeHigh === void 0 ? this.lowestSubtreeHigh : lowestSubtreeHigh, notSelectedSubtreeTopOriginalTree === void 0 ? this.notSelectedSubtreeTopOriginalTree : notSelectedSubtreeTopOriginalTree, notSelectedSubtreeTopArguments === void 0 ? this.notSelectedSubtreeTopArguments : notSelectedSubtreeTopArguments, selectedSubtreeTopArguments === void 0 ? this.selectedSubtreeTopArguments : selectedSubtreeTopArguments, selectedSubtreeTopArgumentsInSelectionOrder === void 0 ? this.selectedSubtreeTopArgumentsInSelectionOrder : selectedSubtreeTopArgumentsInSelectionOrder);
+  SubstitutionSelectionData.prototype.component17 = function () {
+    return this.nestedNodesInSelection;
+  };
+  SubstitutionSelectionData.prototype.copy_mmvv2t$ = function (originalExpression, selectedNodeIds, compiledConfiguration, expressionToTransform, isMoving, selectedNodeIdsMap, selectedNodes, topOfSelection, topOfSelectionParent, topOfSelectionIndex, lowestSubtree, lowestSubtreeHigh, notSelectedSubtreeTopOriginalTree, notSelectedSubtreeTopArguments, selectedSubtreeTopArguments, selectedSubtreeTopArgumentsInSelectionOrder, nestedNodesInSelection) {
+    return new SubstitutionSelectionData(originalExpression === void 0 ? this.originalExpression : originalExpression, selectedNodeIds === void 0 ? this.selectedNodeIds : selectedNodeIds, compiledConfiguration === void 0 ? this.compiledConfiguration : compiledConfiguration, expressionToTransform === void 0 ? this.expressionToTransform : expressionToTransform, isMoving === void 0 ? this.isMoving : isMoving, selectedNodeIdsMap === void 0 ? this.selectedNodeIdsMap : selectedNodeIdsMap, selectedNodes === void 0 ? this.selectedNodes : selectedNodes, topOfSelection === void 0 ? this.topOfSelection : topOfSelection, topOfSelectionParent === void 0 ? this.topOfSelectionParent : topOfSelectionParent, topOfSelectionIndex === void 0 ? this.topOfSelectionIndex : topOfSelectionIndex, lowestSubtree === void 0 ? this.lowestSubtree : lowestSubtree, lowestSubtreeHigh === void 0 ? this.lowestSubtreeHigh : lowestSubtreeHigh, notSelectedSubtreeTopOriginalTree === void 0 ? this.notSelectedSubtreeTopOriginalTree : notSelectedSubtreeTopOriginalTree, notSelectedSubtreeTopArguments === void 0 ? this.notSelectedSubtreeTopArguments : notSelectedSubtreeTopArguments, selectedSubtreeTopArguments === void 0 ? this.selectedSubtreeTopArguments : selectedSubtreeTopArguments, selectedSubtreeTopArgumentsInSelectionOrder === void 0 ? this.selectedSubtreeTopArgumentsInSelectionOrder : selectedSubtreeTopArgumentsInSelectionOrder, nestedNodesInSelection === void 0 ? this.nestedNodesInSelection : nestedNodesInSelection);
   };
   SubstitutionSelectionData.prototype.toString = function () {
-    return 'SubstitutionSelectionData(originalExpression=' + Kotlin.toString(this.originalExpression) + (', selectedNodeIds=' + Kotlin.toString(this.selectedNodeIds)) + (', compiledConfiguration=' + Kotlin.toString(this.compiledConfiguration)) + (', expressionToTransform=' + Kotlin.toString(this.expressionToTransform)) + (', isMoving=' + Kotlin.toString(this.isMoving)) + (', selectedNodeIdsMap=' + Kotlin.toString(this.selectedNodeIdsMap)) + (', selectedNodes=' + Kotlin.toString(this.selectedNodes)) + (', topOfSelection=' + Kotlin.toString(this.topOfSelection)) + (', topOfSelectionParent=' + Kotlin.toString(this.topOfSelectionParent)) + (', topOfSelectionIndex=' + Kotlin.toString(this.topOfSelectionIndex)) + (', lowestSubtree=' + Kotlin.toString(this.lowestSubtree)) + (', lowestSubtreeHigh=' + Kotlin.toString(this.lowestSubtreeHigh)) + (', notSelectedSubtreeTopOriginalTree=' + Kotlin.toString(this.notSelectedSubtreeTopOriginalTree)) + (', notSelectedSubtreeTopArguments=' + Kotlin.toString(this.notSelectedSubtreeTopArguments)) + (', selectedSubtreeTopArguments=' + Kotlin.toString(this.selectedSubtreeTopArguments)) + (', selectedSubtreeTopArgumentsInSelectionOrder=' + Kotlin.toString(this.selectedSubtreeTopArgumentsInSelectionOrder)) + ')';
+    return 'SubstitutionSelectionData(originalExpression=' + Kotlin.toString(this.originalExpression) + (', selectedNodeIds=' + Kotlin.toString(this.selectedNodeIds)) + (', compiledConfiguration=' + Kotlin.toString(this.compiledConfiguration)) + (', expressionToTransform=' + Kotlin.toString(this.expressionToTransform)) + (', isMoving=' + Kotlin.toString(this.isMoving)) + (', selectedNodeIdsMap=' + Kotlin.toString(this.selectedNodeIdsMap)) + (', selectedNodes=' + Kotlin.toString(this.selectedNodes)) + (', topOfSelection=' + Kotlin.toString(this.topOfSelection)) + (', topOfSelectionParent=' + Kotlin.toString(this.topOfSelectionParent)) + (', topOfSelectionIndex=' + Kotlin.toString(this.topOfSelectionIndex)) + (', lowestSubtree=' + Kotlin.toString(this.lowestSubtree)) + (', lowestSubtreeHigh=' + Kotlin.toString(this.lowestSubtreeHigh)) + (', notSelectedSubtreeTopOriginalTree=' + Kotlin.toString(this.notSelectedSubtreeTopOriginalTree)) + (', notSelectedSubtreeTopArguments=' + Kotlin.toString(this.notSelectedSubtreeTopArguments)) + (', selectedSubtreeTopArguments=' + Kotlin.toString(this.selectedSubtreeTopArguments)) + (', selectedSubtreeTopArgumentsInSelectionOrder=' + Kotlin.toString(this.selectedSubtreeTopArgumentsInSelectionOrder)) + (', nestedNodesInSelection=' + Kotlin.toString(this.nestedNodesInSelection)) + ')';
   };
   SubstitutionSelectionData.prototype.hashCode = function () {
     var result = 0;
@@ -8190,10 +8409,11 @@ if (typeof kotlin === 'undefined') {
     result = result * 31 + Kotlin.hashCode(this.notSelectedSubtreeTopArguments) | 0;
     result = result * 31 + Kotlin.hashCode(this.selectedSubtreeTopArguments) | 0;
     result = result * 31 + Kotlin.hashCode(this.selectedSubtreeTopArgumentsInSelectionOrder) | 0;
+    result = result * 31 + Kotlin.hashCode(this.nestedNodesInSelection) | 0;
     return result;
   };
   SubstitutionSelectionData.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.originalExpression, other.originalExpression) && Kotlin.equals(this.selectedNodeIds, other.selectedNodeIds) && Kotlin.equals(this.compiledConfiguration, other.compiledConfiguration) && Kotlin.equals(this.expressionToTransform, other.expressionToTransform) && Kotlin.equals(this.isMoving, other.isMoving) && Kotlin.equals(this.selectedNodeIdsMap, other.selectedNodeIdsMap) && Kotlin.equals(this.selectedNodes, other.selectedNodes) && Kotlin.equals(this.topOfSelection, other.topOfSelection) && Kotlin.equals(this.topOfSelectionParent, other.topOfSelectionParent) && Kotlin.equals(this.topOfSelectionIndex, other.topOfSelectionIndex) && Kotlin.equals(this.lowestSubtree, other.lowestSubtree) && Kotlin.equals(this.lowestSubtreeHigh, other.lowestSubtreeHigh) && Kotlin.equals(this.notSelectedSubtreeTopOriginalTree, other.notSelectedSubtreeTopOriginalTree) && Kotlin.equals(this.notSelectedSubtreeTopArguments, other.notSelectedSubtreeTopArguments) && Kotlin.equals(this.selectedSubtreeTopArguments, other.selectedSubtreeTopArguments) && Kotlin.equals(this.selectedSubtreeTopArgumentsInSelectionOrder, other.selectedSubtreeTopArgumentsInSelectionOrder)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.originalExpression, other.originalExpression) && Kotlin.equals(this.selectedNodeIds, other.selectedNodeIds) && Kotlin.equals(this.compiledConfiguration, other.compiledConfiguration) && Kotlin.equals(this.expressionToTransform, other.expressionToTransform) && Kotlin.equals(this.isMoving, other.isMoving) && Kotlin.equals(this.selectedNodeIdsMap, other.selectedNodeIdsMap) && Kotlin.equals(this.selectedNodes, other.selectedNodes) && Kotlin.equals(this.topOfSelection, other.topOfSelection) && Kotlin.equals(this.topOfSelectionParent, other.topOfSelectionParent) && Kotlin.equals(this.topOfSelectionIndex, other.topOfSelectionIndex) && Kotlin.equals(this.lowestSubtree, other.lowestSubtree) && Kotlin.equals(this.lowestSubtreeHigh, other.lowestSubtreeHigh) && Kotlin.equals(this.notSelectedSubtreeTopOriginalTree, other.notSelectedSubtreeTopOriginalTree) && Kotlin.equals(this.notSelectedSubtreeTopArguments, other.notSelectedSubtreeTopArguments) && Kotlin.equals(this.selectedSubtreeTopArguments, other.selectedSubtreeTopArguments) && Kotlin.equals(this.selectedSubtreeTopArgumentsInSelectionOrder, other.selectedSubtreeTopArgumentsInSelectionOrder) && Kotlin.equals(this.nestedNodesInSelection, other.nestedNodesInSelection)))));
   };
   function SubstitutionApplication(expressionSubstitution, originalExpression, originalExpressionChangingPart, resultExpression, resultExpressionChangingPart, substitutionType, priority) {
     this.expressionSubstitution = expressionSubstitution;
@@ -8204,6 +8424,9 @@ if (typeof kotlin === 'undefined') {
     this.substitutionType = substitutionType;
     this.priority = priority;
   }
+  SubstitutionApplication.prototype.toString = function () {
+    return '' + ("result: '" + this.resultExpression.toPlainTextView_odr8sm$() + "'" + '\n') + ("expressionSubstitution.left: '" + this.expressionSubstitution.left.toString() + "'" + '\n') + ("expressionSubstitution.right: '" + this.expressionSubstitution.right.toString() + "'" + '\n') + ("originalExpression: '" + this.originalExpression.toString() + "'" + '\n') + ("originalExpressionChangingPart: '" + this.originalExpressionChangingPart.toString() + "'" + '\n') + ("resultExpression: '" + this.resultExpression.toString() + "'" + '\n') + ("resultExpressionChangingPart: '" + this.resultExpressionChangingPart.toString() + "'" + '\n') + ("substitutionType: '" + this.substitutionType + "'" + '\n') + ("priority: '" + this.priority + "'");
+  };
   SubstitutionApplication.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'SubstitutionApplication',
@@ -8233,9 +8456,6 @@ if (typeof kotlin === 'undefined') {
   SubstitutionApplication.prototype.copy_p6ff07$ = function (expressionSubstitution, originalExpression, originalExpressionChangingPart, resultExpression, resultExpressionChangingPart, substitutionType, priority) {
     return new SubstitutionApplication(expressionSubstitution === void 0 ? this.expressionSubstitution : expressionSubstitution, originalExpression === void 0 ? this.originalExpression : originalExpression, originalExpressionChangingPart === void 0 ? this.originalExpressionChangingPart : originalExpressionChangingPart, resultExpression === void 0 ? this.resultExpression : resultExpression, resultExpressionChangingPart === void 0 ? this.resultExpressionChangingPart : resultExpressionChangingPart, substitutionType === void 0 ? this.substitutionType : substitutionType, priority === void 0 ? this.priority : priority);
   };
-  SubstitutionApplication.prototype.toString = function () {
-    return 'SubstitutionApplication(expressionSubstitution=' + Kotlin.toString(this.expressionSubstitution) + (', originalExpression=' + Kotlin.toString(this.originalExpression)) + (', originalExpressionChangingPart=' + Kotlin.toString(this.originalExpressionChangingPart)) + (', resultExpression=' + Kotlin.toString(this.resultExpression)) + (', resultExpressionChangingPart=' + Kotlin.toString(this.resultExpressionChangingPart)) + (', substitutionType=' + Kotlin.toString(this.substitutionType)) + (', priority=' + Kotlin.toString(this.priority)) + ')';
-  };
   SubstitutionApplication.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.expressionSubstitution) | 0;
@@ -8251,23 +8471,29 @@ if (typeof kotlin === 'undefined') {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.expressionSubstitution, other.expressionSubstitution) && Kotlin.equals(this.originalExpression, other.originalExpression) && Kotlin.equals(this.originalExpressionChangingPart, other.originalExpressionChangingPart) && Kotlin.equals(this.resultExpression, other.resultExpression) && Kotlin.equals(this.resultExpressionChangingPart, other.resultExpressionChangingPart) && Kotlin.equals(this.substitutionType, other.substitutionType) && Kotlin.equals(this.priority, other.priority)))));
   };
   function simpleCommutativeOperationSelectionHandling(substitutionSelectionData) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
-    if (substitutionSelectionData.selectedNodeIds.size > 1) {
-      tmp$_2 = (tmp$_1 = (tmp$_0 = (tmp$ = substitutionSelectionData.lowestSubtreeHigh) != null ? tmp$.functionStringDefinition : null) != null ? tmp$_0.function : null) != null ? tmp$_1.isCommutativeWithNullWeight : null;
-      if (tmp$_2 == null) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    if (substitutionSelectionData.selectedNodeIds.length > 1 && substitutionSelectionData.lowestSubtreeHigh != null) {
+      tmp$_1 = (tmp$_0 = (tmp$ = ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).functionStringDefinition) != null ? tmp$.function : null) != null ? tmp$_0.isCommutativeWithNullWeight : null;
+      if (tmp$_1 == null) {
         return;
-      }if (!tmp$_2)
-        if (substitutionSelectionData.selectedNodeIds.size === 2) {
-          tmp$_6 = (tmp$_5 = (tmp$_4 = (tmp$_3 = substitutionSelectionData.lowestSubtreeHigh) != null ? tmp$_3.functionStringDefinition : null) != null ? tmp$_4.function : null) != null ? tmp$_5.mainFunctionIsCommutativeWithNullWeight : null;
-          if (tmp$_6 == null) {
-            return;
-          }} else
-          tmp$_6 = false;
-      else
-        tmp$_6 = true;
+      }var tmp$_3 = tmp$_1;
+      if (!tmp$_3) {
+        var tmp$_4 = substitutionSelectionData.selectedNodeIds.length === 2;
+        if (tmp$_4) {
+          var $receiver = ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).getChildNodesOnDepthOrWhileOperation_okkhzr$(2, listOf(['*', '/']));
+          var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+          var tmp$_5;
+          tmp$_5 = $receiver.iterator();
+          while (tmp$_5.hasNext()) {
+            var item = tmp$_5.next();
+            destination.add_11rb$(item.nodeId);
+          }
+          tmp$_4 = destination.containsAll_brywnq$(toList(substitutionSelectionData.selectedNodeIds));
+        }tmp$_3 = (tmp$_4 && equals(ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).value, '/'));
+      }tmp$_2 = tmp$_3;
     } else
-      tmp$_6 = false;
-    if (tmp$_6) {
+      tmp$_2 = false;
+    if (tmp$_2) {
       var topOperation = ensureNotNull(ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).functionStringDefinition).function.notObligateMainFunction();
       substitutionSelectionData.notSelectedSubtreeTopOriginalTree = cloneWithoutSelectedNodes(ensureNotNull(substitutionSelectionData.topOfSelection), ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).getContainedChildOperationNodeIds_61zpoe$(topOperation));
       substitutionSelectionData.notSelectedSubtreeTopArguments = topOperationNode(topOperation, ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).value, substitutionSelectionData);
@@ -8275,26 +8501,26 @@ if (typeof kotlin === 'undefined') {
         ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).addChild_6718cy$(new ExpressionNode(NodeType$EMPTY_getInstance(), 'place_for_result'));
       }substitutionSelectionData.selectedSubtreeTopArguments = topOperationNode(topOperation, ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).value, substitutionSelectionData);
       substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder = topOperationNode(topOperation, ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).value, substitutionSelectionData);
-      var tmp$_7 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder);
-      var array = Array_0(substitutionSelectionData.selectedNodeIds.size);
-      var tmp$_8;
-      tmp$_8 = array.length - 1 | 0;
-      for (var i = 0; i <= tmp$_8; i++) {
+      var tmp$_6 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder);
+      var array = Array_0(substitutionSelectionData.selectedNodeIds.length);
+      var tmp$_7;
+      tmp$_7 = array.length - 1 | 0;
+      for (var i = 0; i <= tmp$_7; i++) {
         array[i] = new ExpressionNode(NodeType$EMPTY_getInstance(), '');
       }
-      tmp$_7.children = toMutableList_0(array);
+      tmp$_6.children = toMutableList_0(array);
       simpleCommutativeOperationSelectionHandlingRecursivePart(ensureNotNull(substitutionSelectionData.lowestSubtreeHigh), substitutionSelectionData, topOperation);
-      var tmp$_9 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder);
-      var $receiver = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children;
-      var destination = ArrayList_init();
-      var tmp$_10;
-      tmp$_10 = $receiver.iterator();
-      while (tmp$_10.hasNext()) {
-        var element = tmp$_10.next();
+      var tmp$_8 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder);
+      var $receiver_0 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children;
+      var destination_0 = ArrayList_init();
+      var tmp$_9;
+      tmp$_9 = $receiver_0.iterator();
+      while (tmp$_9.hasNext()) {
+        var element = tmp$_9.next();
         if (element.nodeType !== NodeType$EMPTY_getInstance())
-          destination.add_11rb$(element);
+          destination_0.add_11rb$(element);
       }
-      tmp$_9.children = toMutableList(destination);
+      tmp$_8.children = toMutableList(destination_0);
     } else {
       substitutionSelectionData.selectedSubtreeTopArguments = substitutionSelectionData.topOfSelection;
       while (ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).value.length === 0 && ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).children.size === 1) {
@@ -8428,34 +8654,75 @@ if (typeof kotlin === 'undefined') {
     substitutionSelectionData.topOfSelection = findLowestSubtreeTopOfNodes(substitutionSelectionData.expressionToTransform, substitutionSelectionData.selectedNodes);
     substitutionSelectionData.topOfSelectionParent = (tmp$ = substitutionSelectionData.topOfSelection) != null ? tmp$.parent : null;
     substitutionSelectionData.topOfSelectionIndex = indexOf(ensureNotNull(substitutionSelectionData.topOfSelectionParent).children, substitutionSelectionData.topOfSelection);
-    substitutionSelectionData.lowestSubtree = findLowestSubtreeWithNodes(substitutionSelectionData.expressionToTransform, substitutionSelectionData.selectedNodes, false);
-    substitutionSelectionData.lowestSubtreeHigh = findLowestSubtreeWithNodes(substitutionSelectionData.expressionToTransform, substitutionSelectionData.selectedNodes, true);
+    var nestedNodesInSelection = ArrayList_init();
+    substitutionSelectionData.lowestSubtree = findLowestSubtreeWithNodes(substitutionSelectionData.expressionToTransform, substitutionSelectionData.selectedNodes, false, nestedNodesInSelection);
+    if (nestedNodesInSelection.contains_11rb$(true)) {
+      substitutionSelectionData.nestedNodesInSelection = true;
+    }substitutionSelectionData.lowestSubtreeHigh = findLowestSubtreeWithNodes(substitutionSelectionData.expressionToTransform, substitutionSelectionData.selectedNodes, true);
     simpleCommutativeOperationSelectionHandling(substitutionSelectionData);
   }
-  function findConfiguredSubstitutionsApplications(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
+  function findConfiguredSubstitutionsApplications(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, withExtendingSubstitutions) {
     if (simplifyNotSelectedTopArguments === void 0)
       simplifyNotSelectedTopArguments = false;
     if (withReadyApplicationResult === void 0)
       withReadyApplicationResult = false;
     if (fastestAppropriateVersion === void 0)
       fastestAppropriateVersion = false;
+    if (withExtendingSubstitutions === void 0)
+      withExtendingSubstitutions = true;
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     var result = ArrayList_init();
     tmp$ = substitutionSelectionData.compiledConfiguration.compiledExpressionTreeTransformationRules.iterator();
     while (tmp$.hasNext()) {
       var transformation = tmp$.next();
-      tmp$_0 = checkLeftCondition(substitutionSelectionData, transformation, fastestAppropriateVersion);
+      if (!withExtendingSubstitutions && transformation.isExtending) {
+        continue;
+      }tmp$_0 = checkLeftCondition(substitutionSelectionData, transformation, fastestAppropriateVersion);
       if (tmp$_0 == null) {
         continue;
       }var substitutionInstance = tmp$_0;
       if (substitutionInstance.isApplicable) {
-        tmp$_1 = transformation.applyRight_miu9dc$(substitutionInstance);
+        tmp$_1 = transformation.applyRight_7o4uji$(substitutionInstance);
         if (tmp$_1 == null) {
           continue;
         }var applicationToSelectedPartResult = tmp$_1;
-        addApplicationToResults(withReadyApplicationResult, substitutionSelectionData, simplifyNotSelectedTopArguments, applicationToSelectedPartResult, result, transformation, (tmp$_2 = transformation.type) != null ? tmp$_2 : 'ConfiguredSubstitution', (tmp$_3 = transformation.priority) != null ? tmp$_3 : 50);
+        addApplicationToResults(withReadyApplicationResult, substitutionSelectionData, simplifyNotSelectedTopArguments, applicationToSelectedPartResult, result, transformation, (tmp$_2 = transformation.nameEn) != null ? tmp$_2 : 'ConfiguredSubstitution', (tmp$_3 = transformation.priority) != null ? tmp$_3 : 50);
       }}
     return result;
+  }
+  function generateParentBracketsExpansionSubstitution(substitutionSelectionData) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    var result = ArrayList_init();
+    if (substitutionSelectionData.selectedNodes.size === 1 && equals((tmp$ = firstOrNull_0(substitutionSelectionData.selectedNodes)) != null ? tmp$.value : null, '+') && equals((tmp$_1 = (tmp$_0 = firstOrNull_0(substitutionSelectionData.selectedNodes)) != null ? tmp$_0.parent : null) != null ? tmp$_1.value : null, '+')) {
+      var inBracketsNode = first(substitutionSelectionData.selectedNodes);
+      var inBracketsNodeParent = ensureNotNull(inBracketsNode.parent);
+      var inBracketsNodeIndex = inBracketsNodeParent.children.indexOf_11rb$(inBracketsNode);
+      var newParent = inBracketsNodeParent.copy_uq8prj$();
+      for (var i = 0; i < inBracketsNodeIndex; i++) {
+        newParent.addChild_6718cy$(inBracketsNodeParent.children.get_za3lpa$(i).clone());
+      }
+      tmp$_2 = inBracketsNode.children.iterator();
+      while (tmp$_2.hasNext()) {
+        var child = tmp$_2.next();
+        newParent.addChild_6718cy$(child.clone());
+      }
+      tmp$_3 = get_lastIndex(inBracketsNodeParent.children);
+      for (var i_0 = inBracketsNodeIndex + 1 | 0; i_0 <= tmp$_3; i_0++) {
+        newParent.addChild_6718cy$(inBracketsNodeParent.children.get_za3lpa$(i_0).clone());
+      }
+      tmp$_4 = inBracketsNodeParent.parent;
+      if (tmp$_4 == null) {
+        return result;
+      }var parentOfParent = tmp$_4;
+      var parentNodeIndex = parentOfParent.children.indexOf_11rb$(inBracketsNodeParent);
+      parentOfParent.setChildOnPosition_tvfpvg$(newParent, parentNodeIndex);
+      var $receiver = substitutionSelectionData.expressionToTransform.clone();
+      normalizeExpressionToUsualForm($receiver, substitutionSelectionData.compiledConfiguration);
+      var resultExpression = $receiver;
+      parentOfParent.setChildOnPosition_tvfpvg$(inBracketsNodeParent, parentNodeIndex);
+      var swapSubstitution = new ExpressionSubstitution(addRootNodeToExpression(inBracketsNodeParent.clone()), addRootNodeToExpression(newParent));
+      result.add_11rb$(new SubstitutionApplication(swapSubstitution, substitutionSelectionData.originalExpression, inBracketsNodeParent.clone(), resultExpression, newParent, 'ParentBracketsExpansion', 1));
+    }return result;
   }
   function generatePermutationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
     if (simplifyNotSelectedTopArguments === void 0)
@@ -8464,9 +8731,9 @@ if (typeof kotlin === 'undefined') {
       withReadyApplicationResult = false;
     if (fastestAppropriateVersion === void 0)
       fastestAppropriateVersion = false;
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5;
     var result = ArrayList_init();
-    if (substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder != null && ((tmp$_1 = (tmp$_0 = (tmp$ = substitutionSelectionData.selectedSubtreeTopArguments) != null ? tmp$.functionStringDefinition : null) != null ? tmp$_0.function : null) != null ? tmp$_1.isCommutativeWithNullWeight : null) === true) {
+    if (substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder != null && ((tmp$_1 = (tmp$_0 = (tmp$ = substitutionSelectionData.selectedSubtreeTopArguments) != null ? tmp$.functionStringDefinition : null) != null ? tmp$_0.function : null) != null ? tmp$_1.isCommutativeWithNullWeight : null) === true && !substitutionSelectionData.nestedNodesInSelection) {
       var userSelectedDirectlyChildrenOfCommutativeNode = ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).allParentsMainFunctionIs_61zpoe$(ensureNotNull(ensureNotNull(substitutionSelectionData.lowestSubtreeHigh).functionStringDefinition).function.mainFunction);
       var swapSubstitutionSuggested = false;
       if (userSelectedDirectlyChildrenOfCommutativeNode) {
@@ -8487,30 +8754,68 @@ if (typeof kotlin === 'undefined') {
           firstNodeParent.setChildOnPosition_tvfpvg$(secondNode, firstNodeIndex);
           secondNodeParent.setChildOnPosition_tvfpvg$(firstNode, secondNodeIndex);
           var swapResult = ensureNotNull(substitutionSelectionData.topOfSelection).clone();
-          ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(ensureNotNull(substitutionSelectionData.topOfSelection).clone(), substitutionSelectionData.topOfSelectionIndex);
           var $receiver = substitutionSelectionData.expressionToTransform.clone();
-          normalizeExpressionToUsualForm($receiver);
+          normalizeExpressionToUsualForm($receiver, substitutionSelectionData.compiledConfiguration);
           var resultExpression = $receiver;
           firstNodeParent.setChildOnPosition_tvfpvg$(firstNode, firstNodeIndex);
           secondNodeParent.setChildOnPosition_tvfpvg$(secondNode, secondNodeIndex);
           var swapSubstitution = new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.topOfSelection).clone()), addRootNodeToExpression(swapResult));
           result.add_11rb$(new SubstitutionApplication(swapSubstitution, substitutionSelectionData.originalExpression, ensureNotNull(substitutionSelectionData.topOfSelection).clone(), resultExpression, swapResult, 'Swap', 10));
           swapSubstitutionSuggested = true;
-        }}if (substitutionSelectionData.notSelectedSubtreeTopArguments != null && ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).children.size > 0 || (!swapSubstitutionSuggested && !equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString()))) {
-        addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder), result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).clone())), 'Extraction', !equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString()) ? 30 : 80, true);
-        if (ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.size > 1 && userSelectedDirectlyChildrenOfCommutativeNode) {
+        }}if (substitutionSelectionData.notSelectedSubtreeTopArguments != null && ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).children.size > 1 || (!swapSubstitutionSuggested && !equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString()))) {
+        if (ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).children.size > 1) {
           var $receiver_0 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).copy_uq8prj$();
           $receiver_0.addChild_6718cy$(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).clone());
-          var selectedPartTransformationResultInSelectedOrderInBrackets = $receiver_0;
-          addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, selectedPartTransformationResultInSelectedOrderInBrackets, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(selectedPartTransformationResultInSelectedOrderInBrackets)), 'Extraction', 90);
-          if (!equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString()) && (substitutionSelectionData.notSelectedSubtreeTopArguments != null && ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).children.size > 0) && !equals(ensureNotNull(substitutionSelectionData.topOfSelection).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString())) {
-            addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments), result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone())), 'Extraction', 80, true);
+          tmp$_4 = $receiver_0;
+        } else {
+          tmp$_4 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder);
+        }
+        var selectedPartTransformationResultInSelectedOrderInBrackets = tmp$_4;
+        addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, selectedPartTransformationResultInSelectedOrderInBrackets, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(selectedPartTransformationResultInSelectedOrderInBrackets)), 'SelectedOrderExtraction', 90);
+        if (!equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString()) && (substitutionSelectionData.notSelectedSubtreeTopArguments != null && ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).children.size > 0) && !equals(ensureNotNull(substitutionSelectionData.topOfSelection).toString(), ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).toString())) {
+          if (ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments).children.size > 1) {
             var $receiver_1 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).copy_uq8prj$();
             $receiver_1.addChild_6718cy$(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone());
-            var selectedPartTransformationResultInOriginalOrderInBrackets = $receiver_1;
-            addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, selectedPartTransformationResultInOriginalOrderInBrackets, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(selectedPartTransformationResultInOriginalOrderInBrackets)), 'Extraction', 90);
-          }}}}return result;
+            tmp$_5 = $receiver_1;
+          } else {
+            tmp$_5 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments);
+          }
+          var selectedPartTransformationResultInOriginalOrderInBrackets = tmp$_5;
+          addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, selectedPartTransformationResultInOriginalOrderInBrackets, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(selectedPartTransformationResultInOriginalOrderInBrackets)), 'OriginalOrderExtraction', 90);
+        }}}return result;
   }
+  function ExpressionStrictureIdentifierCounter(expressionStrictureIdentifier, count) {
+    if (count === void 0)
+      count = 1;
+    this.expressionStrictureIdentifier = expressionStrictureIdentifier;
+    this.count = count;
+  }
+  ExpressionStrictureIdentifierCounter.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ExpressionStrictureIdentifierCounter',
+    interfaces: []
+  };
+  ExpressionStrictureIdentifierCounter.prototype.component1 = function () {
+    return this.expressionStrictureIdentifier;
+  };
+  ExpressionStrictureIdentifierCounter.prototype.component2 = function () {
+    return this.count;
+  };
+  ExpressionStrictureIdentifierCounter.prototype.copy_d7ey3a$ = function (expressionStrictureIdentifier, count) {
+    return new ExpressionStrictureIdentifierCounter(expressionStrictureIdentifier === void 0 ? this.expressionStrictureIdentifier : expressionStrictureIdentifier, count === void 0 ? this.count : count);
+  };
+  ExpressionStrictureIdentifierCounter.prototype.toString = function () {
+    return 'ExpressionStrictureIdentifierCounter(expressionStrictureIdentifier=' + Kotlin.toString(this.expressionStrictureIdentifier) + (', count=' + Kotlin.toString(this.count)) + ')';
+  };
+  ExpressionStrictureIdentifierCounter.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.expressionStrictureIdentifier) | 0;
+    result = result * 31 + Kotlin.hashCode(this.count) | 0;
+    return result;
+  };
+  ExpressionStrictureIdentifierCounter.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.expressionStrictureIdentifier, other.expressionStrictureIdentifier) && Kotlin.equals(this.count, other.count)))));
+  };
   function generateReduceArithmeticSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
     if (simplifyNotSelectedTopArguments === void 0)
       simplifyNotSelectedTopArguments = false;
@@ -8518,71 +8823,565 @@ if (typeof kotlin === 'undefined') {
       withReadyApplicationResult = false;
     if (fastestAppropriateVersion === void 0)
       fastestAppropriateVersion = false;
-    var tmp$, tmp$_0;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     var result = ArrayList_init();
     if (substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder != null && ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.size > 1) {
       ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).fillStructureStringIdentifiers_t6ztn0$();
       if (equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).value, '+')) {
-        var possibleMultipliersSet = getMultipliersFromNode(first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children));
-        tmp$ = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
-        for (var i = 1; i <= tmp$; i++) {
-          var childMultipliers = getMultipliersFromNode(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i));
-          possibleMultipliersSet = toList(intersect(possibleMultipliersSet, childMultipliers));
-        }
-        if (!possibleMultipliersSet.isEmpty()) {
-          var prodNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('*', -1);
+        var possibleMultipliersSet = tryToAddMonomReduceTransformation(substitutionSelectionData, false, simplifyNotSelectedTopArguments, result);
+        tryToAddMonomReduceTransformation(substitutionSelectionData, true, simplifyNotSelectedTopArguments, result, possibleMultipliersSet);
+      }if (equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).value, '+')) {
+        var possibleDenominator = getOperandsFrom2ArgsNode(first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children), '/', 1, new ExpressionNode(NodeType$EMPTY_getInstance(), ''));
+        if (ensureNotNull(possibleDenominator).nodeType !== NodeType$EMPTY_getInstance()) {
+          tmp$ = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
+          for (var i = 1; i <= tmp$; i++) {
+            if (!equals(possibleDenominator != null ? possibleDenominator.expressionStrictureIdentifier : null, getOperandsFrom2ArgsNode(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i), '/', 1, new ExpressionNode(NodeType$EMPTY_getInstance(), '')).expressionStrictureIdentifier)) {
+              possibleDenominator = null;
+              break;
+            }}
+          if (possibleDenominator != null) {
+            var degNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+            var prodNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('*', -1);
+            tmp$_0 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.iterator();
+            while (tmp$_0.hasNext()) {
+              var child = tmp$_0.next();
+              prodNode.addChild_6718cy$(getOperandsFrom2ArgsNode(child, '/', 0, null, substitutionSelectionData).clone());
+            }
+            degNode.addChild_6718cy$(prodNode);
+            degNode.addChild_6718cy$(possibleDenominator.clone());
+            addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, degNode, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(degNode)), 'ReduceArithmetic', 5);
+          }}}if (equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).value, '*')) {
+        var possibleDegree = getOperandsFrom2ArgsNode(first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children), '^', 0, null);
+        tmp$_1 = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
+        for (var i_0 = 1; i_0 <= tmp$_1; i_0++) {
+          if (!equals(possibleDegree != null ? possibleDegree.expressionStrictureIdentifier : null, getOperandsFrom2ArgsNode(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i_0), '^', 0, null).expressionStrictureIdentifier)) {
+            possibleDegree = null;
+            break;
+          }}
+        if (possibleDegree != null) {
+          var degNode_0 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+          degNode_0.addChild_6718cy$(possibleDegree.clone());
           var sumNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('+', -1);
-          handleAdditiveNodeAsReductionPart(substitutionSelectionData, first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children), possibleMultipliersSet, sumNode, prodNode);
-          tmp$_0 = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
-          for (var i_0 = 1; i_0 <= tmp$_0; i_0++) {
-            handleAdditiveNodeAsReductionPart(substitutionSelectionData, ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i_0), possibleMultipliersSet, sumNode, null);
+          tmp$_2 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.iterator();
+          while (tmp$_2.hasNext()) {
+            var child_0 = tmp$_2.next();
+            sumNode.addChild_6718cy$(getOperandsFrom2ArgsNode(child_0, '^', 1, new ExpressionNode(NodeType$VARIABLE_getInstance(), '1')).clone());
           }
-          prodNode.addChild_6718cy$(sumNode);
-          addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, prodNode, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(prodNode)), 'OpeningBrackets', 20);
-        }}}return result;
+          degNode_0.addChild_6718cy$(sumNode);
+          addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, degNode_0, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(degNode_0)), 'ReduceArithmetic', 5);
+        }}if (equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).value, '*')) {
+        var possibleDegree_0 = getOperandsFrom2ArgsNode(first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children), '^', 1, new ExpressionNode(NodeType$EMPTY_getInstance(), ''));
+        if (ensureNotNull(possibleDegree_0).nodeType !== NodeType$EMPTY_getInstance()) {
+          tmp$_3 = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
+          for (var i_1 = 1; i_1 <= tmp$_3; i_1++) {
+            if (!equals(possibleDegree_0 != null ? possibleDegree_0.expressionStrictureIdentifier : null, getOperandsFrom2ArgsNode(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i_1), '^', 1, new ExpressionNode(NodeType$EMPTY_getInstance(), '')).expressionStrictureIdentifier)) {
+              possibleDegree_0 = null;
+              break;
+            }}
+          if (possibleDegree_0 != null) {
+            var degNode_1 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+            var prodNode_0 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('*', -1);
+            tmp$_4 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.iterator();
+            while (tmp$_4.hasNext()) {
+              var child_1 = tmp$_4.next();
+              prodNode_0.addChild_6718cy$(getOperandsFrom2ArgsNode(child_1, '^', 0, null).clone());
+            }
+            degNode_1.addChild_6718cy$(prodNode_0);
+            degNode_1.addChild_6718cy$(possibleDegree_0.clone());
+            addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, degNode_1, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(degNode_1)), 'ReduceArithmetic', 5);
+          }}}}return result;
   }
-  function getMultipliersFromNode(expressionNode) {
-    if (equals(expressionNode.value, '-')) {
-      return getMultipliersFromNode(first(expressionNode.children));
-    } else if (equals(expressionNode.value, '*')) {
-      var $receiver = expressionNode.children;
-      var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
-      var tmp$;
-      tmp$ = $receiver.iterator();
-      while (tmp$.hasNext()) {
-        var item = tmp$.next();
-        destination.add_11rb$(ensureNotNull(item.expressionStrictureIdentifier));
+  function tryToAddMonomReduceTransformation(substitutionSelectionData, useExpanded, simplifyNotSelectedTopArguments, result, otherMultipliers) {
+    if (otherMultipliers === void 0)
+      otherMultipliers = emptyList();
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    var possibleMultipliersSet = getMultipliersFromNode(first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children), useExpanded);
+    tmp$ = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
+    for (var i = 1; i <= tmp$; i++) {
+      var childMultipliers = getMultipliersFromNode(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i), useExpanded);
+      tmp$_0 = possibleMultipliersSet.iterator();
+      loop_label: while (tmp$_0.hasNext()) {
+        var possibleMultiplier = tmp$_0.next();
+        var firstOrNull$result;
+        firstOrNull$break: do {
+          var tmp$_4;
+          tmp$_4 = childMultipliers.iterator();
+          while (tmp$_4.hasNext()) {
+            var element = tmp$_4.next();
+            var tmp$_5;
+            if ((tmp$_5 = element.expressionStrictureIdentifier) != null ? tmp$_5.equals(possibleMultiplier.expressionStrictureIdentifier) : null) {
+              firstOrNull$result = element;
+              break firstOrNull$break;
+            }}
+          firstOrNull$result = null;
+        }
+         while (false);
+        var maxCount = (tmp$_2 = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.count : null) != null ? tmp$_2 : 0;
+        var a = possibleMultiplier.count;
+        possibleMultiplier.count = Math_0.min(a, maxCount);
       }
-      return destination;
-    } else {
-      return listOf_0(ensureNotNull(expressionNode.expressionStrictureIdentifier));
-    }
+      var $receiver = possibleMultipliersSet;
+      var destination = ArrayList_init();
+      var tmp$_6;
+      tmp$_6 = $receiver.iterator();
+      while (tmp$_6.hasNext()) {
+        var element_0 = tmp$_6.next();
+        if (element_0.count > 0)
+          destination.add_11rb$(element_0);
+      }
+      possibleMultipliersSet = destination;
+      if (possibleMultipliersSet.isEmpty()) {
+        break;
+      }}
+    if (!possibleMultipliersSet.isEmpty()) {
+      var $receiver_0 = possibleMultipliersSet;
+      var destination_0 = ArrayList_init();
+      var tmp$_7;
+      tmp$_7 = $receiver_0.iterator();
+      while (tmp$_7.hasNext()) {
+        var element_1 = tmp$_7.next();
+        var tmp$_8;
+        var originalOrderIdentifier = '(^(' + element_1.expressionStrictureIdentifier.originalOrderIdentifier + ';' + element_1.count + '))';
+        var commutativeSortedIdentifier = '(^(' + element_1.expressionStrictureIdentifier.commutativeSortedIdentifier + ';' + element_1.count + '))';
+        var selected = false;
+        tmp$_8 = substitutionSelectionData.selectedNodes.iterator();
+        while (tmp$_8.hasNext()) {
+          var node = tmp$_8.next();
+          var nodeIdentifier = node.toString();
+          if (contains(originalOrderIdentifier, nodeIdentifier) || contains(commutativeSortedIdentifier, nodeIdentifier)) {
+            selected = true;
+            break;
+          }}
+        if (selected)
+          destination_0.add_11rb$(element_1);
+      }
+      var onlySelectedMultipliers = destination_0;
+      if (!onlySelectedMultipliers.isEmpty()) {
+        possibleMultipliersSet = onlySelectedMultipliers;
+      }if (otherMultipliers.isEmpty() || !otherMultipliers.containsAll_brywnq$(possibleMultipliersSet)) {
+        var prodNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('*', -1);
+        var sumNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('+', -1);
+        handleAdditiveNodeAsReductionPart(substitutionSelectionData, first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children), possibleMultipliersSet, sumNode, prodNode, useExpanded);
+        tmp$_3 = get_lastIndex(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children);
+        for (var i_0 = 1; i_0 <= tmp$_3; i_0++) {
+          handleAdditiveNodeAsReductionPart(substitutionSelectionData, ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder).children.get_za3lpa$(i_0), possibleMultipliersSet, sumNode, null, useExpanded);
+        }
+        prodNode.addChild_6718cy$(sumNode);
+        addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, prodNode, result, new ExpressionSubstitution(addRootNodeToExpression(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).clone()), addRootNodeToExpression(prodNode)), 'ReduceArithmetic', 5);
+      }}return possibleMultipliersSet;
   }
-  function handleAdditiveNodeAsReductionPart(substitutionSelectionData, expressionNode, multipliers, sumNode, prodNode, hasMinus) {
+  function generateReduceFractionSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
+    if (simplifyNotSelectedTopArguments === void 0)
+      simplifyNotSelectedTopArguments = false;
+    if (withReadyApplicationResult === void 0)
+      withReadyApplicationResult = false;
+    if (fastestAppropriateVersion === void 0)
+      fastestAppropriateVersion = false;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    var result = ArrayList_init();
+    var tmp$_3 = equals(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).value, '/') && substitutionSelectionData.selectedNodeIds.length === 2;
+    if (tmp$_3) {
+      var $receiver = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).children;
+      var all$result;
+      all$break: do {
+        var tmp$_4;
+        if (Kotlin.isType($receiver, Collection) && $receiver.isEmpty()) {
+          all$result = true;
+          break all$break;
+        }tmp$_4 = $receiver.iterator();
+        while (tmp$_4.hasNext()) {
+          var element = tmp$_4.next();
+          if (!(element.children.size === 1)) {
+            all$result = false;
+            break all$break;
+          }}
+        all$result = true;
+      }
+       while (false);
+      tmp$_3 = all$result;
+    }if (tmp$_3) {
+      ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).fillStructureStringIdentifiers_t6ztn0$();
+      var numerator = first(first(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).children).children);
+      var denominator = first(last(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).children).children);
+      var rightBase = ensureNotNull(substitutionSelectionData.notSelectedSubtreeTopArguments);
+      if (equals(numerator.expressionStrictureIdentifier, denominator.expressionStrictureIdentifier)) {
+        var $receiver_0 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+        $receiver_0.addChild_6718cy$(numerator);
+        $receiver_0.addChild_6718cy$(denominator);
+        var expressionSubstitution = new ExpressionSubstitution(addRootNodeToExpression($receiver_0), addRootNodeToExpression(new ExpressionNode(NodeType$VARIABLE_getInstance(), '1')));
+        var applicationPlace = ensureNotNull(substitutionSelectionData.topOfSelection).clone();
+        var applicationResultInPlace = normalizeReduceFractionResult(rightBase.clone());
+        ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(applicationResultInPlace, substitutionSelectionData.topOfSelectionIndex);
+        var tmp$_5 = substitutionSelectionData.originalExpression;
+        var $receiver_1 = substitutionSelectionData.expressionToTransform.clone();
+        normalizeExpressionToUsualForm($receiver_1, substitutionSelectionData.compiledConfiguration);
+        result.add_11rb$(new SubstitutionApplication(expressionSubstitution, tmp$_5, applicationPlace, $receiver_1, applicationResultInPlace, 'ReduceFraction', 5));
+      } else if (numerator.isNumberValue() && denominator.isNumberValue()) {
+        tmp$ = toDoubleOrNull(numerator.value);
+        if (tmp$ == null) {
+          return result;
+        }var num = tmp$;
+        tmp$_0 = toDoubleOrNull(denominator.value);
+        if (tmp$_0 == null) {
+          return result;
+        }var denom = tmp$_0;
+        var numDivDenom = numberToInt(num / denom);
+        var denomDivNum = numberToInt(denom / num);
+        if (substitutionSelectionData.compiledConfiguration.factComporator.expressionComporator.baseOperationsDefinitions.additivelyEqual_lu1900$(num, denom * numDivDenom)) {
+          tmp$_1 = new ExpressionNode(NodeType$VARIABLE_getInstance(), numDivDenom.toString());
+        } else if (substitutionSelectionData.compiledConfiguration.factComporator.expressionComporator.baseOperationsDefinitions.additivelyEqual_lu1900$(denom, num * denomDivNum)) {
+          var $receiver_2 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+          $receiver_2.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), '1'));
+          $receiver_2.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), denomDivNum.toString()));
+          tmp$_1 = $receiver_2;
+        } else
+          tmp$_1 = null;
+        var resNode = tmp$_1;
+        if (resNode != null) {
+          var $receiver_3 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+          $receiver_3.addChild_6718cy$(numerator);
+          $receiver_3.addChild_6718cy$(denominator);
+          var expressionSubstitution_0 = new ExpressionSubstitution(addRootNodeToExpression($receiver_3), addRootNodeToExpression(resNode));
+          var applicationPlace_0 = ensureNotNull(substitutionSelectionData.topOfSelection).clone();
+          var $receiver_4 = rightBase.clone();
+          if (equals(resNode.value, '/')) {
+            last($receiver_4.children).addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), denomDivNum.toString()));
+          } else {
+            first($receiver_4.children).addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), numDivDenom.toString()));
+          }
+          var applicationResultInPlace_0 = normalizeReduceFractionResult($receiver_4);
+          ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(applicationResultInPlace_0, substitutionSelectionData.topOfSelectionIndex);
+          var tmp$_6 = substitutionSelectionData.originalExpression;
+          var $receiver_5 = substitutionSelectionData.expressionToTransform.clone();
+          normalizeExpressionToUsualForm($receiver_5, substitutionSelectionData.compiledConfiguration);
+          result.add_11rb$(new SubstitutionApplication(expressionSubstitution_0, tmp$_6, applicationPlace_0, $receiver_5, applicationResultInPlace_0, 'ReduceFraction', 5));
+        }} else if (equals(numerator.value, '^') && equals(denominator.value, '^') && numerator.children.size === 2 && denominator.children.size === 2 && equals(first(numerator.children).expressionStrictureIdentifier, first(denominator.children).expressionStrictureIdentifier)) {
+        var numPow = toDoubleOrNull(last(numerator.children).value);
+        var denomPow = toDoubleOrNull(last(denominator.children).value);
+        if (numPow != null && denomPow != null) {
+          if (numPow >= denomPow) {
+            var pow = numPow - denomPow;
+            if (substitutionSelectionData.compiledConfiguration.factComporator.expressionComporator.baseOperationsDefinitions.additivelyEqual_lu1900$(pow, 1.0)) {
+              tmp$_2 = first(numerator.children).clone();
+            } else {
+              var $receiver_6 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+              $receiver_6.addChild_6718cy$(first(numerator.children).clone());
+              $receiver_6.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), toShortString(pow)));
+              tmp$_2 = $receiver_6;
+            }
+          } else {
+            var pow_0 = denomPow - numPow;
+            var $receiver_7 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+            $receiver_7.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), '1'));
+            if (substitutionSelectionData.compiledConfiguration.factComporator.expressionComporator.baseOperationsDefinitions.additivelyEqual_lu1900$(pow_0, 1.0)) {
+              $receiver_7.addChild_6718cy$(first(numerator.children).clone());
+            } else {
+              var $receiver_8 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+              $receiver_8.addChild_6718cy$(first(numerator.children).clone());
+              $receiver_8.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), toShortString(pow_0)));
+              $receiver_7.addChild_6718cy$($receiver_8);
+            }
+            tmp$_2 = $receiver_7;
+          }
+          var resNode_0 = tmp$_2;
+          var $receiver_9 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+          $receiver_9.addChild_6718cy$(numerator);
+          $receiver_9.addChild_6718cy$(denominator);
+          var expressionSubstitution_1 = new ExpressionSubstitution(addRootNodeToExpression($receiver_9), addRootNodeToExpression(resNode_0));
+          var applicationPlace_1 = ensureNotNull(substitutionSelectionData.topOfSelection).clone();
+          var $receiver_10 = rightBase.clone();
+          if (equals(resNode_0.value, '/')) {
+            last($receiver_10.children).addChild_6718cy$(last(resNode_0.children).clone());
+          } else {
+            first($receiver_10.children).addChild_6718cy$(resNode_0.clone());
+          }
+          var applicationResultInPlace_1 = normalizeReduceFractionResult($receiver_10);
+          ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(applicationResultInPlace_1, substitutionSelectionData.topOfSelectionIndex);
+          var tmp$_7 = substitutionSelectionData.originalExpression;
+          var $receiver_11 = substitutionSelectionData.expressionToTransform.clone();
+          normalizeExpressionToUsualForm($receiver_11, substitutionSelectionData.compiledConfiguration);
+          result.add_11rb$(new SubstitutionApplication(expressionSubstitution_1, tmp$_7, applicationPlace_1, $receiver_11, applicationResultInPlace_1, 'ReduceFraction', 5));
+        } else {
+          var $receiver_12 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+          $receiver_12.addChild_6718cy$(first(numerator.children).clone());
+          var $receiver_13 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('+', -1);
+          $receiver_13.addChild_6718cy$(last(numerator.children));
+          var $receiver_14 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('-', -1);
+          $receiver_14.addChild_6718cy$(last(denominator.children));
+          $receiver_13.addChild_6718cy$($receiver_14);
+          $receiver_12.addChild_6718cy$($receiver_13);
+          var resNodeNumerator = $receiver_12;
+          var $receiver_15 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+          $receiver_15.addChild_6718cy$(numerator);
+          $receiver_15.addChild_6718cy$(denominator);
+          var expressionSubstitutionNumerator = new ExpressionSubstitution(addRootNodeToExpression($receiver_15), addRootNodeToExpression(resNodeNumerator));
+          var applicationPlaceNumerator = ensureNotNull(substitutionSelectionData.topOfSelection).clone();
+          var $receiver_16 = rightBase.clone();
+          first($receiver_16.children).addChild_6718cy$(resNodeNumerator.clone());
+          var applicationResultInPlaceNumerator = normalizeReduceFractionResult($receiver_16);
+          ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(applicationResultInPlaceNumerator, substitutionSelectionData.topOfSelectionIndex);
+          var tmp$_8 = substitutionSelectionData.originalExpression;
+          var $receiver_17 = substitutionSelectionData.expressionToTransform.clone();
+          normalizeExpressionToUsualForm($receiver_17, substitutionSelectionData.compiledConfiguration);
+          result.add_11rb$(new SubstitutionApplication(expressionSubstitutionNumerator, tmp$_8, applicationPlaceNumerator, $receiver_17, applicationResultInPlaceNumerator, 'ReduceFraction', 5));
+          var $receiver_18 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+          $receiver_18.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), '1'));
+          var $receiver_19 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+          $receiver_19.addChild_6718cy$(first(numerator.children).clone());
+          var $receiver_20 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('+', -1);
+          $receiver_20.addChild_6718cy$(last(denominator.children));
+          var $receiver_21 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('-', -1);
+          $receiver_21.addChild_6718cy$(last(numerator.children));
+          $receiver_20.addChild_6718cy$($receiver_21);
+          $receiver_19.addChild_6718cy$($receiver_20);
+          $receiver_18.addChild_6718cy$($receiver_19);
+          var resNodeDenominator = $receiver_18;
+          var $receiver_22 = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+          $receiver_22.addChild_6718cy$(numerator);
+          $receiver_22.addChild_6718cy$(denominator);
+          var expressionSubstitutionDenominator = new ExpressionSubstitution(addRootNodeToExpression($receiver_22), addRootNodeToExpression(resNodeDenominator));
+          var applicationPlaceDenominator = ensureNotNull(substitutionSelectionData.topOfSelection).clone();
+          var $receiver_23 = rightBase.clone();
+          last($receiver_23.children).addChild_6718cy$(last(resNodeDenominator.children).clone());
+          var applicationResultInPlaceDenominator = normalizeReduceFractionResult($receiver_23);
+          ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(applicationResultInPlaceDenominator, substitutionSelectionData.topOfSelectionIndex);
+          var tmp$_9 = substitutionSelectionData.originalExpression;
+          var $receiver_24 = substitutionSelectionData.expressionToTransform.clone();
+          normalizeExpressionToUsualForm($receiver_24, substitutionSelectionData.compiledConfiguration);
+          result.add_11rb$(new SubstitutionApplication(expressionSubstitutionDenominator, tmp$_9, applicationPlaceDenominator, $receiver_24, applicationResultInPlaceDenominator, 'ReduceFraction', 5));
+        }
+      }}return result;
+  }
+  function normalizeReduceFractionResult($receiver) {
+    var $receiver_0 = $receiver.children;
+    var all$result;
+    all$break: do {
+      var tmp$;
+      if (Kotlin.isType($receiver_0, Collection) && $receiver_0.isEmpty()) {
+        all$result = true;
+        break all$break;
+      }tmp$ = $receiver_0.iterator();
+      while (tmp$.hasNext()) {
+        var element = tmp$.next();
+        if (!(element.children.size === 0)) {
+          all$result = false;
+          break all$break;
+        }}
+      all$result = true;
+    }
+     while (false);
+    if (all$result) {
+      $receiver.setVariable_61zpoe$('1');
+    } else {
+      if (first($receiver.children).children.size === 0) {
+        first($receiver.children).setVariable_61zpoe$('1');
+      } else if (first($receiver.children).children.size === 1) {
+        $receiver.setChildOnPosition_tvfpvg$(first(first($receiver.children).children), 0);
+      }if (last($receiver.children).children.size === 0) {
+        $receiver.value = first($receiver.children).value;
+        $receiver.functionStringDefinition = first($receiver.children).functionStringDefinition;
+        $receiver.children = first($receiver.children).children;
+        var tmp$_0;
+        tmp$_0 = $receiver.children.iterator();
+        while (tmp$_0.hasNext()) {
+          var element_0 = tmp$_0.next();
+          element_0.parent = $receiver;
+        }
+      } else if (last($receiver.children).children.size === 1) {
+        $receiver.setChildOnPosition_tvfpvg$(first(last($receiver.children).children), 1);
+      }}
+    return $receiver;
+  }
+  function getOperandsFrom2ArgsNode(expressionNode, operation, operandIndex, ifNotReturn, substitutionSelectionData, hasMinus) {
+    if (substitutionSelectionData === void 0)
+      substitutionSelectionData = null;
     if (hasMinus === void 0)
       hasMinus = false;
     var tmp$;
     if (equals(expressionNode.value, '-')) {
-      handleAdditiveNodeAsReductionPart(substitutionSelectionData, first(expressionNode.children), multipliers, sumNode, prodNode, hasMinus ^ true);
+      return getOperandsFrom2ArgsNode(first(expressionNode.children), operation, operandIndex, ifNotReturn, substitutionSelectionData, hasMinus ^ true);
+    } else {
+      if (equals(expressionNode.value, operation) && expressionNode.children.size === 2) {
+        tmp$ = expressionNode.children.get_za3lpa$(operandIndex);
+      } else {
+        tmp$ = ifNotReturn != null ? ifNotReturn : expressionNode;
+      }
+      var result = tmp$;
+      if (hasMinus && substitutionSelectionData != null) {
+        var $receiver = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('-', -1);
+        $receiver.addChild_6718cy$(result);
+        return $receiver;
+      } else
+        return result;
+    }
+  }
+  function getMultipliersFromNode(expressionNode, expandPow) {
+    var tmp$;
+    if (equals(expressionNode.value, '-')) {
+      return getMultipliersFromNode(first(expressionNode.children), expandPow);
     } else if (equals(expressionNode.value, '*')) {
+      var result = ArrayList_init();
       tmp$ = expressionNode.children.iterator();
       while (tmp$.hasNext()) {
         var child = tmp$.next();
-        if (contains(multipliers, child.expressionStrictureIdentifier)) {
-          prodNode != null ? (prodNode.addChild_6718cy$(child.clone()), Unit) : null;
+        if (powExpandCondition(expandPow, child)) {
+          var pow = toInt(last(child.children).value);
+          addMultiplierIdentifierToList(result, first(child.children), pow);
         } else {
-          if (hasMinus) {
-            var minusNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('-', -1);
-            minusNode.addChild_6718cy$(child.clone());
-            sumNode.addChild_6718cy$(minusNode);
-          } else {
-            sumNode.addChild_6718cy$(child.clone());
-          }
+          addMultiplierIdentifierToList(result, child);
         }
       }
+      return result;
+    } else if (powExpandCondition(expandPow, expressionNode)) {
+      var pow_0 = toInt(last(expressionNode.children).value);
+      return listOf_0(new ExpressionStrictureIdentifierCounter(ensureNotNull(first(expressionNode.children).expressionStrictureIdentifier), pow_0));
     } else {
-      sumNode.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), '1'));
-      prodNode != null ? (prodNode.addChild_6718cy$(expressionNode.clone()), Unit) : null;
+      return listOf_0(new ExpressionStrictureIdentifierCounter(ensureNotNull(expressionNode.expressionStrictureIdentifier)));
+    }
+  }
+  function powExpandCondition(expandPow, child) {
+    var tmp$ = expandPow && equals(child.value, '^') && child.children.size === 2 && last(child.children).value.length < 2;
+    if (tmp$) {
+      var $receiver = last(child.children).value;
+      var all$result;
+      all$break: do {
+        var tmp$_0;
+        tmp$_0 = iterator($receiver);
+        while (tmp$_0.hasNext()) {
+          var element = unboxChar(tmp$_0.next());
+          if (!isDigit(unboxChar(toBoxedChar(element)))) {
+            all$result = false;
+            break all$break;
+          }}
+        all$result = true;
+      }
+       while (false);
+      tmp$ = all$result;
+    }return tmp$;
+  }
+  function addMultiplierIdentifierToList(result, node, count) {
+    if (count === void 0)
+      count = 1;
+    var tmp$;
+    var indexOfFirst$result;
+    indexOfFirst$break: do {
+      var tmp$_0;
+      var index = 0;
+      tmp$_0 = result.iterator();
+      while (tmp$_0.hasNext()) {
+        var item = tmp$_0.next();
+        if (equals(node.expressionStrictureIdentifier, item.expressionStrictureIdentifier)) {
+          indexOfFirst$result = index;
+          break indexOfFirst$break;
+        }index = index + 1 | 0;
+      }
+      indexOfFirst$result = -1;
+    }
+     while (false);
+    var childIndex = indexOfFirst$result;
+    if (childIndex < 0) {
+      result.add_11rb$(new ExpressionStrictureIdentifierCounter(ensureNotNull(node.expressionStrictureIdentifier), count));
+    } else {
+      tmp$ = result.get_za3lpa$(childIndex);
+      tmp$.count = tmp$.count + count | 0;
+    }
+  }
+  function handleAdditiveNodeAsReductionPart(substitutionSelectionData, expressionNode, multipliers, sumNode, prodNode, expandPow, hasMinus) {
+    if (hasMinus === void 0)
+      hasMinus = false;
+    var tmp$, tmp$_0;
+    if (equals(expressionNode.value, '-')) {
+      handleAdditiveNodeAsReductionPart(substitutionSelectionData, first(expressionNode.children), multipliers, sumNode, prodNode, expandPow, hasMinus ^ true);
+    } else if (equals(expressionNode.value, '*')) {
+      var multipliersCopy = ArrayList_init();
+      tmp$ = multipliers.iterator();
+      while (tmp$.hasNext()) {
+        var multiplier = tmp$.next();
+        multipliersCopy.add_11rb$(new ExpressionStrictureIdentifierCounter(multiplier.expressionStrictureIdentifier, multiplier.count));
+      }
+      var sumProdNode = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('*', -1);
+      tmp$_0 = expressionNode.children.iterator();
+      while (tmp$_0.hasNext()) {
+        var child = tmp$_0.next();
+        if (powExpandCondition(expandPow, child)) {
+          var pow = toInt(last(child.children).value);
+          addMultiplierToSumProdNode(multipliersCopy, first(child.children), prodNode, substitutionSelectionData, sumProdNode, pow);
+        } else {
+          addMultiplierToSumProdNode(multipliersCopy, child, prodNode, substitutionSelectionData, sumProdNode, 1);
+        }
+      }
+      if (sumProdNode.children.size === 1) {
+        sumNode.addChild_6718cy$(minusNode(substitutionSelectionData, first(sumProdNode.children), hasMinus));
+      } else if (sumProdNode.children.size > 1) {
+        sumNode.addChild_6718cy$(minusNode(substitutionSelectionData, sumProdNode, hasMinus));
+      }} else {
+      if (powExpandCondition(expandPow, expressionNode)) {
+        var pow_0 = toInt(last(expressionNode.children).value);
+        var firstOrNull$result;
+        firstOrNull$break: do {
+          var tmp$_1;
+          tmp$_1 = multipliers.iterator();
+          while (tmp$_1.hasNext()) {
+            var element = tmp$_1.next();
+            if (equals(element.expressionStrictureIdentifier, first(expressionNode.children).expressionStrictureIdentifier)) {
+              firstOrNull$result = element;
+              break firstOrNull$break;
+            }}
+          firstOrNull$result = null;
+        }
+         while (false);
+        var mul = firstOrNull$result;
+        if (mul != null && pow_0 > mul.count) {
+          sumNode.addChild_6718cy$(minusNode(substitutionSelectionData, powNode(substitutionSelectionData, expressionNode, pow_0 - mul.count | 0), hasMinus));
+          prodNode != null ? (prodNode.addChild_6718cy$(minusNode(substitutionSelectionData, powNode(substitutionSelectionData, expressionNode, mul.count), hasMinus)), Unit) : null;
+          return;
+        }}sumNode.addChild_6718cy$(minusNode(substitutionSelectionData, new ExpressionNode(NodeType$VARIABLE_getInstance(), '1'), hasMinus));
+      prodNode != null ? (prodNode.addChild_6718cy$(minusNode(substitutionSelectionData, expressionNode, hasMinus)), Unit) : null;
+    }
+  }
+  function addMultiplierToSumProdNode(multipliersCopy, node, prodNode, substitutionSelectionData, sumProdNode, count) {
+    var firstOrNull$result;
+    firstOrNull$break: do {
+      var tmp$;
+      tmp$ = multipliersCopy.iterator();
+      while (tmp$.hasNext()) {
+        var element = tmp$.next();
+        if (equals(element.expressionStrictureIdentifier, node.expressionStrictureIdentifier)) {
+          firstOrNull$result = element;
+          break firstOrNull$break;
+        }}
+      firstOrNull$result = null;
+    }
+     while (false);
+    var mul = firstOrNull$result;
+    if (mul != null && mul.count >= count) {
+      mul.count = mul.count - count | 0;
+      prodNode != null ? (prodNode.addChild_6718cy$(powNode(substitutionSelectionData, node, count)), Unit) : null;
+    } else if (mul != null && 0 < mul.count && mul.count < count) {
+      prodNode != null ? (prodNode.addChild_6718cy$(powNode(substitutionSelectionData, node, mul.count)), Unit) : null;
+      sumProdNode.addChild_6718cy$(powNode(substitutionSelectionData, node, count - mul.count | 0));
+      mul.count = 0;
+    } else {
+      sumProdNode.addChild_6718cy$(powNode(substitutionSelectionData, node, count));
+    }
+  }
+  function powNode(substitutionSelectionData, node, pow) {
+    if (pow === 1) {
+      return node.clone();
+    } else {
+      var $receiver = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+      $receiver.addChild_6718cy$(node.clone());
+      $receiver.addChild_6718cy$(new ExpressionNode(NodeType$VARIABLE_getInstance(), pow.toString()));
+      return $receiver;
+    }
+  }
+  function minusNode(substitutionSelectionData, node, hasMinus) {
+    if (!hasMinus) {
+      return node.clone();
+    } else {
+      var $receiver = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('-', -1);
+      $receiver.addChild_6718cy$(node.clone());
+      return $receiver;
     }
   }
   function generateOpeningBracketsSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
@@ -8693,7 +9492,7 @@ if (typeof kotlin === 'undefined') {
       fastestAppropriateVersion = false;
     var tmp$;
     var result = ArrayList_init();
-    if (substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams.isIncluded && substitutionSelectionData.selectedSubtreeTopArguments != null && !ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).isNumberValue() && calcComplexity(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments)) <= substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams.maxCalcComplexity && subtract(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).getContainedFunctions(), substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams.operationsMap.keys).isEmpty() && ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).getContainedVariables().isEmpty()) {
+    if (!substitutionSelectionData.nestedNodesInSelection && substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams.isIncluded && substitutionSelectionData.selectedSubtreeTopArguments != null && !ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).isNumberValue() && calcComplexity(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments)) <= substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams.maxCalcComplexity && subtract(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).getContainedFunctions(), substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams.operationsMap.keys).isEmpty() && ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments).getContainedVariables().isEmpty()) {
       tmp$ = computeNodeIfSimple(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments), substitutionSelectionData.compiledConfiguration.simpleComputationRuleParams);
       if (tmp$ == null) {
         return result;
@@ -8782,11 +9581,11 @@ if (typeof kotlin === 'undefined') {
       last(additiveTreeNode.children).addChild_6718cy$(applicationObject.clone());
       var additiveSubstitution = new ExpressionSubstitution(addRootNodeToExpression(applicationPlace.clone()), addRootNodeToExpression(additiveTreeNode));
       applicationPlaceParent.setChildOnPosition_tvfpvg$(additiveTreeNode, applicationPlaceIndex);
-      ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(ensureNotNull(substitutionSelectionData.topOfSelection).clone(), substitutionSelectionData.topOfSelectionIndex);
       var tmp$_0 = substitutionSelectionData.originalExpression;
       var $receiver = substitutionSelectionData.expressionToTransform.clone();
-      normalizeExpressionToUsualForm($receiver);
+      normalizeExpressionToUsualForm($receiver, substitutionSelectionData.compiledConfiguration);
       result.add_11rb$(new SubstitutionApplication(additiveSubstitution, tmp$_0, applicationPlace, $receiver, additiveTreeNode, 'ComplicatingExtension', 60));
+      applicationPlaceParent.setChildOnPosition_tvfpvg$(applicationPlace, applicationPlaceIndex);
       var multiplicativeTreeNode = new ExpressionNode(NodeType$FUNCTION_getInstance(), '/');
       multiplicativeTreeNode.addChild_6718cy$(new ExpressionNode(NodeType$FUNCTION_getInstance(), '*'));
       last(multiplicativeTreeNode.children).addChild_6718cy$(applicationPlace.clone());
@@ -8794,11 +9593,11 @@ if (typeof kotlin === 'undefined') {
       multiplicativeTreeNode.addChild_6718cy$(applicationObject.clone());
       var multiplicativeSubstitution = new ExpressionSubstitution(addRootNodeToExpression(applicationPlace.clone()), addRootNodeToExpression(multiplicativeTreeNode));
       applicationPlaceParent.setChildOnPosition_tvfpvg$(multiplicativeTreeNode, applicationPlaceIndex);
-      ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(ensureNotNull(substitutionSelectionData.topOfSelection).clone(), substitutionSelectionData.topOfSelectionIndex);
       var tmp$_1 = substitutionSelectionData.originalExpression;
       var $receiver_0 = substitutionSelectionData.expressionToTransform.clone();
-      normalizeExpressionToUsualForm($receiver_0);
+      normalizeExpressionToUsualForm($receiver_0, substitutionSelectionData.compiledConfiguration);
       result.add_11rb$(new SubstitutionApplication(multiplicativeSubstitution, tmp$_1, applicationPlace, $receiver_0, multiplicativeTreeNode, 'ComplicatingExtension', 60));
+      applicationPlaceParent.setChildOnPosition_tvfpvg$(applicationPlace, applicationPlaceIndex);
     }return result;
   }
   function applySubstitution_0(substitutionSelectionData, expressionSubstitution, simplifyNotSelectedTopArguments) {
@@ -8811,32 +9610,40 @@ if (typeof kotlin === 'undefined') {
       return null;
     }var substitutionInstance = tmp$;
     if (substitutionInstance.isApplicable) {
-      tmp$_0 = expressionSubstitution.applyRight_miu9dc$(substitutionInstance);
+      tmp$_0 = expressionSubstitution.applyRight_7o4uji$(substitutionInstance);
       if (tmp$_0 == null) {
         return null;
       }var applicationToSelectedPartResult = tmp$_0;
-      addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, applicationToSelectedPartResult, result, expressionSubstitution, (tmp$_1 = expressionSubstitution.type) != null ? tmp$_1 : '', (tmp$_2 = expressionSubstitution.priority) != null ? tmp$_2 : 100);
+      addApplicationToResults(true, substitutionSelectionData, simplifyNotSelectedTopArguments, applicationToSelectedPartResult, result, expressionSubstitution, (tmp$_1 = expressionSubstitution.nameEn) != null ? tmp$_1 : '', (tmp$_2 = expressionSubstitution.priority) != null ? tmp$_2 : 100);
       return first(result).resultExpression;
     }return null;
   }
   function checkLeftCondition(substitutionSelectionData, expressionSubstitution, fastestAppropriateVersion) {
     if (fastestAppropriateVersion === void 0)
       fastestAppropriateVersion = true;
-    var tmp$, tmp$_0, tmp$_1;
+    var tmp$, tmp$_0;
     if (substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder != null && !expressionSubstitution.changeOnlyOrder) {
-      tmp$ = substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder;
-      if (tmp$ == null) {
-        return null;
-      }tmp$_0 = expressionSubstitution.checkLeftCondition_6718cy$(tmp$);
+      tmp$ = tryToGenerateApplicationSubstitutionInstance(ensureNotNull(substitutionSelectionData.selectedSubtreeTopArgumentsInSelectionOrder), expressionSubstitution);
     } else
-      tmp$_0 = null;
-    var substitutionInstance = tmp$_0;
+      tmp$ = null;
+    var substitutionInstance = tmp$;
     if (substitutionInstance == null || (!fastestAppropriateVersion && !substitutionInstance.isApplicable)) {
-      tmp$_1 = substitutionSelectionData.selectedSubtreeTopArguments;
-      if (tmp$_1 == null) {
+      tmp$_0 = substitutionSelectionData.selectedSubtreeTopArguments;
+      if (tmp$_0 == null) {
         return null;
-      }substitutionInstance = expressionSubstitution.checkLeftCondition_6718cy$(tmp$_1);
+      }substitutionInstance = tryToGenerateApplicationSubstitutionInstance(tmp$_0, expressionSubstitution);
     }return substitutionInstance;
+  }
+  function tryToGenerateApplicationSubstitutionInstance(expression, substitution) {
+    var result = substitution.checkLeftCondition_6718cy$(expression);
+    if (!result.isApplicable && substitution.matchJumbledAndNested) {
+      var simplifiedExpression = expression.cloneWithExpandingNestedSameFunctions();
+      result = substitution.checkLeftCondition_6718cy$(simplifiedExpression);
+      if (!result.isApplicable) {
+        result = substitution.checkLeftCondition_6718cy$(simplifiedExpression.cloneAndSimplifyByComputeSimplePlaces());
+      }}if (!result.isApplicable) {
+      result = substitution.checkLeftCondition_6718cy$(expression.cloneAndSimplifyByComputeSimplePlaces());
+    }return result;
   }
   function addApplicationToResults(withReadyApplicationResult, substitutionSelectionData, simplifyNotSelectedTopArguments, applicationToSelectedPartResult, result, transformation, substitutionType, priority, onSameBracketLevel) {
     if (onSameBracketLevel === void 0)
@@ -8885,14 +9692,63 @@ if (typeof kotlin === 'undefined') {
     tmp$_2 = ensureNotNull(substitutionSelectionData.selectedSubtreeTopArguments);
     if (withReadyApplicationResult) {
       var $receiver_1 = substitutionSelectionData.expressionToTransform.clone();
-      normalizeExpressionToUsualForm($receiver_1);
+      normalizeExpressionToUsualForm($receiver_1, substitutionSelectionData.compiledConfiguration);
       tmp$_3 = $receiver_1;
     } else {
       tmp$_3 = new ExpressionNode(NodeType$EMPTY_getInstance(), "To get application result use argument 'withReadyApplicationResult' = 'true'");
     }
     result.add_11rb$(new SubstitutionApplication(transformation, tmp$_1, tmp$_2, tmp$_3, applicationToSelectedPartResult, substitutionType, priority));
+    ensureNotNull(substitutionSelectionData.topOfSelectionParent).setChildOnPosition_tvfpvg$(ensureNotNull(substitutionSelectionData.topOfSelection), substitutionSelectionData.topOfSelectionIndex);
+  }
+  function generateFormIndependentSubstitutionsBySelectedNodes(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
+    if (simplifyNotSelectedTopArguments === void 0)
+      simplifyNotSelectedTopArguments = false;
+    if (withReadyApplicationResult === void 0)
+      withReadyApplicationResult = false;
+    if (fastestAppropriateVersion === void 0)
+      fastestAppropriateVersion = false;
+    var result = ArrayList_init();
+    result.addAll_brywnq$(generateSimpleComputationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generateOpeningBracketsSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generatePermutationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generateNumberTransformationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generateComplicatingExtensionSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generateParentBracketsExpansionSubstitution(substitutionSelectionData));
+    return result;
+  }
+  function generateFormDependentSubstitutionsBySelectedNodes(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, withExtendingSubstitutions) {
+    if (simplifyNotSelectedTopArguments === void 0)
+      simplifyNotSelectedTopArguments = false;
+    if (withReadyApplicationResult === void 0)
+      withReadyApplicationResult = false;
+    if (fastestAppropriateVersion === void 0)
+      fastestAppropriateVersion = false;
+    if (withExtendingSubstitutions === void 0)
+      withExtendingSubstitutions = true;
+    var tmp$;
+    var result = ArrayList_init();
+    result.addAll_brywnq$(generateReduceArithmeticSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generateReduceFractionSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    if (equals((tmp$ = substitutionSelectionData.topOfSelection) != null ? tmp$.value : null, '/') && substitutionSelectionData.selectedNodeIds.length === 2) {
+      var tmp$_0 = substitutionSelectionData.originalExpression;
+      var array = Array_0(1);
+      var tmp$_1;
+      tmp$_1 = array.length - 1 | 0;
+      for (var i = 0; i <= tmp$_1; i++) {
+        array[i] = ensureNotNull(substitutionSelectionData.topOfSelection).nodeId;
+      }
+      var divisionSubstitutionSelectionData = new SubstitutionSelectionData(tmp$_0, array, substitutionSelectionData.compiledConfiguration);
+      fillSubstitutionSelectionData(divisionSubstitutionSelectionData);
+      result.addAll_brywnq$(findConfiguredSubstitutionsApplications(divisionSubstitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, withExtendingSubstitutions));
+    } else {
+      result.addAll_brywnq$(findConfiguredSubstitutionsApplications(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, withExtendingSubstitutions));
+    }
+    return result;
   }
   function generateSubstitutionsBySelectedNodes$lambda(it) {
+    return it.priority;
+  }
+  function generateSubstitutionsBySelectedNodes$lambda_0(it) {
     return it.priority;
   }
   function generateSubstitutionsBySelectedNodes(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion) {
@@ -8902,23 +9758,61 @@ if (typeof kotlin === 'undefined') {
       withReadyApplicationResult = false;
     if (fastestAppropriateVersion === void 0)
       fastestAppropriateVersion = false;
-    var tmp$;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
     var result = ArrayList_init();
     fillSubstitutionSelectionData(substitutionSelectionData);
-    result.addAll_brywnq$(generateSimpleComputationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    result.addAll_brywnq$(generateReduceArithmeticSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    result.addAll_brywnq$(generateOpeningBracketsSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    result.addAll_brywnq$(generatePermutationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    result.addAll_brywnq$(generateNumberTransformationSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    result.addAll_brywnq$(generateComplicatingExtensionSubstitutions(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    if (equals((tmp$ = substitutionSelectionData.topOfSelection) != null ? tmp$.value : null, '/') && substitutionSelectionData.selectedNodeIds.size === 2) {
-      var divisionSubstitutionSelectionData = new SubstitutionSelectionData(substitutionSelectionData.originalExpression, listOf_0(ensureNotNull(substitutionSelectionData.topOfSelection).nodeId), substitutionSelectionData.compiledConfiguration);
-      fillSubstitutionSelectionData(divisionSubstitutionSelectionData);
-      result.addAll_brywnq$(findConfiguredSubstitutionsApplications(divisionSubstitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    } else {
-      result.addAll_brywnq$(findConfiguredSubstitutionsApplications(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
-    }
-    return sortedWith(result, new Comparator$ObjectLiteral_3(compareBy$lambda_1(generateSubstitutionsBySelectedNodes$lambda)));
+    result.addAll_brywnq$(generateFormIndependentSubstitutionsBySelectedNodes(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion));
+    result.addAll_brywnq$(generateFormDependentSubstitutionsBySelectedNodes(substitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, true));
+    if (result.size > 1) {
+      sortWith(result, new Comparator$ObjectLiteral_3(compareBy$lambda_1(generateSubstitutionsBySelectedNodes$lambda)));
+    }var resultAfterAdditionalSubstitutions = ArrayList_init();
+    if (substitutionSelectionData.selectedNodeIds.length > 1) {
+      tmp$ = substitutionSelectionData.compiledConfiguration.compiledExpressionSimpleAdditionalTreeTransformationRules.iterator();
+      while (tmp$.hasNext()) {
+        var rule = tmp$.next();
+        var expression = substitutionSelectionData.originalExpression.clone();
+        var selectedNodes = nodeIdsToNodeLinksInSameOrder(expression, substitutionSelectionData.selectedNodeIds, nodeIdsPositionsMap(substitutionSelectionData.selectedNodeIds));
+        var happenedReplacementsCount = 0;
+        tmp$_0 = selectedNodes.iterator();
+        while (tmp$_0.hasNext()) {
+          var selectedNode = tmp$_0.next();
+          if (!equals(selectedNode.value, first(rule.right.children).value)) {
+            tmp$_1 = selectedNode.parent;
+            if (tmp$_1 == null) {
+              continue;
+            }var selectedNodeParent = tmp$_1;
+            var selectedNodeIndex = selectedNodeParent.children.indexOf_11rb$(selectedNode);
+            var applicationResult = rule.checkAndApply_6718cy$(selectedNode);
+            if (applicationResult != null) {
+              selectedNodeParent.setChildOnPosition_tvfpvg$(applicationResult, selectedNodeIndex);
+              happenedReplacementsCount = happenedReplacementsCount + 1 | 0;
+            }}}
+        if (0 < happenedReplacementsCount && happenedReplacementsCount < selectedNodes.size) {
+          expression.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$(1073741823, 0, false);
+          var additionalSubstitutionSelectionData = new SubstitutionSelectionData(expression, substitutionSelectionData.selectedNodeIds, substitutionSelectionData.compiledConfiguration);
+          fillSubstitutionSelectionData(additionalSubstitutionSelectionData);
+          resultAfterAdditionalSubstitutions.addAll_brywnq$(generateFormDependentSubstitutionsBySelectedNodes(additionalSubstitutionSelectionData, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, false));
+        }}
+    } else if (equals((tmp$_3 = (tmp$_2 = firstOrNull_0(substitutionSelectionData.selectedNodes)) != null ? tmp$_2.parent : null) != null ? tmp$_3.value : null, '-') && equals((tmp$_6 = (tmp$_5 = (tmp$_4 = firstOrNull_0(substitutionSelectionData.selectedNodes)) != null ? tmp$_4.parent : null) != null ? tmp$_5.parent : null) != null ? tmp$_6.value : null, '+')) {
+      var expression_0 = substitutionSelectionData.originalExpression.clone();
+      var selectedNodes_0 = nodeIdsToNodeLinksInSameOrder(expression_0, substitutionSelectionData.selectedNodeIds, nodeIdsPositionsMap(substitutionSelectionData.selectedNodeIds));
+      var dadPlusNode = ensureNotNull(ensureNotNull(first(selectedNodes_0).parent).parent);
+      var parentMinusNode = ensureNotNull(first(selectedNodes_0).parent);
+      var parentMinusNodeIndex = dadPlusNode.children.indexOf_11rb$(parentMinusNode);
+      var $receiver = substitutionSelectionData.compiledConfiguration.createExpressionFunctionNode_bm4lxs$('+', -1);
+      $receiver.nodeId = first_1(substitutionSelectionData.selectedNodeIds);
+      var addNode = $receiver;
+      parentMinusNode.resetNodeIds();
+      addNode.addChild_6718cy$(parentMinusNode);
+      addNode.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$(1073741823, 0, false);
+      dadPlusNode.setChildOnPosition_tvfpvg$(addNode, parentMinusNodeIndex);
+      var additionalSubstitutionSelectionData_0 = new SubstitutionSelectionData(expression_0, substitutionSelectionData.selectedNodeIds, substitutionSelectionData.compiledConfiguration);
+      fillSubstitutionSelectionData(additionalSubstitutionSelectionData_0);
+      resultAfterAdditionalSubstitutions.addAll_brywnq$(findConfiguredSubstitutionsApplications(additionalSubstitutionSelectionData_0, simplifyNotSelectedTopArguments, withReadyApplicationResult, fastestAppropriateVersion, false));
+    }if (resultAfterAdditionalSubstitutions.size > 1) {
+      sortWith(resultAfterAdditionalSubstitutions, new Comparator$ObjectLiteral_3(compareBy$lambda_1(generateSubstitutionsBySelectedNodes$lambda_0)));
+    }result.addAll_brywnq$(resultAfterAdditionalSubstitutions);
+    return result;
   }
   function ExpressionStructurePart() {
   }
@@ -10805,37 +11699,43 @@ if (typeof kotlin === 'undefined') {
   SubstitutionPlace.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.nodeParent, other.nodeParent) && Kotlin.equals(this.nodeChildIndex, other.nodeChildIndex) && Kotlin.equals(this.substitutionInstance, other.substitutionInstance) && Kotlin.equals(this.originalValue, other.originalValue) && Kotlin.equals(this.originalExpression, other.originalExpression)))));
   };
-  function ExpressionSubstitution(left, right, weight, basedOnTaskContext, name, comparisonType, leftFunctions, matchJumbledAndNested, type, priority, changeOnlyOrder) {
+  function ExpressionSubstitution(left, right, weight, basedOnTaskContext, nameEn, nameRu, comparisonType, leftFunctions, matchJumbledAndNested, priority, changeOnlyOrder, simpleAdditional, isExtending) {
     ExpressionSubstitution$Companion_getInstance();
     if (weight === void 0)
       weight = 1.0;
     if (basedOnTaskContext === void 0)
       basedOnTaskContext = false;
-    if (name === void 0)
-      name = '';
+    if (nameEn === void 0)
+      nameEn = '';
+    if (nameRu === void 0)
+      nameRu = '';
     if (comparisonType === void 0)
       comparisonType = ComparisonType$EQUAL_getInstance();
     if (leftFunctions === void 0)
       leftFunctions = left.getContainedFunctions();
     if (matchJumbledAndNested === void 0)
       matchJumbledAndNested = false;
-    if (type === void 0)
-      type = null;
     if (priority === void 0)
       priority = null;
     if (changeOnlyOrder === void 0)
       changeOnlyOrder = false;
+    if (simpleAdditional === void 0)
+      simpleAdditional = false;
+    if (isExtending === void 0)
+      isExtending = false;
     this.left = left;
     this.right = right;
     this.weight = weight;
     this.basedOnTaskContext = basedOnTaskContext;
-    this.name = name;
+    this.nameEn = nameEn;
+    this.nameRu = nameRu;
     this.comparisonType = comparisonType;
     this.leftFunctions = leftFunctions;
     this.matchJumbledAndNested = matchJumbledAndNested;
-    this.type = type;
     this.priority = priority;
     this.changeOnlyOrder = changeOnlyOrder;
+    this.simpleAdditional = simpleAdditional;
+    this.isExtending = isExtending;
     if (!this.changeOnlyOrder) {
       var $receiver = this.left.clone();
       $receiver.normalizeSubTree_f8z7ch$(void 0, void 0, true);
@@ -10866,7 +11766,7 @@ if (typeof kotlin === 'undefined') {
       matchJumbledAndNested = false;
     if (onlyCheckListFlag === void 0)
       onlyCheckListFlag = null;
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7, tmp$_8, tmp$_9, tmp$_10, tmp$_11, tmp$_12;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7, tmp$_8, tmp$_9, tmp$_10, tmp$_11, tmp$_12, tmp$_13, tmp$_14, tmp$_15, tmp$_16, tmp$_17, tmp$_18;
     if (conditionNode.isNumberValue()) {
       if (expressionNode.nodeType === NodeType$VARIABLE_getInstance()) {
         tmp$_1 = expressionNode.value;
@@ -10893,9 +11793,9 @@ if (typeof kotlin === 'undefined') {
           conditionChildrenMap.put_xwzc9p$(conditionNode.children.get_za3lpa$(j).value, 'sys_def_func_agr_' + j);
         tmp$_3 = nameArgsMap.entries.iterator();
         while (tmp$_3.hasNext()) {
-          var tmp$_13 = tmp$_3.next();
-          var key = tmp$_13.key;
-          var value = tmp$_13.value;
+          var tmp$_19 = tmp$_3.next();
+          var key = tmp$_19.key;
+          var value = tmp$_19.value;
           var orderValue = conditionChildrenMap.get_11rb$(value);
           if (orderValue != null)
             actualNameArgsMap.put_xwzc9p$(key, orderValue);
@@ -10909,27 +11809,27 @@ if (typeof kotlin === 'undefined') {
             return;
           }}
       } else {
-        if (conditionNode.children.size !== expressionNode.children.size || !conditionNode.isNodeValueEquals_6718cy$(expressionNode)) {
+        if (conditionNode.children.size < expressionNode.children.size || (conditionNode.children.size !== expressionNode.children.size && (((tmp$_5 = (tmp$_4 = conditionNode.functionStringDefinition) != null ? tmp$_4.function : null) != null ? tmp$_5.fieldZero : null) == null || ((tmp$_7 = (tmp$_6 = conditionNode.functionStringDefinition) != null ? tmp$_6.function : null) != null ? tmp$_7.isCommutativeWithNullWeight : null) !== true || !matchJumbledAndNested)) || !conditionNode.isNodeValueEquals_6718cy$(expressionNode)) {
           if (onlyCheckListFlag == null) {
             substitutionInstance.isApplicable = false;
           } else {
             onlyCheckListFlag.add_11rb$(false);
           }
           return;
-        }var argumentStartIndex = (tmp$_6 = (tmp$_5 = (tmp$_4 = conditionNode.functionStringDefinition) != null ? tmp$_4.function : null) != null ? tmp$_5.numberOfDefinitionArguments : null) != null ? tmp$_6 : 0;
+        }var argumentStartIndex = (tmp$_10 = (tmp$_9 = (tmp$_8 = conditionNode.functionStringDefinition) != null ? tmp$_8.function : null) != null ? tmp$_9.numberOfDefinitionArguments : null) != null ? tmp$_10 : 0;
         if (argumentStartIndex !== 0 && onlyCheckListFlag != null)
           return;
         for (var i = 0; i < argumentStartIndex; i++) {
           nameArgsMap.put_xwzc9p$(expressionNode.children.get_za3lpa$(i).value, conditionNode.children.get_za3lpa$(i).value);
         }
-        if (matchJumbledAndNested && conditionNode.children.size > 1 && ((tmp$_9 = (tmp$_8 = (tmp$_7 = conditionNode.functionStringDefinition) != null ? tmp$_7.function : null) != null ? tmp$_8.isCommutativeWithNullWeight : null) != null ? tmp$_9 : false)) {
+        if (matchJumbledAndNested && ((tmp$_13 = (tmp$_12 = (tmp$_11 = conditionNode.functionStringDefinition) != null ? tmp$_11.function : null) != null ? tmp$_12.isCommutativeWithNullWeight : null) != null ? tmp$_13 : false)) {
           var usedNodes = LinkedHashSet_init();
           var expressionStartNodeIndex = argumentStartIndex;
-          tmp$_10 = get_lastIndex(conditionNode.children);
-          for (var i_0 = argumentStartIndex; i_0 <= tmp$_10; i_0++) {
+          tmp$_14 = get_lastIndex(conditionNode.children);
+          for (var i_0 = argumentStartIndex; i_0 <= tmp$_14; i_0++) {
             var isMatched = false;
-            tmp$_11 = get_lastIndex(expressionNode.children);
-            for (var j_0 = expressionStartNodeIndex; j_0 <= tmp$_11; j_0++) {
+            tmp$_15 = get_lastIndex(expressionNode.children);
+            for (var j_0 = expressionStartNodeIndex; j_0 <= tmp$_15; j_0++) {
               if (usedNodes.contains_11rb$(j_0))
                 continue;
               var checkListFlag = ArrayList_init();
@@ -10947,7 +11847,17 @@ if (typeof kotlin === 'undefined') {
               isMatched = true;
               break;
             }
-            if (!isMatched) {
+            if (!isMatched && ((tmp$_17 = (tmp$_16 = conditionNode.functionStringDefinition) != null ? tmp$_16.function : null) != null ? tmp$_17.fieldZero : null) != null && conditionNode.children.get_za3lpa$(i_0).nodeType === NodeType$VARIABLE_getInstance()) {
+              var varValue = substitutionInstance.getExprVar_61zpoe$(conditionNode.children.get_za3lpa$(i_0).value);
+              if (varValue == null) {
+                isMatched = true;
+                if (onlyCheckListFlag == null) {
+                  substitutionInstance.putExprVar_vkfows$(conditionNode.children.get_za3lpa$(i_0).value, new ExpressionNode(NodeType$VARIABLE_getInstance(), ensureNotNull(ensureNotNull(conditionNode.functionStringDefinition).function.fieldZero)));
+                }} else {
+                if (varValue.isNodeSubtreeEquals_7j5kvs$(new ExpressionNode(NodeType$VARIABLE_getInstance(), ensureNotNull(ensureNotNull(conditionNode.functionStringDefinition).function.fieldZero)))) {
+                  isMatched = true;
+                }}
+            }if (!isMatched) {
               if (onlyCheckListFlag == null) {
                 substitutionInstance.isApplicable = false;
               } else {
@@ -10956,8 +11866,8 @@ if (typeof kotlin === 'undefined') {
               return;
             }}
         } else {
-          tmp$_12 = get_lastIndex(conditionNode.children);
-          for (var i_1 = argumentStartIndex; i_1 <= tmp$_12; i_1++) {
+          tmp$_18 = get_lastIndex(expressionNode.children);
+          for (var i_1 = argumentStartIndex; i_1 <= tmp$_18; i_1++) {
             if (onlyCheckListFlag != null) {
               this.checkConditionCompanion_5w3lm6$(expressionNode.children.get_za3lpa$(i_1), conditionNode.children.get_za3lpa$(i_1), substitutionInstance, nameArgsMap, basedOnTaskContext, matchJumbledAndNested, onlyCheckListFlag);
               if (!onlyCheckListFlag.isEmpty()) {
@@ -10981,13 +11891,13 @@ if (typeof kotlin === 'undefined') {
           }
         }return;
       } else {
-        var varValue = substitutionInstance.getExprVar_61zpoe$(conditionNode.value);
-        if (varValue == null) {
+        var varValue_0 = substitutionInstance.getExprVar_61zpoe$(conditionNode.value);
+        if (varValue_0 == null) {
           if (onlyCheckListFlag != null)
             return;
           substitutionInstance.putExprVar_vkfows$(conditionNode.value, expressionNode);
         } else {
-          if (!varValue.isNodeSubtreeEquals_7j5kvs$(expressionNode)) {
+          if (!varValue_0.isNodeSubtreeEquals_7j5kvs$(expressionNode)) {
             if (onlyCheckListFlag == null) {
               substitutionInstance.isApplicable = false;
             } else {
@@ -11099,20 +12009,30 @@ if (typeof kotlin === 'undefined') {
       var substitutionPlace_0 = substitutionPlaces.get_za3lpa$(i_0);
       if ((bitMask & 1 << i_0) === 0)
         continue;
-      var newValue = this.applyRight_miu9dc$(substitutionPlace_0.substitutionInstance);
+      var newValue = this.applyRight_7o4uji$(substitutionPlace_0.substitutionInstance);
       if (newValue != null) {
         substitutionPlace_0.nodeParent.children.set_wxm5ur$(substitutionPlace_0.nodeChildIndex, newValue);
       }}
   };
-  ExpressionSubstitution.prototype.applyRight_miu9dc$ = function (substitutionInstance, right) {
+  ExpressionSubstitution.prototype.applyRight_7o4uji$ = function (substitutionInstance, right, topNodeId) {
     if (right === void 0)
       right = this.right.children.get_za3lpa$(0);
-    return ExpressionSubstitution$Companion_getInstance().applyRightCompanion_miu9dc$(substitutionInstance, right);
+    if (topNodeId === void 0)
+      topNodeId = -1;
+    var tmp$;
+    var tmp$_0;
+    if ((tmp$ = ExpressionSubstitution$Companion_getInstance().applyRightCompanion_miu9dc$(substitutionInstance, right)) != null) {
+      tmp$.resetNodeIds();
+      tmp$.nodeId = topNodeId;
+      tmp$_0 = tmp$;
+    } else
+      tmp$_0 = null;
+    return tmp$_0;
   };
   ExpressionSubstitution.prototype.checkAndApply_6718cy$ = function (expressionNode) {
     var substitutionInstance = this.checkLeftCondition_6718cy$(expressionNode);
     if (substitutionInstance.isApplicable)
-      return this.applyRight_miu9dc$(substitutionInstance);
+      return this.applyRight_7o4uji$(substitutionInstance, void 0, expressionNode.nodeId);
     else
       return null;
   };
@@ -11672,7 +12592,7 @@ if (typeof kotlin === 'undefined') {
       if (!tmp$_0) {
         var tmp$_1;
         tmp$_0 = endsWith_0(trim(Kotlin.isCharSequence(tmp$_1 = originalExpression) ? tmp$_1 : throwCCE()).toString(), '>');
-      }isMathML = tmp$_0 || contains_1(originalExpression, '&#');
+      }isMathML = tmp$_0 || contains(originalExpression, '&#');
     }this.originalExpression = originalExpression;
     this.nameForRuleDesignationsPossible = nameForRuleDesignationsPossible;
     this.functionConfiguration = functionConfiguration;
@@ -11854,7 +12774,7 @@ if (typeof kotlin === 'undefined') {
     this.root.correctPositions();
     this.root.computeIdentifier_t6ztn0$();
     this.root.variableReplacement_y0zsll$(this.compiledImmediateVariableReplacements);
-    this.root.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_vux9f0$();
+    this.root.computeNodeIdsAsNumbersInDirectTraversalAndDistancesToRoot_ydzd23$();
     return null;
   };
   function ExpressionTreeParser$parseMathMlTagTree$lambda(it) {
@@ -13214,35 +14134,201 @@ if (typeof kotlin === 'undefined') {
     simpleName: 'ExpressionTreeAnalyzer',
     interfaces: []
   };
-  function SimpleComputationRuleParams(isIncluded, maxCalcComplexity, maxTenPowIterations, operationsMap) {
+  function shouldTakeLog(node) {
+    if (node.value.length === 0) {
+      if (node.children.size === 1)
+        return shouldTakeLog(node.children.get_za3lpa$(0));
+      return false;
+    }return equals(node.value, 'exp') || equals(node.value, '^');
+  }
+  function getLog(node, compiledConfiguration) {
+    var tmp$;
+    if (node.value.length === 0) {
+      var res = node.clone();
+      if (res.children.size === 1)
+        res.children.set_wxm5ur$(0, getLog(res.children.get_za3lpa$(0), compiledConfiguration));
+      return res;
+    } else {
+      if (equals(node.value, 'exp') && node.children.size === 1)
+        return node.children.get_za3lpa$(0).clone();
+      if (equals(node.value, '^') && node.children.size > 1) {
+        var res_0 = compiledConfiguration.createExpressionFunctionNode_bm4lxs$('*', -1);
+        res_0.addChild_6718cy$(compiledConfiguration.createExpressionFunctionNode_bm4lxs$('ln', 1));
+        res_0.children.get_za3lpa$(0).addChild_6718cy$(node.children.get_za3lpa$(0).clone());
+        if (node.children.size === 2)
+          res_0.addChild_6718cy$(node.children.get_za3lpa$(1).clone());
+        else {
+          var right = compiledConfiguration.createExpressionFunctionNode_bm4lxs$('^', -1);
+          tmp$ = node.children.size;
+          for (var i = 1; i < tmp$; i++)
+            right.addChild_6718cy$(node.children.get_za3lpa$(i).clone());
+        }
+        return res_0;
+      }}
+    return node.clone();
+  }
+  function alwaysPositiveFunction(node) {
+    if (node.nodeType !== NodeType$FUNCTION_getInstance())
+      return false;
+    if (equals(node.value, 'exp') || equals(node.value, 'sqrt'))
+      return true;
+    var eps = 1.0E-6;
+    if (equals(node.value, '^')) {
+      if (node.children.size === 2) {
+        var roundedPower = toIntOrNull(node.children.get_za3lpa$(1).value);
+        if (roundedPower != null && (roundedPower % 2 === 0 || toDouble(node.children.get_za3lpa$(1).value) - roundedPower > eps))
+          return true;
+      }}return false;
+  }
+  function difference(left, right, compiledConfiguration) {
+    var res = compiledConfiguration.createExpressionFunctionNode_bm4lxs$('+', -1);
+    if (left.value.length === 0 && left.children.size === 1)
+      res.addChild_6718cy$(left.children.get_za3lpa$(0).clone());
+    else
+      res.addChild_6718cy$(left.clone());
+    res.addChild_6718cy$(compiledConfiguration.createExpressionFunctionNode_bm4lxs$('-', -1));
+    if (right.value.length === 0 && right.children.size === 1)
+      last(res.children).addChild_6718cy$(right.children.get_za3lpa$(0).clone());
+    else
+      last(res.children).addChild_6718cy$(right.clone());
+    return res;
+  }
+  function ratio(num, den, compiledConfiguration) {
+    var res = compiledConfiguration.createExpressionFunctionNode_bm4lxs$('/', -1);
+    if (num.value.length === 0 && num.children.size === 1)
+      res.addChild_6718cy$(num.children.get_za3lpa$(0).clone());
+    else
+      res.addChild_6718cy$(num.clone());
+    if (den.value.length === 0 && den.children.size === 1)
+      res.addChild_6718cy$(den.children.get_za3lpa$(0).clone());
+    else
+      res.addChild_6718cy$(den.clone());
+    return res;
+  }
+  function alwaysPositive(expression, compiledConfiguration) {
+    var expressionNode = expression.clone();
+    if (expressionNode.value.length === 0) {
+      if (expressionNode.children.size === 1)
+        expressionNode = expressionNode.children.get_za3lpa$(0);
+    }if (expressionNode.nodeType === NodeType$FUNCTION_getInstance() && alwaysPositiveFunction(expressionNode))
+      return true;
+    var expressionMinimizer = new OptimizerUtils(difference(expression, compiledConfiguration.createExpressionVariableNode_14dthe$(1.0E-6), compiledConfiguration));
+    if (!expressionMinimizer.canStart() && !expressionMinimizer.run_224j3y$(3))
+      return true;
+    return false;
+  }
+  function gradientDescentComparison(l, r, compiledConfiguration, comparisonType, domain) {
+    if (domain === void 0)
+      domain = null;
+    var tmp$, tmp$_0, tmp$_1;
+    var left = l.clone();
+    var right = r.clone();
+    var findDomainAgain = false;
+    while (shouldTakeLog(left) && shouldTakeLog(right)) {
+      left = getLog(left, compiledConfiguration);
+      right = getLog(right, compiledConfiguration);
+      findDomainAgain = true;
+    }
+    var dom = domain == null || findDomainAgain ? new DomainPointGenerator(arrayListOf([left, right])) : domain;
+    switch (comparisonType.name) {
+      case 'LEFT_MORE':
+      case 'LEFT_MORE_OR_EQUAL':
+        tmp$ = difference(left, right, compiledConfiguration);
+        break;
+      default:tmp$ = difference(right, left, compiledConfiguration);
+        break;
+    }
+    var diff = tmp$;
+    var diffMinizer = new OptimizerUtils(diff, void 0, compiledConfiguration, dom);
+    if (diffMinizer.canStart() && diffMinizer.run_224j3y$())
+      return false;
+    switch (comparisonType.name) {
+      case 'LEFT_MORE':
+      case 'LEFT_MORE_OR_EQUAL':
+        tmp$_0 = right;
+        break;
+      default:tmp$_0 = left;
+        break;
+    }
+    var denominator = tmp$_0;
+    if (alwaysPositive(denominator, compiledConfiguration)) {
+      switch (comparisonType.name) {
+        case 'LEFT_MORE':
+        case 'LEFT_MORE_OR_EQUAL':
+          tmp$_1 = ratio(left, right, compiledConfiguration);
+          break;
+        default:tmp$_1 = ratio(right, left, compiledConfiguration);
+          break;
+      }
+      var ratio_0 = tmp$_1;
+      var ratioMinimizer = new OptimizerUtils(ratio_0, void 0, compiledConfiguration, dom);
+      if (ratioMinimizer.canStart() && ratioMinimizer.run_224j3y$(void 0, void 0, 1.0))
+        return false;
+    }return true;
+  }
+  function SimpleComputationRuleParams(isIncluded, maxCalcComplexity, maxTenPowIterations, maxPlusArgRounded, maxPlusResRounded, maxMulArgRounded, maxMulResRounded, maxPowBaseRounded, maxPowDegRounded, maxPowResRounded, operationsMap) {
     if (maxCalcComplexity === void 0)
       maxCalcComplexity = 4;
     if (maxTenPowIterations === void 0)
       maxTenPowIterations = 10;
-    if (operationsMap === void 0)
-      operationsMap = mapOf_0([to('+', SimpleComputationRuleParams_init$lambda), to('-', SimpleComputationRuleParams_init$lambda_0), to('*', SimpleComputationRuleParams_init$lambda_1), to('/', SimpleComputationRuleParams_init$lambda_2), to('^', SimpleComputationRuleParams_init$lambda_3), to('log', SimpleComputationRuleParams_init$lambda_4)]);
-    this.isIncluded = isIncluded;
+    if (maxPlusArgRounded === void 0)
+      maxPlusArgRounded = 200;
+    if (maxPlusResRounded === void 0)
+      maxPlusResRounded = (maxPlusArgRounded * 3 | 0) / 2 | 0;
+    if (maxMulArgRounded === void 0)
+      maxMulArgRounded = 50;
+    if (maxMulResRounded === void 0)
+      maxMulResRounded = maxPlusArgRounded * 2 | 0;
+    if (maxPowBaseRounded === void 0)
+      maxPowBaseRounded = 50;
+    if (maxPowDegRounded === void 0)
+      maxPowDegRounded = 10;
+    if (maxPowResRounded === void 0)
+      maxPowResRounded = 400;
+    if (operationsMap === void 0) {
+      operationsMap = emptyMap();
+    }this.isIncluded = isIncluded;
     this.maxCalcComplexity = maxCalcComplexity;
     this.maxTenPowIterations = maxTenPowIterations;
+    this.maxPlusArgRounded = maxPlusArgRounded;
+    this.maxPlusResRounded = maxPlusResRounded;
+    this.maxMulArgRounded = maxMulArgRounded;
+    this.maxMulResRounded = maxMulResRounded;
+    this.maxPowBaseRounded = maxPowBaseRounded;
+    this.maxPowDegRounded = maxPowDegRounded;
+    this.maxPowResRounded = maxPowResRounded;
     this.operationsMap = operationsMap;
+    this.operationsMap = mapOf_0([to('+', SimpleComputationRuleParams_init$lambda(this)), to('-', SimpleComputationRuleParams_init$lambda_0(this)), to('*', SimpleComputationRuleParams_init$lambda_1(this)), to('/', SimpleComputationRuleParams_init$lambda_2(this)), to('^', SimpleComputationRuleParams_init$lambda_3(this)), to('log', SimpleComputationRuleParams_init$lambda_4(this))]);
   }
-  function SimpleComputationRuleParams_init$lambda(args) {
-    return plus_1(args);
+  function SimpleComputationRuleParams_init$lambda(this$SimpleComputationRuleParams) {
+    return function (args) {
+      return plus_1(args, this$SimpleComputationRuleParams);
+    };
   }
-  function SimpleComputationRuleParams_init$lambda_0(args) {
-    return minus(args);
+  function SimpleComputationRuleParams_init$lambda_0(this$SimpleComputationRuleParams) {
+    return function (args) {
+      return minus(args, this$SimpleComputationRuleParams);
+    };
   }
-  function SimpleComputationRuleParams_init$lambda_1(args) {
-    return mul(args);
+  function SimpleComputationRuleParams_init$lambda_1(this$SimpleComputationRuleParams) {
+    return function (args) {
+      return mul(args, this$SimpleComputationRuleParams);
+    };
   }
-  function SimpleComputationRuleParams_init$lambda_2(args) {
-    return div(args);
+  function SimpleComputationRuleParams_init$lambda_2(this$SimpleComputationRuleParams) {
+    return function (args) {
+      return div(args, this$SimpleComputationRuleParams);
+    };
   }
-  function SimpleComputationRuleParams_init$lambda_3(args) {
-    return pow(args);
+  function SimpleComputationRuleParams_init$lambda_3(this$SimpleComputationRuleParams) {
+    return function (args) {
+      return pow(args, this$SimpleComputationRuleParams);
+    };
   }
-  function SimpleComputationRuleParams_init$lambda_4(args) {
-    return log_0(args);
+  function SimpleComputationRuleParams_init$lambda_4(this$SimpleComputationRuleParams) {
+    return function (args) {
+      return log_0(args, this$SimpleComputationRuleParams);
+    };
   }
   SimpleComputationRuleParams.$metadata$ = {
     kind: Kind_CLASS,
@@ -13259,24 +14345,52 @@ if (typeof kotlin === 'undefined') {
     return this.maxTenPowIterations;
   };
   SimpleComputationRuleParams.prototype.component4 = function () {
+    return this.maxPlusArgRounded;
+  };
+  SimpleComputationRuleParams.prototype.component5 = function () {
+    return this.maxPlusResRounded;
+  };
+  SimpleComputationRuleParams.prototype.component6 = function () {
+    return this.maxMulArgRounded;
+  };
+  SimpleComputationRuleParams.prototype.component7 = function () {
+    return this.maxMulResRounded;
+  };
+  SimpleComputationRuleParams.prototype.component8 = function () {
+    return this.maxPowBaseRounded;
+  };
+  SimpleComputationRuleParams.prototype.component9 = function () {
+    return this.maxPowDegRounded;
+  };
+  SimpleComputationRuleParams.prototype.component10 = function () {
+    return this.maxPowResRounded;
+  };
+  SimpleComputationRuleParams.prototype.component11 = function () {
     return this.operationsMap;
   };
-  SimpleComputationRuleParams.prototype.copy_fr63se$ = function (isIncluded, maxCalcComplexity, maxTenPowIterations, operationsMap) {
-    return new SimpleComputationRuleParams(isIncluded === void 0 ? this.isIncluded : isIncluded, maxCalcComplexity === void 0 ? this.maxCalcComplexity : maxCalcComplexity, maxTenPowIterations === void 0 ? this.maxTenPowIterations : maxTenPowIterations, operationsMap === void 0 ? this.operationsMap : operationsMap);
+  SimpleComputationRuleParams.prototype.copy_bblplm$ = function (isIncluded, maxCalcComplexity, maxTenPowIterations, maxPlusArgRounded, maxPlusResRounded, maxMulArgRounded, maxMulResRounded, maxPowBaseRounded, maxPowDegRounded, maxPowResRounded, operationsMap) {
+    return new SimpleComputationRuleParams(isIncluded === void 0 ? this.isIncluded : isIncluded, maxCalcComplexity === void 0 ? this.maxCalcComplexity : maxCalcComplexity, maxTenPowIterations === void 0 ? this.maxTenPowIterations : maxTenPowIterations, maxPlusArgRounded === void 0 ? this.maxPlusArgRounded : maxPlusArgRounded, maxPlusResRounded === void 0 ? this.maxPlusResRounded : maxPlusResRounded, maxMulArgRounded === void 0 ? this.maxMulArgRounded : maxMulArgRounded, maxMulResRounded === void 0 ? this.maxMulResRounded : maxMulResRounded, maxPowBaseRounded === void 0 ? this.maxPowBaseRounded : maxPowBaseRounded, maxPowDegRounded === void 0 ? this.maxPowDegRounded : maxPowDegRounded, maxPowResRounded === void 0 ? this.maxPowResRounded : maxPowResRounded, operationsMap === void 0 ? this.operationsMap : operationsMap);
   };
   SimpleComputationRuleParams.prototype.toString = function () {
-    return 'SimpleComputationRuleParams(isIncluded=' + Kotlin.toString(this.isIncluded) + (', maxCalcComplexity=' + Kotlin.toString(this.maxCalcComplexity)) + (', maxTenPowIterations=' + Kotlin.toString(this.maxTenPowIterations)) + (', operationsMap=' + Kotlin.toString(this.operationsMap)) + ')';
+    return 'SimpleComputationRuleParams(isIncluded=' + Kotlin.toString(this.isIncluded) + (', maxCalcComplexity=' + Kotlin.toString(this.maxCalcComplexity)) + (', maxTenPowIterations=' + Kotlin.toString(this.maxTenPowIterations)) + (', maxPlusArgRounded=' + Kotlin.toString(this.maxPlusArgRounded)) + (', maxPlusResRounded=' + Kotlin.toString(this.maxPlusResRounded)) + (', maxMulArgRounded=' + Kotlin.toString(this.maxMulArgRounded)) + (', maxMulResRounded=' + Kotlin.toString(this.maxMulResRounded)) + (', maxPowBaseRounded=' + Kotlin.toString(this.maxPowBaseRounded)) + (', maxPowDegRounded=' + Kotlin.toString(this.maxPowDegRounded)) + (', maxPowResRounded=' + Kotlin.toString(this.maxPowResRounded)) + (', operationsMap=' + Kotlin.toString(this.operationsMap)) + ')';
   };
   SimpleComputationRuleParams.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.isIncluded) | 0;
     result = result * 31 + Kotlin.hashCode(this.maxCalcComplexity) | 0;
     result = result * 31 + Kotlin.hashCode(this.maxTenPowIterations) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxPlusArgRounded) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxPlusResRounded) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxMulArgRounded) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxMulResRounded) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxPowBaseRounded) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxPowDegRounded) | 0;
+    result = result * 31 + Kotlin.hashCode(this.maxPowResRounded) | 0;
     result = result * 31 + Kotlin.hashCode(this.operationsMap) | 0;
     return result;
   };
   SimpleComputationRuleParams.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.isIncluded, other.isIncluded) && Kotlin.equals(this.maxCalcComplexity, other.maxCalcComplexity) && Kotlin.equals(this.maxTenPowIterations, other.maxTenPowIterations) && Kotlin.equals(this.operationsMap, other.operationsMap)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.isIncluded, other.isIncluded) && Kotlin.equals(this.maxCalcComplexity, other.maxCalcComplexity) && Kotlin.equals(this.maxTenPowIterations, other.maxTenPowIterations) && Kotlin.equals(this.maxPlusArgRounded, other.maxPlusArgRounded) && Kotlin.equals(this.maxPlusResRounded, other.maxPlusResRounded) && Kotlin.equals(this.maxMulArgRounded, other.maxMulArgRounded) && Kotlin.equals(this.maxMulResRounded, other.maxMulResRounded) && Kotlin.equals(this.maxPowBaseRounded, other.maxPowBaseRounded) && Kotlin.equals(this.maxPowDegRounded, other.maxPowDegRounded) && Kotlin.equals(this.maxPowResRounded, other.maxPowResRounded) && Kotlin.equals(this.operationsMap, other.operationsMap)))));
   };
   var simpleComputationRuleParamsDefault;
   function calcComplexity($receiver) {
@@ -13354,7 +14468,9 @@ if (typeof kotlin === 'undefined') {
     }
     return iterations;
   }
-  function plus_1(args) {
+  function plus_1(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     var tmp$ = args.size === 2;
     if (tmp$) {
       var any$result;
@@ -13385,7 +14501,7 @@ if (typeof kotlin === 'undefined') {
       }tmp$_1 = args.iterator();
       while (tmp$_1.hasNext()) {
         var element_0 = tmp$_1.next();
-        if (roundNumber(element_0) > 200) {
+        if (roundNumber(element_0) > simpleComputationRuleParams.maxPlusArgRounded) {
           any$result_0 = true;
           break any$break;
         }}
@@ -13395,16 +14511,20 @@ if (typeof kotlin === 'undefined') {
     if (any$result_0 && args.size > 2) {
       return null;
     }var result = sum(args);
-    if (roundNumber(result) > 300) {
+    if (roundNumber(result) > simpleComputationRuleParams.maxPlusResRounded) {
       return null;
     }return result;
   }
-  function minus(args) {
+  function minus(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 1) {
       return null;
     }return -first(args);
   }
-  function mul(args) {
+  function mul(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     var tmp$;
     var tmp$_0 = args.size === 2;
     if (tmp$_0) {
@@ -13436,7 +14556,7 @@ if (typeof kotlin === 'undefined') {
       }tmp$_2 = args.iterator();
       while (tmp$_2.hasNext()) {
         var element_0 = tmp$_2.next();
-        if (roundNumber(element_0) > 50) {
+        if (roundNumber(element_0) > simpleComputationRuleParams.maxMulArgRounded) {
           any$result_0 = true;
           break any$break;
         }}
@@ -13451,43 +14571,51 @@ if (typeof kotlin === 'undefined') {
       var arg = tmp$.next();
       result *= arg;
     }
-    if (roundNumber(result) > 100) {
+    if (roundNumber(result) > simpleComputationRuleParams.maxMulResRounded) {
       return null;
     }return result;
   }
-  function div(args) {
+  function div(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 2) {
       return null;
-    }if (roundNumber(first(args)) > 100 || roundNumber(last(args)) > 50 || last(args) === 0.0) {
+    }if (roundNumber(first(args)) > simpleComputationRuleParams.maxMulResRounded || roundNumber(last(args)) > simpleComputationRuleParams.maxMulArgRounded || last(args) === 0.0) {
       return null;
     }var result = first(args) / last(args);
-    if (roundNumber(result) > 100) {
+    if (roundNumber(result) > simpleComputationRuleParams.maxMulResRounded) {
       return null;
     }return result;
   }
-  function pow(args) {
+  function pow(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 2) {
       return null;
-    }if (roundNumber(first(args)) > 400 || roundNumber(last(args)) > 10) {
+    }if (roundNumber(first(args)) > simpleComputationRuleParams.maxPowBaseRounded || roundNumber(last(args)) > simpleComputationRuleParams.maxPowDegRounded) {
       return null;
     }var $receiver = first(args);
     var x = last(args);
     var result = Math_0.pow($receiver, x);
-    if (!isFinite(result) || roundNumber(result) > 400) {
+    if (!isFinite(result) || roundNumber(result) > simpleComputationRuleParams.maxPowResRounded) {
       return null;
     }return result;
   }
-  function log_0(args) {
+  function log_0(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 2) {
       return null;
-    }if (roundNumber(first(args)) > 400 || roundNumber(last(args)) > 400) {
+    }if (roundNumber(first(args)) > simpleComputationRuleParams.maxPowBaseRounded || roundNumber(last(args)) > simpleComputationRuleParams.maxPowResRounded) {
       return null;
     }var result = log(first(args), last(args));
-    if (!isFinite(result) || roundNumber(result) > 400 || (roundNumber(result) >= 1 && !inZ(result))) {
+    if (!isFinite(result) || roundNumber(result) > simpleComputationRuleParams.maxPowDegRounded || (roundNumber(result) >= 1 && !inZ(result))) {
       return null;
     }return result;
   }
-  function sin(args) {
+  function sin(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 1) {
       return null;
     }var x = first(args);
@@ -13496,7 +14624,9 @@ if (typeof kotlin === 'undefined') {
       return null;
     }return result;
   }
-  function cos(args) {
+  function cos(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 1) {
       return null;
     }var x = first(args);
@@ -13505,7 +14635,9 @@ if (typeof kotlin === 'undefined') {
       return null;
     }return result;
   }
-  function tg(args) {
+  function tg(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 1) {
       return null;
     }var x = first(args);
@@ -13514,7 +14646,9 @@ if (typeof kotlin === 'undefined') {
       return null;
     }return result;
   }
-  function ctg(args) {
+  function ctg(args, simpleComputationRuleParams) {
+    if (simpleComputationRuleParams === void 0)
+      simpleComputationRuleParams = simpleComputationRuleParamsDefault;
     if (args.size !== 1) {
       return null;
     }var x = first(args);
@@ -13821,7 +14955,7 @@ if (typeof kotlin === 'undefined') {
       if (containedVariables.size > 1) {
         return new GeneralError('left part of the result contains more than one variable: ' + joinToString(containedVariables, void 0, void 0, void 0, void 0, void 0, Expression$isSolutionForVariables$lambda));
       } else if (containedVariables.size === 1) {
-        targetVariables.put_xwzc9p$(first_1(containedVariables), true);
+        targetVariables.put_xwzc9p$(first_2(containedVariables), true);
       }return null;
     } else {
       var containedVariables_0 = this.data.getContainedVariables_ywdfdh$(targetVariables.keys);
@@ -14277,7 +15411,7 @@ if (typeof kotlin === 'undefined') {
           tmp$_21 = expressionTransformations.iterator();
           while (tmp$_21.hasNext()) {
             var element = tmp$_21.next();
-            if (equals(element.name, ruleName))
+            if (equals(element.nameEn, ruleName))
               destination.add_11rb$(element);
           }
           var rules = destination;
@@ -14293,7 +15427,7 @@ if (typeof kotlin === 'undefined') {
             tmp$_25 = expressionTransformations.iterator();
             while (tmp$_25.hasNext()) {
               var item = tmp$_25.next();
-              destination_0.add_11rb$(item.name);
+              destination_0.add_11rb$(item.nameEn);
             }
             var destination_1 = ArrayList_init();
             var tmp$_26;
@@ -14920,7 +16054,7 @@ if (typeof kotlin === 'undefined') {
         applyAllImmediateSubstitutions(left.data, factComporator.compiledConfiguration);
         applyAllImmediateSubstitutions(right.data, factComporator.compiledConfiguration);
         if (!factComporator.expressionComporator.compareAsIs_98xwbf$(left.data, right.data)) {
-          this.expressionSubstitution = new ExpressionSubstitution(left.data, right.data, void 0, comparisonResult.additionalFactUsed, this.name, first(this.root.expressionTransformationChains).comparisonType);
+          this.expressionSubstitution = new ExpressionSubstitution(left.data, right.data, void 0, comparisonResult.additionalFactUsed, this.name, void 0, first(this.root.expressionTransformationChains).comparisonType);
           log_1.addMessageWithExpressionSubstitutionShort_ht2yvq$(Rule$check$lambda_2, ensureNotNull(this.expressionSubstitution), MessageType$USER_getInstance(), currentLogLevel.v);
         }} else {
         if (!this.root.factTransformationChains.isEmpty()) {
@@ -15353,7 +16487,7 @@ if (typeof kotlin === 'undefined') {
           tmp$_30 = expressionTransformations.iterator();
           while (tmp$_30.hasNext()) {
             var element_0 = tmp$_30.next();
-            if (equals(element_0.name, ruleName))
+            if (equals(element_0.nameEn, ruleName))
               destination_0.add_11rb$(element_0);
           }
           actualExpressionTransformations = destination_0;
@@ -15369,7 +16503,7 @@ if (typeof kotlin === 'undefined') {
             tmp$_34 = expressionTransformations.iterator();
             while (tmp$_34.hasNext()) {
               var item = tmp$_34.next();
-              destination_1.add_11rb$(item.name);
+              destination_1.add_11rb$(item.nameEn);
             }
             var destination_2 = ArrayList_init();
             var tmp$_35;
@@ -15569,7 +16703,7 @@ if (typeof kotlin === 'undefined') {
             var expressionTransformationRulesFromLeftFact = ArrayList_init();
             tmp$_18 = get_lastIndex(leftFacts);
             for (var i = 0; i <= tmp$_18; i++) {
-              expressionTransformationRulesFromLeftFact.add_11rb$(new ExpressionSubstitution((Kotlin.isType(tmp$_19 = leftFacts.get_za3lpa$(i), ExpressionComparison) ? tmp$_19 : throwCCE()).leftExpression.data, (Kotlin.isType(tmp$_20 = leftFacts.get_za3lpa$(i), ExpressionComparison) ? tmp$_20 : throwCCE()).rightExpression.data, void 0, true, void 0, (Kotlin.isType(tmp$_21 = leftFacts.get_za3lpa$(i), ExpressionComparison) ? tmp$_21 : throwCCE()).comparisonType));
+              expressionTransformationRulesFromLeftFact.add_11rb$(new ExpressionSubstitution((Kotlin.isType(tmp$_19 = leftFacts.get_za3lpa$(i), ExpressionComparison) ? tmp$_19 : throwCCE()).leftExpression.data, (Kotlin.isType(tmp$_20 = leftFacts.get_za3lpa$(i), ExpressionComparison) ? tmp$_20 : throwCCE()).rightExpression.data, void 0, true, void 0, void 0, (Kotlin.isType(tmp$_21 = leftFacts.get_za3lpa$(i), ExpressionComparison) ? tmp$_21 : throwCCE()).comparisonType));
               log_1.addMessageWithExpressionSubstitutionShort_ht2yvq$(MainChain$check$lambda_62, last(expressionTransformationRulesFromLeftFact), MessageType$USER_getInstance(), currentLogLevel.v);
             }
             tmp$_22 = get_lastIndex(leftFacts);
@@ -16059,7 +17193,7 @@ if (typeof kotlin === 'undefined') {
               log_1.addMessage_bda5c9$(MainLineAndNode$check$lambda_13, MessageType$USER_getInstance(), currentLogLevel.v);
               if (ensureNotNull(rule.factSubstitution).right.type() === ComparableTransformationPartType$EXPRESSION_COMPARISON_getInstance()) {
                 var ruleData = Kotlin.isType(tmp$_2 = ensureNotNull(rule.factSubstitution).right, ExpressionComparison) ? tmp$_2 : throwCCE();
-                var expressionSubstitution = new ExpressionSubstitution(ruleData.leftExpression.data, ruleData.rightExpression.data, void 0, true, void 0, ruleData.comparisonType);
+                var expressionSubstitution = new ExpressionSubstitution(ruleData.leftExpression.data, ruleData.rightExpression.data, void 0, true, void 0, void 0, ruleData.comparisonType);
                 nodeExpressionTransformations.add_11rb$(expressionSubstitution);
                 log_1.addMessageWithExpressionSubstitutionShort_ht2yvq$(MainLineAndNode$check$lambda_14, expressionSubstitution, void 0, currentLogLevel.v);
               }}} else {
@@ -16750,7 +17884,7 @@ if (typeof kotlin === 'undefined') {
       return MainLineAndNode$Companion_getInstance().parseFromFactIdentifier_yhp8gb$(string, parent, functionConfiguration);
     } else if (startsWith(string, 'OR_NODE(')) {
       return MainLineOrNode$Companion_getInstance().parseFromFactIdentifier_yhp8gb$(string, parent, functionConfiguration);
-    } else if (contains_1(string, ';ec;')) {
+    } else if (contains(string, ';ec;')) {
       return ExpressionComparison$Companion_getInstance().parseFromFactIdentifier_yhp8gb$(string, parent, functionConfiguration);
     } else {
       return Expression$Companion_getInstance().parseFromFactIdentifier_yhp8gb$(string, parent, functionConfiguration);
@@ -17123,7 +18257,7 @@ if (typeof kotlin === 'undefined') {
                   tmp$_6 = this.expressionNodeConstructor.construct_61zpoe$(expressionSubstitutionData.list.get_za3lpa$(1));
                   tmp$_7 = valueOfComparisonType(expressionSubstitutionData.list.get_za3lpa$(2));
                   tmp$_8 = this.booleanFromData_pdl1vz$(expressionSubstitutionData.list.get_za3lpa$(3));
-                  tmp$_9 = new ExpressionSubstitution(tmp$_5, tmp$_6, toDouble(expressionSubstitutionData.list.get_za3lpa$(4)), tmp$_8, void 0, tmp$_7);
+                  tmp$_9 = new ExpressionSubstitution(tmp$_5, tmp$_6, toDouble(expressionSubstitutionData.list.get_za3lpa$(4)), tmp$_8, void 0, void 0, tmp$_7);
                 }
                 var expressionSubstitution = tmp$_9;
                 var factSubstitutionData = this.splitStringByBracketsOnTopLevel_0(ruleIdentifier.list.get_za3lpa$(2));
@@ -17202,6 +18336,7 @@ if (typeof kotlin === 'undefined') {
     this.expressionComporator_987byt$_0 = this.expressionComporator_987byt$_0;
   }
   Object.defineProperty(FactComporator.prototype, 'compiledConfiguration', {
+    configurable: true,
     get: function () {
       if (this.compiledConfiguration_z292fw$_0 == null)
         return throwUPAE('compiledConfiguration');
@@ -17212,6 +18347,7 @@ if (typeof kotlin === 'undefined') {
     }
   });
   Object.defineProperty(FactComporator.prototype, 'expressionComporator', {
+    configurable: true,
     get: function () {
       if (this.expressionComporator_987byt$_0 == null)
         return throwUPAE('expressionComporator');
@@ -17392,7 +18528,7 @@ if (typeof kotlin === 'undefined') {
     }switch (left.type().name) {
       case 'EXPRESSION':
         log_1.addMessage_bda5c9$(FactComporator$compareAsIs$lambda_1, void 0, currentLogLevel.v);
-        tmp$_5 = this.expressionComporator.probabilityTestComparison_zfhhb$((Kotlin.isType(tmp$ = left, Expression) ? tmp$ : throwCCE()).data.clone(), (Kotlin.isType(tmp$_0 = right, Expression) ? tmp$_0 : throwCCE()).data.clone());
+        tmp$_5 = this.expressionComporator.probabilityTestComparison_3fo6fu$((Kotlin.isType(tmp$ = left, Expression) ? tmp$ : throwCCE()).data.clone(), (Kotlin.isType(tmp$_0 = right, Expression) ? tmp$_0 : throwCCE()).data.clone());
         break;
       case 'EXPRESSION_COMPARISON':
         var leftComparison = Kotlin.isType(tmp$_1 = left, ExpressionComparison) ? tmp$_1 : throwCCE();
@@ -18092,7 +19228,7 @@ if (typeof kotlin === 'undefined') {
               if (notMatchedConditionFactsIndexes.contains_11rb$(j_0)) {
                 continue;
               }var conditionFact_0 = conditionFacts.get_za3lpa$(j_0);
-              var matchingFactIndex = first_1(nodesCorrespondingToConditionFacts[j_0]);
+              var matchingFactIndex = first_2(nodesCorrespondingToConditionFacts[j_0]);
               if (matchingFactIndex >= actualFacts_0.size) {
                 substitutionInstance.varNamesTimeStorage.addVarName_5gyjt1$(additionalFactUsedVarName, SubstitutionInstanceVarType$INFO_getInstance());
                 tmp$_15 = additionalFacts.get_za3lpa$(matchingFactIndex - actualFacts_0.size | 0);
@@ -18139,7 +19275,7 @@ if (typeof kotlin === 'undefined') {
                 substitutionInstance.isApplicable = false;
                 substitutionInstance.dropExtraVarsAfter_za3lpa$(startGeneratingResultTime_0);
                 return;
-              }var matchingFactIndex_0 = first_1(nodesCorrespondingToConditionFacts[j_2]);
+              }var matchingFactIndex_0 = first_2(nodesCorrespondingToConditionFacts[j_2]);
               if (matchingFactIndex_0 >= actualFacts_0.size) {
                 substitutionInstance.varNamesTimeStorage.addVarName_5gyjt1$(additionalFactUsedVarName, SubstitutionInstanceVarType$INFO_getInstance());
                 tmp$_20 = additionalFacts.get_za3lpa$(matchingFactIndex_0 - actualFacts_0.size | 0);
@@ -19840,6 +20976,7 @@ if (typeof kotlin === 'undefined') {
     this.message_jzidzn$_0 = lazy(LazyMessage$message$lambda(message));
   }
   Object.defineProperty(LazyMessage.prototype, 'message', {
+    configurable: true,
     get: function () {
       return this.message_jzidzn$_0.value;
     }
@@ -20150,7 +21287,7 @@ if (typeof kotlin === 'undefined') {
   }
   function LazyLog$logCheckParams$lambda_4(closure$j, closure$expressionTransformation) {
     return function () {
-      return closure$j.toString() + '. ' + closure$expressionTransformation.name + ':';
+      return closure$j.toString() + '. ' + closure$expressionTransformation.nameEn + ':';
     };
   }
   function LazyLog$logCheckParams$lambda_5() {
@@ -20454,7 +21591,7 @@ if (typeof kotlin === 'undefined') {
     var mathMLWithoutSupportingTags = deleteUnsupportedMathMLTags(mathMLWithoutBrushing);
     var mathMLAfterSpecificSystemReplacements = specificMathMlSystemReplacements(mathMLWithoutSupportingTags);
     var mathML = correctMathMlTagsAccordingToBracketsFromEnd(mathMLAfterSpecificSystemReplacements);
-    if (contains_1(mathML, 'error', true) && contains_1(mathML, '#FF')) {
+    if (contains(mathML, 'error', true) && contains(mathML, '#FF')) {
       return mathML;
     }log_1.addMessage_bda5c9$(checkFactsInMathML$lambda_0(mathML), void 0, 0);
     var transformationChainParser = new TransformationChainParser(mathML, false, compiledConfiguration.functionConfiguration, compiledConfiguration.factsLogicConfiguration, compiledConfiguration.compiledImmediateVariableReplacements);
@@ -20990,7 +22127,7 @@ if (typeof kotlin === 'undefined') {
       if (!isBlank(endExpressionIdentifier)) {
         var endExpression = expressionNodeConstructor.construct_61zpoe$(endExpressionIdentifier);
         first(transformationChainParser.root.expressionTransformationChains).chain.add_11rb$(new Expression(void 0, void 0, endExpression, void 0, transformationChainParser.root));
-      }}if (contains_1(targetFactIdentifier, '}{=}{')) {
+      }}if (contains(targetFactIdentifier, '}{=}{')) {
       var taskTargetFact = log_1.factConstructorViewer.constructFactByIdentifier_7q4i4t$(targetFactIdentifier);
       var taskTargetRoot = taskTargetFact.type() === transformationChainParser.root.type() ? taskTargetFact : new MainLineAndNode(void 0, void 0, void 0, void 0, mutableListOf([taskTargetFact]));
       var newRoot = new MainLineAndNode(void 0, void 0, void 0, mutableListOf([new MainChain(mutableListOf([transformationChainParser.root, taskTargetRoot]))]));
@@ -21740,14 +22877,14 @@ if (typeof kotlin === 'undefined') {
     if ($receiver.children.isEmpty())
       return true;
     tmp$ = $receiver.value;
-    if (contains_1('', tmp$) || equals(tmp$, '+') || equals(tmp$, '-') || equals(tmp$, '*')) {
+    if (contains('', tmp$) || equals(tmp$, '+') || equals(tmp$, '-') || equals(tmp$, '*')) {
       tmp$_0 = $receiver.children.iterator();
       while (tmp$_0.hasNext()) {
         var child = tmp$_0.next();
         if (!this.isPolynom_5lmvi0$(child, variables))
           return false;
       }
-    } else if (contains_1('/', tmp$) || equals(tmp$, '^')) {
+    } else if (contains('/', tmp$) || equals(tmp$, '^')) {
       if (!this.isPolynom_5lmvi0$(first($receiver.children), variables))
         return false;
       tmp$_1 = $receiver.children.size;
@@ -21768,14 +22905,14 @@ if (typeof kotlin === 'undefined') {
   InequalityApproximateSolver.prototype.isPolynomThatCanHaveDivsOnlyOnTopLevel_5lmvi0$ = function ($receiver, variables) {
     var tmp$, tmp$_0, tmp$_1;
     tmp$ = $receiver.value;
-    if (contains_1('*', tmp$) || equals(tmp$, '')) {
+    if (contains('*', tmp$) || equals(tmp$, '')) {
       tmp$_0 = $receiver.children.iterator();
       while (tmp$_0.hasNext()) {
         var child = tmp$_0.next();
         if (!this.isPolynomThatCanHaveDivsOnlyOnTopLevel_5lmvi0$(child, variables))
           return false;
       }
-    } else if (contains_1('/', tmp$)) {
+    } else if (contains('/', tmp$)) {
       tmp$_1 = $receiver.children.iterator();
       while (tmp$_1.hasNext()) {
         var child_0 = tmp$_1.next();
@@ -22618,15 +23755,17 @@ if (typeof kotlin === 'undefined') {
   CompressedNodeDouble.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.func, other.func) && Kotlin.equals(this.value, other.value)))));
   };
-  function OptimizerUtils(expression, baseOperationsDefinitions, compiledConfiguration) {
+  function OptimizerUtils(expression, baseOperationsDefinitions, compiledConfiguration, domain) {
     if (baseOperationsDefinitions === void 0)
       baseOperationsDefinitions = new BaseOperationsDefinitions();
     if (compiledConfiguration === void 0)
       compiledConfiguration = new CompiledConfiguration();
+    if (domain === void 0)
+      domain = null;
     this.expression = expression;
-    this.epsilon_0 = 1.0E-9;
+    this.compiledConfiguration = compiledConfiguration;
     this.baseOperationsComputationDouble_0 = new BaseOperationsComputation(ComputationType$DOUBLE_getInstance());
-    this.domainPointGenerator_0 = new DomainPointGenerator(arrayListOf([this.expression]), baseOperationsDefinitions);
+    this.domainPointGenerator_0 = domain != null ? domain : new DomainPointGenerator(arrayListOf([this.expression]), baseOperationsDefinitions);
     this.variablesList_0 = ArrayList_init();
     this.treeNodes_0 = ArrayList_init();
     this.nodesWithVariables_0 = ArrayList_init();
@@ -22645,7 +23784,7 @@ if (typeof kotlin === 'undefined') {
     while (tmp$.hasNext()) {
       var tmp$_1 = tmp$.next();
       var name = tmp$_1.component1();
-      var partialDerivative = diff(buildDiffNode(this.expression, name, compiledConfiguration), void 0, compiledConfiguration);
+      var partialDerivative = diff(buildDiffNode(this.expression, name, this.compiledConfiguration), void 0, this.compiledConfiguration);
       this.partialDerivativesTreeNodes_0.add_11rb$(ArrayList_init());
       this.partialDerivativesNodesWithVariables_0.add_11rb$(ArrayList_init());
       this.findAllVariables_0(partialDerivative, last(this.partialDerivativesTreeNodes_0), last(this.partialDerivativesNodesWithVariables_0));
@@ -22656,9 +23795,9 @@ if (typeof kotlin === 'undefined') {
   }
   OptimizerUtils.prototype.run_224j3y$ = function (descentStartPointsCount, iterationCount, threshold) {
     if (descentStartPointsCount === void 0)
-      descentStartPointsCount = 1;
+      descentStartPointsCount = this.compiledConfiguration.gradientDescentComparisonConfiguration.startPointsCount;
     if (iterationCount === void 0)
-      iterationCount = 20;
+      iterationCount = this.compiledConfiguration.gradientDescentComparisonConfiguration.iterationCount;
     if (threshold === void 0)
       threshold = 0.0;
     var tmp$, tmp$_0;
@@ -22685,7 +23824,7 @@ if (typeof kotlin === 'undefined') {
     var tmp$;
     for (var iter = 0; iter < iterationCount; iter++) {
       var direction = this.calculateDirection_0(this.variablesList_0);
-      var lambda = this.runTernarySearch_0(this.variablesList_0, direction, 1.0E-9, 1.0E9, 65, threshold);
+      var lambda = this.runTernarySearch_0(this.variablesList_0, direction, this.compiledConfiguration.gradientDescentComparisonConfiguration.ternarySearchLeftBorder, this.compiledConfiguration.gradientDescentComparisonConfiguration.ternarySearchRightBorder, this.compiledConfiguration.gradientDescentComparisonConfiguration.ternarySearchIterationCount, threshold);
       if (lambda === 0.0)
         break;
       tmp$ = this.variablesList_0;
@@ -22715,8 +23854,8 @@ if (typeof kotlin === 'undefined') {
     var leftOk = this.valueAt_0(left, variableList, direction) != null;
     if (!leftOk && this.valueAt_0(right, variableList, direction) == null) {
       return 0.0;
-    }var alpha = 2.5;
-    var beta = 1;
+    }var alpha = this.compiledConfiguration.gradientDescentComparisonConfiguration.ternarySearchAlpha;
+    var beta = this.compiledConfiguration.gradientDescentComparisonConfiguration.ternarySearchBeta;
     for (var iter = 0; iter < iterationsCount; iter++) {
       var m1 = (alpha * left + beta * right) / (alpha + beta);
       var m2 = (beta * left + alpha * right) / (alpha + beta);
@@ -22737,10 +23876,6 @@ if (typeof kotlin === 'undefined') {
       }
     }
     return leftOk ? left : right;
-  };
-  OptimizerUtils.prototype.generateMedians_0 = function (left, right) {
-    var phi = (3 - Math_0.sqrt(5.0)) / 2;
-    return new Pair(left + (right - left) * phi, right - (right - left) * phi);
   };
   OptimizerUtils.prototype.valueAt_0 = function (lambda, variableList, direction) {
     var variableListCloned = this.cloneVariableList_0(variableList);
@@ -23300,7 +24435,7 @@ if (typeof kotlin === 'undefined') {
   function toShortString($receiver) {
     var stringValue = $receiver.toString();
     if (contains_0(stringValue, 46)) {
-      if (contains_1(stringValue, '999')) {
+      if (contains(stringValue, '999')) {
         var fractionPart = substringBefore_0(substringAfter(stringValue, '.'), '999');
         stringValue = substringBefore_0(stringValue, '.');
         if (fractionPart.length > 0 && !equals(fractionPart, '9'))
@@ -24210,7 +25345,7 @@ if (typeof kotlin === 'undefined') {
     return result.toString();
   }
   var package$api = _.api || (_.api = {});
-  package$api.normalizeExpressionToUsualForm_6718cy$ = normalizeExpressionToUsualForm;
+  package$api.normalizeExpressionToUsualForm_4hv65v$ = normalizeExpressionToUsualForm;
   package$api.compareWithoutSubstitutions_ic33gh$ = compareWithoutSubstitutions;
   package$api.compareByPattern_fxceps$ = compareByPattern;
   package$api.compareWithoutSubstitutions_atx8px$ = compareWithoutSubstitutions_0;
@@ -24229,11 +25364,13 @@ if (typeof kotlin === 'undefined') {
   package$api.generateTaskByStructureStringsSubstitutionsInJSON_ny8vwh$ = generateTaskByStructureStringsSubstitutionsInJSON;
   package$api.optGenerateSimpleComputationRule_8b70w7$ = optGenerateSimpleComputationRule;
   package$api.expressionSubstitutionFromStrings_5nhn2l$ = expressionSubstitutionFromStrings;
-  package$api.expressionSubstitutionFromStructureStrings_8vjoda$ = expressionSubstitutionFromStructureStrings;
+  package$api.expressionSubstitutionFromStructureStrings = expressionSubstitutionFromStructureStrings;
   package$api.findSubstitutionPlacesInExpression_333i8d$ = findSubstitutionPlacesInExpression;
   package$api.applySubstitution_g1mkoe$ = applySubstitution;
-  package$api.findApplicableSubstitutionsInSelectedPlace_clyorm$ = findApplicableSubstitutionsInSelectedPlace;
-  package$api.applySubstitutionInSelectedPlace_xotwiu$ = applySubstitutionInSelectedPlace;
+  package$api.createCompiledConfigurationFromExpressionSubstitutionsAndParams_aatmta$ = createCompiledConfigurationFromExpressionSubstitutionsAndParams;
+  package$api.findApplicableSubstitutionsInSelectedPlace = findApplicableSubstitutionsInSelectedPlace;
+  package$api.applySubstitutionInSelectedPlace_m5nb0p$ = applySubstitutionInSelectedPlace;
+  package$api.findLowestSubtreeTopOfSelectedNodesInExpression_3skgjp$ = findLowestSubtreeTopOfSelectedNodesInExpression;
   package$api.SubstitutionPlaceOfflineData = SubstitutionPlaceOfflineData;
   package$api.findSubstitutionPlacesCoordinatesInExpressionJSON_yb6h17$ = findSubstitutionPlacesCoordinatesInExpressionJSON;
   package$api.findStructureStringsSubstitutionPlacesCoordinatesInExpressionJSON_yb6h17$ = findStructureStringsSubstitutionPlacesCoordinatesInExpressionJSON;
@@ -24321,6 +25458,7 @@ if (typeof kotlin === 'undefined') {
   package$config.valueFromMathMLString_61zpoe$ = valueFromMathMLString;
   package$config.getAllComparisonTypeMathML = getAllComparisonTypeMathML;
   package$config.ComparisonSettings = ComparisonSettings;
+  package$config.GradientDescentComparisonConfiguration = GradientDescentComparisonConfiguration;
   package$config.CompiledConfiguration = CompiledConfiguration;
   Object.defineProperty(ErrorLevel, 'INFO', {
     get: ErrorLevel$INFO_getInstance
@@ -24408,25 +25546,31 @@ if (typeof kotlin === 'undefined') {
   package$expressiontree.subtractionTree_rng7ig$ = subtractionTree;
   package$expressiontree.divisionTree_rng7ig$ = divisionTree;
   package$expressiontree.addRootNodeToExpression_6718cy$ = addRootNodeToExpression;
-  package$expressiontree.nodeIdsPositionsMap_pqoyrt$ = nodeIdsPositionsMap;
-  package$expressiontree.nodeIdsToNodeLinksInSameOrder_bn4fyz$ = nodeIdsToNodeLinksInSameOrder;
+  package$expressiontree.nodeIdsPositionsMap_9mvhws$ = nodeIdsPositionsMap;
+  package$expressiontree.nodeIdsToNodeLinksInSameOrder_o132aw$ = nodeIdsToNodeLinksInSameOrder;
   package$expressiontree.findLowestSubtreeTopOfNodes_4sw5sy$ = findLowestSubtreeTopOfNodes;
-  package$expressiontree.findLowestSubtreeWithNodes_aczpzv$ = findLowestSubtreeWithNodes;
+  package$expressiontree.findLowestSubtreeWithNodes_yr6xck$ = findLowestSubtreeWithNodes;
   package$expressiontree.cloneWithoutSelectedNodes_kdwlv0$ = cloneWithoutSelectedNodes;
   package$expressiontree.SubstitutionSelectionData = SubstitutionSelectionData;
   package$expressiontree.SubstitutionApplication = SubstitutionApplication;
   package$expressiontree.simpleCommutativeOperationSelectionHandling_9330xr$ = simpleCommutativeOperationSelectionHandling;
   package$expressiontree.fillSubstitutionSelectionData_9330xr$ = fillSubstitutionSelectionData;
-  package$expressiontree.findConfiguredSubstitutionsApplications_5rlcje$ = findConfiguredSubstitutionsApplications;
+  package$expressiontree.findConfiguredSubstitutionsApplications_qwwddr$ = findConfiguredSubstitutionsApplications;
+  package$expressiontree.generateParentBracketsExpansionSubstitution_9330xr$ = generateParentBracketsExpansionSubstitution;
   package$expressiontree.generatePermutationSubstitutions_5rlcje$ = generatePermutationSubstitutions;
+  package$expressiontree.ExpressionStrictureIdentifierCounter = ExpressionStrictureIdentifierCounter;
   package$expressiontree.generateReduceArithmeticSubstitutions_5rlcje$ = generateReduceArithmeticSubstitutions;
-  package$expressiontree.getMultipliersFromNode_6718cy$ = getMultipliersFromNode;
-  package$expressiontree.handleAdditiveNodeAsReductionPart_rlhp4k$ = handleAdditiveNodeAsReductionPart;
+  package$expressiontree.generateReduceFractionSubstitutions_5rlcje$ = generateReduceFractionSubstitutions;
+  package$expressiontree.getOperandsFrom2ArgsNode_j00fd2$ = getOperandsFrom2ArgsNode;
+  package$expressiontree.getMultipliersFromNode_d6hjez$ = getMultipliersFromNode;
+  package$expressiontree.handleAdditiveNodeAsReductionPart_4hxcvp$ = handleAdditiveNodeAsReductionPart;
   package$expressiontree.generateOpeningBracketsSubstitutions_5rlcje$ = generateOpeningBracketsSubstitutions;
   package$expressiontree.generateSimpleComputationSubstitutions_5rlcje$ = generateSimpleComputationSubstitutions;
   package$expressiontree.generateNumberTransformationSubstitutions_5rlcje$ = generateNumberTransformationSubstitutions;
   package$expressiontree.generateComplicatingExtensionSubstitutions_5rlcje$ = generateComplicatingExtensionSubstitutions;
   package$expressiontree.applySubstitution_bs6wez$ = applySubstitution_0;
+  package$expressiontree.generateFormIndependentSubstitutionsBySelectedNodes_5rlcje$ = generateFormIndependentSubstitutionsBySelectedNodes;
+  package$expressiontree.generateFormDependentSubstitutionsBySelectedNodes_qwwddr$ = generateFormDependentSubstitutionsBySelectedNodes;
   package$expressiontree.generateSubstitutionsBySelectedNodes_5rlcje$ = generateSubstitutionsBySelectedNodes;
   package$expressiontree.ExpressionStructurePart = ExpressionStructurePart;
   package$expressiontree.FunctionCondition = FunctionCondition;
@@ -24550,6 +25694,13 @@ if (typeof kotlin === 'undefined') {
   });
   package$expressiontree.ExpressionTreeParser = ExpressionTreeParser;
   package$expressiontree.ExpressionTreeAnalyzer = ExpressionTreeAnalyzer;
+  package$expressiontree.shouldTakeLog_6718cy$ = shouldTakeLog;
+  package$expressiontree.getLog_4hv65v$ = getLog;
+  package$expressiontree.alwaysPositiveFunction_6718cy$ = alwaysPositiveFunction;
+  package$expressiontree.difference_jv1oz7$ = difference;
+  package$expressiontree.ratio_jv1oz7$ = ratio;
+  package$expressiontree.alwaysPositive_4hv65v$ = alwaysPositive;
+  package$expressiontree.gradientDescentComparison_pufmpq$ = gradientDescentComparison;
   package$expressiontree.SimpleComputationRuleParams = SimpleComputationRuleParams;
   Object.defineProperty(package$expressiontree, 'simpleComputationRuleParamsDefault', {
     get: function () {
