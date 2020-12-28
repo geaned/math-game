@@ -20,10 +20,10 @@ function getDeepestContainer(x, y, nodes) {
 
 function repositionExpressionContainer(container, isCenter) {
     if (isCenter) {
-        container.position.set((renderer.width-container.width)/2, (renderer.height-container.height)/2);
+        container.position.set((screenWidth-container.width)/2, (screenHeight-container.height)/2);
 
     } else {
-        container.position.set((renderer.width-container.width)/2, (renderer.height*extraSettings.partOfScreenDedicatedToExpression-container.height)/2);
+        container.position.set((screenWidth-container.width)/2, (screenHeight*extraSettings.partOfScreenDedicatedToExpression-container.height)/2);
     }
     container.nodeData = getAllNodeBlocksCoords(container, [], 0, 0);
 }
@@ -58,4 +58,8 @@ function getAllNodeBlocksCoords(container, NodeDataArray, absoluteCoordX, absolu
         }
     }
     return NodeDataArray;
+}
+
+function checkAnswer(testedExpressionNode, goalStructureString) {
+    return (twf.api.expressionToStructureString(testedExpressionNode) === goalStructureString);
 }

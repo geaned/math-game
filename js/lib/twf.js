@@ -25516,8 +25516,8 @@ if (typeof kotlin === 'undefined') {
   package$api.expressionToString_tvfpvg$ = expressionToString;
   package$api.expressionToTexString_tvfpvg$ = expressionToTexString;
   package$api.structureStringToExpression = structureStringToExpression;
-  package$api.expressionToStructureString_6718cy$ = expressionToStructureString;
-  package$api.stringToStructureString_y630ta$ = stringToStructureString;
+  package$api.expressionToStructureString = expressionToStructureString;
+  package$api.stringToStructureString = stringToStructureString;
   package$api.stringToExpressionStructurePattern_69c2cy$ = stringToExpressionStructurePattern;
   package$api.investigateIfExpressionFormIsStructureString_61zpoe$ = investigateIfExpressionFormIsStructureString;
   package$api.generateTask_ufm96r$ = generateTask;

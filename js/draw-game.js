@@ -1,17 +1,20 @@
-function redrawMainExpression(goBack, newExpressionNode) {
+function redrawMainExpression(goBack, newExpressionNode, goalStructureString) {
     if (goBack)
         expressionProgression.pop();
     else
         expressionProgression.push(newExpressionNode);
     expressionRoot = expressionProgression[expressionProgression.length-1];
+
+    turnsDone++;
+    checkAnswer(expressionRoot, goalStructureString);
     
     containerRoot.removeChildren();
     expressionContainerRoot = outputReactiveExpression(expressionRoot);
     substitutionContainerRoot.removeChildren();
     containerRoot.addChild(expressionContainerRoot);
     containerRoot.addChild(substitutionContainerRoot);
-    console.log(expressionRoot);
-    console.log(expressionContainerRoot);
+    //console.log(expressionRoot);
+    //console.log(expressionContainerRoot);
 }
 
 function outputReactiveExpression(expressionNode) {
@@ -28,7 +31,7 @@ function outputReactiveExpression(expressionNode) {
         var posY = event.data.global.y;
         var selectedNode = getDeepestContainer(posX, posY, outputContainer.nodeData);
         var applicableSubstitutions = twf.api.findApplicableSubstitutionsInSelectedPlace(expressionRoot, [selectedNode], config);
-        console.log(applicableSubstitutions);
+        //console.log(applicableSubstitutions);
         
         containerRoot.removeChildAt(1);
         substitutionContainerRoot.removeChildren();
@@ -321,12 +324,12 @@ function makeResponsiveSubstitution(container, newNode) {
 
     container.interactive = true;
     container.buttonMode = true;
-    container.hitArea = new PIXI.Rectangle(0, 0, renderer.width, container.height);
+    container.hitArea = new PIXI.Rectangle(0, 0, screenWidth, container.height);
     container.on("click", returnSubstitutionId);
     var highlightRect = new PIXI.Graphics();
     highlightRect.lineStyle(0, 0xffffff);
     highlightRect.beginFill(0xffffff);
-    highlightRect.drawRect(0, 0, renderer.width, container.height);
+    highlightRect.drawRect(0, 0, screenWidth, container.height);
     highlightRect.endFill();
     highlightRect.alpha = 0;
 
@@ -341,7 +344,7 @@ function makeResponsiveSubstitution(container, newNode) {
 
     function returnSubstitutionId(event) {
         //console.log(container.newNode);
-        redrawMainExpression(false, container.newNode);
+        redrawMainExpression(false, container.newNode, goalStructureString);
     }
 
     container.addChild(highlightRect);
