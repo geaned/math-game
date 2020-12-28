@@ -6,7 +6,7 @@ function isInBlock(pointerX, pointerY, boxX, boxY, boxWidth, boxHeight) {
 }
 
 function getDeepestContainer(x, y, nodes) {
-    console.log([x, y]);
+    //console.log([x, y]);
     var nodeAmount = nodes.length;
     var deepestContainerClicked = 0;
     for (nodeNum = 0; nodeNum < nodeAmount; nodeNum++) {
