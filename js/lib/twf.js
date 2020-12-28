@@ -594,7 +594,6 @@ if (typeof kotlin === 'undefined') {
       nameEn = '';
     if (nameRu === void 0)
       nameRu = '';
-    console.log([leftStructureString, rightStructureString, basedOnTaskContext, matchJumbledAndNested, simpleAdditional, isExtending, priority, code, nameEn, nameRu]);
     return new ExpressionSubstitution(!isBlank(leftStructureString) ? structureStringToExpression(leftStructureString) : new ExpressionNode(NodeType$EMPTY_getInstance(), ''), !isBlank(rightStructureString) ? structureStringToExpression(rightStructureString) : new ExpressionNode(NodeType$EMPTY_getInstance(), ''), void 0, basedOnTaskContext, !isBlank(code) ? code : "'" + leftStructureString + "'->'" + rightStructureString + "'", nameEn, nameRu, void 0, void 0, matchJumbledAndNested, priority, void 0, simpleAdditional, isExtending);
   }
   function findSubstitutionPlacesInExpression(expression, substitution) {

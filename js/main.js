@@ -29,9 +29,11 @@ var extraSettings = {
 //var testTaskString = "a^b";
 //var testTaskString = "a*b*((c/d)/e)^f";
 //var testTaskString = "sin(a)";
-var testTaskString = "((a/(b*12))/(12*123))+c+d+f";
 //var testTaskString = "-11+5";
 //var testTaskString = "-(a/(b/c))";
+//var testTaskString = "-(12-1)+5";
+//var testTaskString = "(x+1)^2";
+var testTaskString = "((a/(b*12))/(12*(122+1)))+(c+d)+f";
 
 //var config = new twf.config.CompiledConfiguration();
 
@@ -40,7 +42,7 @@ function addExpressionSubstitutionByName(name) {
 }
 
 var expressionSubstitutions = [
-    /*addExpressionSubstitutionByName("NumberPlusMinus1"), // why referring by code doesn't work?
+    addExpressionSubstitutionByName("NumberPlusMinus1"), // ATTENTION: why referring by code doesn't work?
     addExpressionSubstitutionByName("DecimalToFraction"),
     addExpressionSubstitutionByName("PowFactorization"),
     addExpressionSubstitutionByName("MultiplicationFactorization"),
@@ -54,18 +56,16 @@ var expressionSubstitutions = [
     addExpressionSubstitutionByName("AdditiveComplicatingExtension"),
     addExpressionSubstitutionByName("MultiplicativeComplicatingExtension"),
     addExpressionSubstitutionByName("MinusInOutBrackets"),
-    addExpressionSubstitutionByName("SimpleComputation"),*/
-    twf.api.expressionSubstitutionFromStructureStrings("a", "b")];
+    addExpressionSubstitutionByName("SimpleComputation"),
+    twf.api.expressionSubstitutionFromStructureStrings("a", "b")];  // ATTENTION: test rule, it works
 var config = twf.api.createCompiledConfigurationFromExpressionSubstitutionsAndParams(expressionSubstitutions);
 console.log(config);
 
-//var kek = twf.api.expressionSubstitutionFromStructureStrings("a", "b");
-//config.compiledExpressionTreeTransformationRules.array_hd7ov6$_0 = [kek];
-var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future (just change the command)
+var expressionRoot = twf.api.stringToExpression(testTaskString);    // ATTENTION: will need to parse an expressionString in the future (just change the command)
 
-var containerRoot = new PIXI.Container();   // contains the whole scene
-var expressionContainerRoot; // contains current expression
-var substitutionContainerRoot = new PIXI.Container();   // will contain clickable substitutions
+var containerRoot = new PIXI.Container();               // contains the whole scene
+var expressionContainerRoot;                            // contains current expression
+var substitutionContainerRoot = new PIXI.Container();   // contains clickable substitutions
 substitutionContainerRoot.position.set(0, renderer.height*extraSettings.partOfScreenDedicatedToExpression);
 
 redrawMainExpression(expressionRoot);

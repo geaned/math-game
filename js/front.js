@@ -6,8 +6,8 @@ function redrawMainExpression(newExpressionNode) {
     substitutionContainerRoot.removeChildren();
     containerRoot.addChild(expressionContainerRoot);
     containerRoot.addChild(substitutionContainerRoot);
-    //console.log(expressionRoot);
-    //console.log(expressionContainerRoot);
+    console.log(expressionRoot);
+    console.log(expressionContainerRoot);
 }
 
 function outputReactiveExpression(expressionNode) {
@@ -57,6 +57,27 @@ function outputReactiveExpression(expressionNode) {
     return outputContainer;
 }
 
+function surroundContainerByBrackets(container) {   // expression should be added to container before using, container should be made reactive after using this function
+    var expressionWidth = container.width;
+    var expressionHeight = container.height;
+
+    var openingBracketWidth = PIXI.TextMetrics.measureText("(", style).width;
+    var openingBracketHeight = PIXI.TextMetrics.measureText("(", style).height;
+    var closingBracketHeight = PIXI.TextMetrics.measureText(")", style).height;
+
+    var leftBracket = new PIXI.Text("(", style);
+    leftBracket.position.set(0, (expressionHeight-openingBracketHeight)/2);
+
+    for (child of container.children)
+        child.x += openingBracketWidth;
+
+    var rightBracket = new PIXI.Text(")", style);
+    rightBracket.position.set(openingBracketWidth+expressionWidth, (expressionHeight-closingBracketHeight)/2);
+
+    container.addChild(leftBracket);
+    container.addChild(rightBracket);
+}
+
 function drawExpression(x, y, expressionNode, isResponsive) {
     var container = new PIXI.Container();
     container.x = x;
@@ -64,9 +85,12 @@ function drawExpression(x, y, expressionNode, isResponsive) {
     var type = expressionNode.nodeType.name$;
     var value = expressionNode.value;
     container.expressionTreeNodeId = expressionNode.nodeId;
-    container.respectiveIdentifier = expressionNode.identifier;
-    if (isResponsive)
-        console.log([container.expressionTreeNodeId, container.respectiveIdentifier]);
+    var isRoot = (expressionNode.parent == null);
+    var parentType = (expressionNode.parent == null) ? null : expressionNode.parent.name$;
+    var parentValue = (expressionNode.parent == null) ? null : expressionNode.parent.value;
+    //container.respectiveIdentifier = expressionNode.identifier;
+    //if (isResponsive)
+    //    console.log([container.expressionTreeNodeId, container.respectiveIdentifier]);
 
     if (type === "VARIABLE") {  // ATTENTION: currently implies not having children
         var text = new PIXI.Text(value, style);
@@ -108,6 +132,11 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     sign.y = (maxHeight-sign.height)/2;
                     container.addChild(sign);
                 }
+
+                if (["+", "-", "*", "^"].includes(parentValue)) {
+                    surroundContainerByBrackets(container);
+                }
+
                 if (isResponsive)
                     return makeResponsiveContainer(container);
                 return container;
@@ -121,6 +150,11 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 
                 container.addChild(text);
                 container.addChild(variable_part);
+
+                if (["-", "*", "^"].includes(parentValue)) {
+                    surroundContainerByBrackets(container);
+                }
+
                 if (isResponsive)
                     return makeResponsiveContainer(container);
                 return container;
@@ -154,6 +188,11 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     sign.y = (maxHeight-sign.height)/2;
                     container.addChild(sign);
                 }
+
+                if (["-", "*", "^"].includes(parentValue)) {
+                    surroundContainerByBrackets(container);
+                }
+
                 if (isResponsive)
                     return makeResponsiveContainer(container);
                 return container;
@@ -177,6 +216,11 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 container.addChild(numerator);
                 container.addChild(denominator);
                 container.addChild(divisionLine);
+
+                if (parentValue === "^") {
+                    surroundContainerByBrackets(container);
+                }
+
                 if (isResponsive)
                     return makeResponsiveContainer(container);
                 return container;
@@ -192,9 +236,9 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     return makeResponsiveContainer(container);
                 return container;
 
-            default:    // ATTENTION: currectly means only unary mathematical functions which are not operators
-                if (value === "") {     // ATTENTION: this currently only means bracketed expression
-                    if (expressionNode.parent == null) {    // TODO: make better bracket positioning
+            default:    // ATTENTION: currectly means only unary mathematical functions which are not operators or a full expression
+                if (value === "") {
+                    if (isRoot) {
                         var fullExpression = drawExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0], isResponsive);
                         container.addChild(fullExpression);
                         return container;
@@ -220,19 +264,19 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     }
 
                 } else {
-                    var left_side = new PIXI.Text(value+"(", style);
+                    var leftBracket = new PIXI.Text(value+"(", style);
                     var textBlockWidth = PIXI.TextMetrics.measureText(value+"(", style).width;
                     var textBlockHeight = PIXI.TextMetrics.measureText(value+"(", style).height;
 
                     var operand = drawExpression(textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[0], isResponsive);
                     var heightOffset = (operand.height-textBlockHeight)/2;
-                    left_side.position.set(0, heightOffset);
+                    leftBracket.position.set(0, heightOffset);
 
-                    var right_side = new PIXI.Text(")", style);
-                    right_side.position.set(textBlockWidth+operand.width, heightOffset);
+                    var rightBracket = new PIXI.Text(")", style);
+                    rightBracket.position.set(textBlockWidth+operand.width, heightOffset);
 
-                    container.addChild(left_side);
-                    container.addChild(right_side);
+                    container.addChild(leftBracket);
+                    container.addChild(rightBracket);
                     container.addChild(operand);
                     if (isResponsive)
                         return makeResponsiveContainer(container);
