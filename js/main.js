@@ -68,7 +68,8 @@ var expressionContainerRoot;                            // contains current expr
 var substitutionContainerRoot = new PIXI.Container();   // contains clickable substitutions
 substitutionContainerRoot.position.set(0, renderer.height*extraSettings.partOfScreenDedicatedToExpression);
 
-redrawMainExpression(expressionRoot);
+var expressionProgression = [];
+redrawMainExpression(false, expressionRoot);
 
 animate();
 

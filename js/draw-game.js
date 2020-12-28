@@ -1,6 +1,10 @@
-function redrawMainExpression(newExpressionNode) {
-    //console.log(newExpressionNode);
-    expressionRoot = newExpressionNode;
+function redrawMainExpression(goBack, newExpressionNode) {
+    if (goBack)
+        expressionProgression.pop();
+    else
+        expressionProgression.push(newExpressionNode);
+    expressionRoot = expressionProgression[expressionProgression.length-1];
+    
     containerRoot.removeChildren();
     expressionContainerRoot = outputReactiveExpression(expressionRoot);
     substitutionContainerRoot.removeChildren();
@@ -337,7 +341,7 @@ function makeResponsiveSubstitution(container, newNode) {
 
     function returnSubstitutionId(event) {
         //console.log(container.newNode);
-        redrawMainExpression(container.newNode);
+        redrawMainExpression(false, container.newNode);
     }
 
     container.addChild(highlightRect);
