@@ -1,11 +1,11 @@
-function redrawMainExpression(goBack, newExpressionNode, goalStructureString) {
+function redrawMainExpression(goBack, newExpressionNode) {
     if (goBack)
         expressionProgression.pop();
     else
         expressionProgression.push(newExpressionNode);
     expressionRoot = expressionProgression[expressionProgression.length-1];
 
-    turnsDone++;
+    changeStepsValue(turnsDone+1);
     checkAnswer(expressionRoot, goalStructureString);
     
     containerRoot.removeChildren();
@@ -29,7 +29,7 @@ function outputReactiveExpression(expressionNode) {
     function outputApplicableSubstitutions(event) {
         var posX = event.data.global.x;
         var posY = event.data.global.y;
-        var selectedNode = getDeepestContainer(posX, posY, outputContainer.nodeData);
+        var selectedNode = getDeepestContainer(posX-containerRoot.x, posY-containerRoot.y, outputContainer.nodeData);
         var applicableSubstitutions = twf.api.findApplicableSubstitutionsInSelectedPlace(expressionRoot, [selectedNode], config);
         //console.log(applicableSubstitutions);
         
@@ -324,12 +324,12 @@ function makeResponsiveSubstitution(container, newNode) {
 
     container.interactive = true;
     container.buttonMode = true;
-    container.hitArea = new PIXI.Rectangle(0, 0, screenWidth, container.height);
+    container.hitArea = new PIXI.Rectangle(0, 0, extraSettings.screenWidth, container.height);
     container.on("click", returnSubstitutionId);
     var highlightRect = new PIXI.Graphics();
     highlightRect.lineStyle(0, 0xffffff);
     highlightRect.beginFill(0xffffff);
-    highlightRect.drawRect(0, 0, screenWidth, container.height);
+    highlightRect.drawRect(0, 0, extraSettings.screenWidth, container.height);
     highlightRect.endFill();
     highlightRect.alpha = 0;
 
@@ -344,7 +344,7 @@ function makeResponsiveSubstitution(container, newNode) {
 
     function returnSubstitutionId(event) {
         //console.log(container.newNode);
-        redrawMainExpression(false, container.newNode, goalStructureString);
+        redrawMainExpression(false, container.newNode);
     }
 
     container.addChild(highlightRect);

@@ -15,19 +15,26 @@ var extraSettings = {
 }
 
 var expressionRoot;
-var turnsDone;
+var turnsDone = 0;
 var expressionProgression;
+var startingStructureString;
+var goalStructureString;
 
 var containerRoot = new PIXI.Container();               // contains the whole scene
 var expressionContainerRoot;                            // contains current expression
 var substitutionContainerRoot = new PIXI.Container();   // contains clickable substitutions
-substitutionContainerRoot.position.set(0, screenHeight*extraSettings.partOfScreenDedicatedToExpression);
+substitutionContainerRoot.position.set(0, extraSettings.screenHeight*extraSettings.partOfScreenDedicatedToExpression);
 
 containerRoot.width = extraSettings.screenWidth;    // may require invisible block of screenWidth by screenHeight size
 containerRoot.height = extraSettings.screenHeight;
-containerRoot.position.set((renderer.width-screenWidth)/2, (renderer.height-screenHeight)/2);
+containerRoot.position.set((renderer.width-extraSettings.screenWidth)/2, (renderer.height-extraSettings.screenHeight)/2);
 
 interface.addChild(containerRoot);
+
+function changeStepsValue(newValue) {
+    turnsDone = newValue;
+    updateSteps();
+}
 
 function addExpressionSubstitutionByName(name) {
     return twf.api.expressionSubstitutionFromStructureStrings(void 0, void 0, void 0, void 0, void 0, void 0, name);
@@ -54,14 +61,14 @@ var config = twf.api.createCompiledConfigurationFromExpressionSubstitutionsAndPa
 
 function goToPreviousExpression() {   // for a 'cancel turn' button
     if (expressionProgression.length > 1)
-        redrawMainExpression(true, void 0, goalStructureString);
+        redrawMainExpression(true, void 0);
 }
 
 function goToFirstExpression() {    // for a 'retry from the start' button
     if (expressionProgression.length > 1) {
         expressionProgression = expressionProgression.slice(0, 2);
-        redrawMainExpression(true, void 0, goalStructureString);
-        turnsDone = 0;
+        redrawMainExpression(true, void 0);
+        changeStepsValue(0);
     }
 }
 
@@ -69,9 +76,15 @@ function returnTurnAmount() {
     return turnsDone;
 }
 
-function loadLevel(startingStructureString, goalStructureString) {    // load level and start the game
+function loadLevel(startingStructureStringInput, goalStructureStringInput) {    // load level and start the game
+    startingStructureString = startingStructureStringInput;
+    goalStructureString = goalStructureStringInput;
     expressionRoot = twf.api.structureStringToExpression(startingStructureString);
-    turnsDone = 0;
     expressionProgression = [];
-    redrawMainExpression(false, expressionRoot, goalStructureString);
+    redrawMainExpression(false, expressionRoot);
+    changeStepsValue(0);
+}
+
+function checkAnswer(testedExpressionNode, goalStructureString) {
+    return (twf.api.expressionToStructureString(testedExpressionNode) === goalStructureString); // should be connected to the front
 }

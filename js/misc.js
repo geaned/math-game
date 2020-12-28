@@ -6,7 +6,7 @@ function isInBlock(pointerX, pointerY, boxX, boxY, boxWidth, boxHeight) {
 }
 
 function getDeepestContainer(x, y, nodes) {
-    //console.log([x, y]);
+    console.log([x, y]);
     var nodeAmount = nodes.length;
     var deepestContainerClicked = 0;
     for (nodeNum = 0; nodeNum < nodeAmount; nodeNum++) {
@@ -20,10 +20,10 @@ function getDeepestContainer(x, y, nodes) {
 
 function repositionExpressionContainer(container, isCenter) {
     if (isCenter) {
-        container.position.set((screenWidth-container.width)/2, (screenHeight-container.height)/2);
+        container.position.set((extraSettings.screenWidth-container.width)/2, (extraSettings.screenHeight-container.height)/2);
 
     } else {
-        container.position.set((screenWidth-container.width)/2, (screenHeight*extraSettings.partOfScreenDedicatedToExpression-container.height)/2);
+        container.position.set((extraSettings.screenWidth-container.width)/2, (extraSettings.screenHeight*extraSettings.partOfScreenDedicatedToExpression-container.height)/2);
     }
     container.nodeData = getAllNodeBlocksCoords(container, [], 0, 0);
 }
@@ -58,8 +58,4 @@ function getAllNodeBlocksCoords(container, NodeDataArray, absoluteCoordX, absolu
         }
     }
     return NodeDataArray;
-}
-
-function checkAnswer(testedExpressionNode, goalStructureString) {
-    return (twf.api.expressionToStructureString(testedExpressionNode) === goalStructureString);
 }
