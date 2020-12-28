@@ -1,4 +1,5 @@
 function redrawMainExpression(newExpressionNode) {
+    //console.log(newExpressionNode);
     expressionRoot = newExpressionNode;
     containerRoot.removeChildren();
     expressionContainerRoot = outputReactiveExpression(expressionRoot);
@@ -23,6 +24,7 @@ function outputReactiveExpression(expressionNode) {
         var posY = event.data.global.y;
         var selectedNode = getDeepestContainer(posX, posY, outputContainer.nodeData);
         var applicableSubstitutions = twf.api.findApplicableSubstitutionsInSelectedPlace(expressionRoot, [selectedNode], config);
+        console.log(applicableSubstitutions);
         
         containerRoot.removeChildAt(1);
         substitutionContainerRoot.removeChildren();
@@ -63,6 +65,8 @@ function drawExpression(x, y, expressionNode, isResponsive) {
     var value = expressionNode.value;
     container.expressionTreeNodeId = expressionNode.nodeId;
     container.respectiveIdentifier = expressionNode.identifier;
+    if (isResponsive)
+        console.log([container.expressionTreeNodeId, container.respectiveIdentifier]);
 
     if (type === "VARIABLE") {  // ATTENTION: currently implies not having children
         var text = new PIXI.Text(value, style);
@@ -77,7 +81,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 var curOffset = 0;
                 var maxHeight = 0;
                 var parts = [];
-                var plus_signs = [];
+                var plusSigns = [];
                 var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
                 for (let childNum = 0; childNum < childrenAmount; childNum++) {
                     var newBlock = drawExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum], isResponsive);
@@ -89,7 +93,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                         if (expressionNode.children.array_hd7ov6$_0[childNum+1].value !== "-") { // if right child is -(<some_expression>), then we shouldn't draw a "+"
                             var text = new PIXI.Text("+", style);
                             text.position.set(curOffset, 0);
-                            plus_signs.push(text);
+                            plusSigns.push(text);
                             var textBlockWidth = PIXI.TextMetrics.measureText("+", style).width;
                             curOffset += textBlockWidth;
                         }
@@ -100,7 +104,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     part.y = (maxHeight-part.height)/2;
                     container.addChild(part);
                 }
-                for (let sign of plus_signs) {
+                for (let sign of plusSigns) {
                     sign.y = (maxHeight-sign.height)/2;
                     container.addChild(sign);
                 }
@@ -110,9 +114,10 @@ function drawExpression(x, y, expressionNode, isResponsive) {
 
             case "-":
                 var text = new PIXI.Text("-", style);
-                text.position.set(0, 0);
                 var textBlockWidth = PIXI.TextMetrics.measureText("-", style).width;
+                var textBlockHeight = PIXI.TextMetrics.measureText("-", style).height;
                 var variable_part = drawExpression(textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[0], isResponsive);
+                text.position.set(0, (variable_part.height-textBlockHeight)/2);
                 
                 container.addChild(text);
                 container.addChild(variable_part);
@@ -124,7 +129,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 var curOffset = 0;
                 var maxHeight = 0;
                 var parts = [];
-                var multiply_signs = [];
+                var multiplySigns = [];
                 var childrenAmount = expressionNode.children.array_hd7ov6$_0.length;
                 for (let childNum = 0; childNum < childrenAmount; childNum++) {
                     var newBlock = drawExpression(curOffset, 0, expressionNode.children.array_hd7ov6$_0[childNum], isResponsive);
@@ -135,7 +140,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     if (childNum < childrenAmount-1) {
                         var text = new PIXI.Text("*", style);
                         text.position.set(curOffset, 0);
-                        multiply_signs.push(text);
+                        multiplySigns.push(text);
                         var textBlockWidth = PIXI.TextMetrics.measureText("*", style).width;
                         curOffset += textBlockWidth;
                     }
@@ -145,7 +150,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                     part.y = (maxHeight-part.height)/2;
                     container.addChild(part);
                 }
-                for (let sign of multiply_signs) {
+                for (let sign of multiplySigns) {
                     sign.y = (maxHeight-sign.height)/2;
                     container.addChild(sign);
                 }
@@ -188,10 +193,31 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 return container;
 
             default:    // ATTENTION: currectly means only unary mathematical functions which are not operators
-                if (value === "") {     // ATTENTION: this currently only means full expression (hence shouldn't be reactive)
-                    var fullContainer = drawExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0], isResponsive);
-                    container.addChild(fullContainer);
-                    return container;
+                if (value === "") {     // ATTENTION: this currently only means bracketed expression
+                    if (expressionNode.parent == null) {    // TODO: make better bracket positioning
+                        var fullExpression = drawExpression(0, 0, expressionNode.children.array_hd7ov6$_0[0], isResponsive);
+                        container.addChild(fullExpression);
+                        return container;
+
+                    } else {
+                        var left_side = new PIXI.Text("(", style);
+                        var textBlockWidth = PIXI.TextMetrics.measureText("(", style).width;
+                        var textBlockHeight = PIXI.TextMetrics.measureText("(", style).height;
+    
+                        var containedExpression = drawExpression(textBlockWidth, 0, expressionNode.children.array_hd7ov6$_0[0], isResponsive);
+                        var heightOffset = (containedExpression.height-textBlockHeight)/2;
+                        left_side.position.set(0, heightOffset);
+    
+                        var right_side = new PIXI.Text(")", style);
+                        right_side.position.set(textBlockWidth+containedExpression.width, heightOffset);
+                        
+                        container.addChild(left_side);
+                        container.addChild(right_side);
+                        container.addChild(containedExpression);
+                        if (isResponsive)
+                            return makeResponsiveContainer(container);
+                        return container;
+                    }
 
                 } else {
                     var left_side = new PIXI.Text(value+"(", style);
@@ -215,7 +241,7 @@ function drawExpression(x, y, expressionNode, isResponsive) {
                 
         }
     }
-    console.assert(true, {msg: "Oops, shouldn't've come here!"});
+    console.assert(false, "Oops, shouldn't've come here!");
 }
 
 function makeResponsiveContainer(container) {

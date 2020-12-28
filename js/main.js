@@ -30,9 +30,35 @@ var extraSettings = {
 //var testTaskString = "a*b*((c/d)/e)^f";
 //var testTaskString = "sin(a)";
 var testTaskString = "((a/(b*12))/(12*123))+c+d+f";
-//var testTaskString = "(a/(b*12))/(2*6*123)+c+d+f";
+//var testTaskString = "-11+5";
+//var testTaskString = "-(a/(b/c))";
 
-var config = new twf.config.CompiledConfiguration();
+//var config = new twf.config.CompiledConfiguration();
+
+function addExpressionSubstitutionByName(name) {
+    return twf.api.expressionSubstitutionFromStructureStrings(void 0, void 0, void 0, void 0, void 0, void 0, name);
+}
+
+var expressionSubstitutions = [
+    /*addExpressionSubstitutionByName("NumberPlusMinus1"), // why referring by code doesn't work?
+    addExpressionSubstitutionByName("DecimalToFraction"),
+    addExpressionSubstitutionByName("PowFactorization"),
+    addExpressionSubstitutionByName("MultiplicationFactorization"),
+    addExpressionSubstitutionByName("OpeningBrackets"),
+    addExpressionSubstitutionByName("ParentBracketsExpansion"),
+    addExpressionSubstitutionByName("ArgumentsSwap"),
+    addExpressionSubstitutionByName("ArgumentsPermutation"),
+    addExpressionSubstitutionByName("ArgumentsPermutationInOther"),
+    addExpressionSubstitutionByName("ReduceArithmetic"),
+    addExpressionSubstitutionByName("ReduceFraction"),
+    addExpressionSubstitutionByName("AdditiveComplicatingExtension"),
+    addExpressionSubstitutionByName("MultiplicativeComplicatingExtension"),
+    addExpressionSubstitutionByName("MinusInOutBrackets"),
+    addExpressionSubstitutionByName("SimpleComputation"),*/
+    twf.api.expressionSubstitutionFromStructureStrings("a", "b")];
+var config = twf.api.createCompiledConfigurationFromExpressionSubstitutionsAndParams(expressionSubstitutions);
+console.log(config);
+
 //var kek = twf.api.expressionSubstitutionFromStructureStrings("a", "b");
 //config.compiledExpressionTreeTransformationRules.array_hd7ov6$_0 = [kek];
 var expressionRoot = twf.api.stringToExpression(testTaskString);    // will need to parse an expressionString in the future (just change the command)
@@ -42,8 +68,6 @@ var expressionContainerRoot; // contains current expression
 var substitutionContainerRoot = new PIXI.Container();   // will contain clickable substitutions
 substitutionContainerRoot.position.set(0, renderer.height*extraSettings.partOfScreenDedicatedToExpression);
 
-console.log(expressionRoot);
-console.log(expressionContainerRoot);
 redrawMainExpression(expressionRoot);
 
 animate();
